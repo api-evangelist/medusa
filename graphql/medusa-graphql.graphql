@@ -1,0 +1,1347 @@
+"""
+Medusa.js GraphQL API Schema
+Headless Commerce Platform — https://docs.medusajs.com
+Source: OAS schemas from github.com/medusajs/medusa (develop branch)
+"""
+
+scalar DateTime
+scalar Date
+scalar Time
+scalar JSON
+
+# ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum ProductStatus {
+  draft
+  proposed
+  published
+  rejected
+}
+
+enum GiftCardStatus {
+  disabled
+  enabled
+}
+
+enum ReturnStatus {
+  open
+  requested
+  received
+  partially_received
+  canceled
+}
+
+enum OrderStatus {
+  pending
+  completed
+  archived
+  canceled
+  requires_action
+}
+
+enum PaymentStatus {
+  not_paid
+  awaiting
+  captured
+  partially_captured
+  partially_refunded
+  refunded
+  canceled
+  requires_action
+}
+
+enum FulfillmentStatus {
+  not_fulfilled
+  partially_fulfilled
+  fulfilled
+  partially_shipped
+  shipped
+  partially_delivered
+  delivered
+  canceled
+}
+
+enum PaymentSessionStatus {
+  authorized
+  captured
+  pending
+  requires_more
+  error
+  canceled
+}
+
+enum ShippingOptionPriceType {
+  flat
+  calculated
+}
+
+enum PriceRuleOperator {
+  eq
+  ne
+  gt
+  gte
+  lt
+  lte
+  in
+  nin
+}
+
+# ─── Scalar / Value Types ─────────────────────────────────────────────────────
+
+type Currency {
+  code: String!
+  symbol: String!
+  symbol_native: String!
+  name: String!
+  decimal_digits: Float
+  rounding: Float
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type Country {
+  id: String!
+  iso_2: String!
+  iso_3: String!
+  num_code: String
+  name: String!
+  display_name: String
+}
+
+type Image {
+  id: String!
+  url: String!
+  rank: Float
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+  deleted_at: DateTime
+}
+
+type ProductTag {
+  id: String!
+  value: String!
+  external_id: String
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+  deleted_at: DateTime
+}
+
+type ProductType {
+  id: String!
+  value: String!
+  external_id: String
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+  deleted_at: DateTime
+}
+
+type ProductOptionValue {
+  id: String!
+  value: String!
+  option_id: String
+  option: ProductOption
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+  deleted_at: DateTime
+}
+
+type ProductOption {
+  id: String!
+  title: String!
+  product_id: String
+  product: Product
+  values: [ProductOptionValue!]
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+  deleted_at: DateTime
+}
+
+type ProductCategory {
+  id: String!
+  name: String!
+  description: String
+  handle: String!
+  rank: Float
+  parent_category_id: String
+  parent_category: ProductCategory
+  category_children: [ProductCategory!]
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type ProductCollection {
+  id: String!
+  title: String!
+  handle: String
+  products: [Product!]
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+  deleted_at: DateTime
+}
+
+type PriceRule {
+  id: String!
+  attribute: String!
+  operator: PriceRuleOperator!
+  value: String!
+}
+
+type Price {
+  id: String!
+  currency_code: String!
+  amount: Float!
+  min_quantity: Float
+  max_quantity: Float
+  rules: [PriceRule!]
+}
+
+type CalculatedPrice {
+  id: String!
+  is_calculated_price_price_list: Boolean
+  is_calculated_price_tax_inclusive: Boolean
+  calculated_amount: Float
+  calculated_amount_with_tax: Float
+  calculated_amount_without_tax: Float
+  is_original_price_price_list: Boolean
+  is_original_price_tax_inclusive: Boolean
+  original_amount: Float
+  original_amount_with_tax: Float
+  original_amount_without_tax: Float
+  currency_code: String
+}
+
+type MoneyAmount {
+  id: String
+  currency_code: String!
+  amount: Float!
+}
+
+# ─── Product ──────────────────────────────────────────────────────────────────
+
+type ProductVariant {
+  id: String!
+  title: String!
+  sku: String
+  barcode: String
+  ean: String
+  upc: String
+  allow_backorder: Boolean
+  manage_inventory: Boolean
+  inventory_quantity: Float
+  product_id: String
+  product: Product
+  options: [ProductOptionValue!]
+  prices: [Price!]
+  calculated_price: CalculatedPrice
+  length: Float
+  width: Float
+  height: Float
+  weight: Float
+  origin_country: String
+  hs_code: String
+  mid_code: String
+  material: String
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+  deleted_at: DateTime
+}
+
+type Product {
+  id: String!
+  title: String!
+  subtitle: String
+  description: String
+  handle: String
+  is_giftcard: Boolean!
+  status: ProductStatus!
+  thumbnail: String
+  width: Float
+  weight: Float
+  height: Float
+  length: Float
+  origin_country: String
+  hs_code: String
+  mid_code: String
+  material: String
+  collection_id: String
+  collection: ProductCollection
+  type_id: String
+  type: ProductType
+  tags: [ProductTag!]
+  categories: [ProductCategory!]
+  options: [ProductOption!]!
+  variants: [ProductVariant!]!
+  images: [Image!]!
+  discountable: Boolean
+  external_id: String
+  metadata: JSON
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime
+}
+
+# ─── Region ───────────────────────────────────────────────────────────────────
+
+type PaymentProvider {
+  id: String!
+  is_enabled: Boolean
+}
+
+type Region {
+  id: String!
+  name: String!
+  currency_code: String!
+  automatic_taxes: Boolean
+  countries: [Country!]
+  payment_providers: [PaymentProvider!]
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+# ─── Address ──────────────────────────────────────────────────────────────────
+
+type Address {
+  id: String!
+  customer_id: String
+  first_name: String
+  last_name: String
+  phone: String
+  company: String
+  address_1: String
+  address_2: String
+  city: String
+  country_code: String
+  province: String
+  postal_code: String
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type CustomerAddress {
+  id: String!
+  address_name: String
+  is_default_shipping: Boolean
+  is_default_billing: Boolean
+  customer_id: String!
+  company: String
+  first_name: String
+  last_name: String
+  address_1: String
+  address_2: String
+  city: String
+  country_code: String
+  province: String
+  postal_code: String
+  phone: String
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+# ─── Customer ─────────────────────────────────────────────────────────────────
+
+type Customer {
+  id: String!
+  email: String!
+  first_name: String
+  last_name: String
+  company_name: String
+  phone: String
+  default_billing_address_id: String
+  default_shipping_address_id: String
+  addresses: [CustomerAddress!]!
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+  deleted_at: DateTime
+}
+
+# ─── Cart ─────────────────────────────────────────────────────────────────────
+
+type ShippingOptionType {
+  id: String!
+  label: String
+  description: String
+  code: String
+}
+
+type ShippingOption {
+  id: String!
+  name: String!
+  price_type: ShippingOptionPriceType
+  service_zone_id: String
+  provider_id: String
+  provider: PaymentProvider
+  shipping_option_type_id: String
+  type: ShippingOptionType
+  shipping_profile_id: String
+  amount: Float
+  calculated_price: CalculatedPrice
+  prices: [Price!]
+  metadata: JSON
+}
+
+type CartShippingMethod {
+  id: String!
+  cart_id: String!
+  name: String!
+  description: String
+  amount: Float!
+  is_tax_inclusive: Boolean
+  shipping_option_id: String
+  data: JSON
+  metadata: JSON
+  original_total: Float
+  original_subtotal: Float
+  original_tax_total: Float
+  total: Float
+  subtotal: Float
+  tax_total: Float
+  discount_total: Float
+  discount_tax_total: Float
+}
+
+type PaymentSession {
+  id: String!
+  amount: Float!
+  currency_code: String!
+  provider_id: String!
+  data: JSON
+  context: JSON
+  status: PaymentSessionStatus
+  authorized_at: DateTime
+  payment_collection: PaymentCollection
+}
+
+type PaymentCollection {
+  id: String!
+  currency_code: String!
+  amount: Float!
+  authorized_amount: Float
+  captured_amount: Float
+  refunded_amount: Float
+  completed_at: DateTime
+  created_at: DateTime
+  updated_at: DateTime
+  payment_sessions: [PaymentSession!]
+}
+
+type CartLineItem {
+  id: String!
+  title: String!
+  subtitle: String
+  thumbnail: String
+  quantity: Float!
+  product_id: String
+  product: Product
+  product_title: String
+  product_description: String
+  product_subtitle: String
+  product_type: String
+  product_type_id: String
+  product_collection: String
+  product_handle: String
+  variant_id: String
+  variant: ProductVariant
+  variant_sku: String
+  variant_barcode: String
+  variant_title: String
+  unit_price: Float
+  compare_at_unit_price: Float
+  is_discountable: Boolean
+  is_tax_inclusive: Boolean
+  metadata: JSON
+  original_total: Float
+  original_subtotal: Float
+  original_tax_total: Float
+  item_total: Float
+  item_subtotal: Float
+  item_tax_total: Float
+  total: Float
+  subtotal: Float
+  tax_total: Float
+  discount_total: Float
+  discount_tax_total: Float
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type CartPromotion {
+  id: String!
+  code: String
+  campaign_id: String
+  is_automatic: Boolean
+}
+
+type Cart {
+  id: String!
+  region_id: String
+  region: Region
+  customer_id: String
+  sales_channel_id: String
+  email: String
+  currency_code: String!
+  shipping_address: Address
+  billing_address: Address
+  items: [CartLineItem!]
+  shipping_methods: [CartShippingMethod!]
+  payment_collection: PaymentCollection
+  promotions: [CartPromotion!]!
+  gift_cards: [GiftCard!]
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+  original_item_total: Float!
+  original_item_subtotal: Float!
+  original_item_tax_total: Float!
+  item_total: Float!
+  item_subtotal: Float!
+  item_tax_total: Float!
+  original_total: Float!
+  original_subtotal: Float!
+  original_tax_total: Float!
+  total: Float!
+  subtotal: Float!
+  tax_total: Float!
+  discount_total: Float!
+  discount_tax_total: Float!
+  gift_card_total: Float!
+  gift_card_tax_total: Float!
+  shipping_total: Float!
+  shipping_subtotal: Float!
+  shipping_tax_total: Float!
+  original_shipping_total: Float!
+  original_shipping_subtotal: Float!
+  original_shipping_tax_total: Float!
+}
+
+# ─── Order ────────────────────────────────────────────────────────────────────
+
+type OrderTaxLine {
+  id: String!
+  description: String
+  tax_rate_id: String
+  code: String!
+  rate: Float!
+  provider_id: String
+  total: Float
+  subtotal: Float
+}
+
+type OrderAdjustment {
+  id: String!
+  promotion_id: String
+  code: String
+  amount: Float!
+  description: String
+  provider_id: String
+}
+
+type OrderLineItem {
+  id: String!
+  title: String!
+  subtitle: String
+  thumbnail: String
+  quantity: Float!
+  product_id: String
+  product: Product
+  product_title: String
+  variant_id: String
+  variant: ProductVariant
+  variant_sku: String
+  unit_price: Float!
+  compare_at_unit_price: Float
+  is_discountable: Boolean
+  is_tax_inclusive: Boolean
+  tax_lines: [OrderTaxLine!]
+  adjustments: [OrderAdjustment!]
+  metadata: JSON
+  original_total: Float!
+  original_subtotal: Float!
+  original_tax_total: Float!
+  item_total: Float!
+  item_subtotal: Float!
+  item_tax_total: Float!
+  total: Float!
+  subtotal: Float!
+  tax_total: Float!
+  discount_total: Float!
+  discount_tax_total: Float!
+  refundable_total: Float
+  refundable_total_per_unit: Float
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type OrderShippingMethod {
+  id: String!
+  order_id: String!
+  name: String!
+  description: String
+  amount: Float!
+  is_tax_inclusive: Boolean
+  shipping_option_id: String
+  tax_lines: [OrderTaxLine!]
+  adjustments: [OrderAdjustment!]
+  original_total: Float!
+  original_subtotal: Float!
+  original_tax_total: Float!
+  total: Float!
+  subtotal: Float!
+  tax_total: Float!
+  discount_total: Float!
+  discount_tax_total: Float!
+}
+
+type OrderFulfillment {
+  id: String!
+  location_id: String
+  packed_at: DateTime
+  shipped_at: DateTime
+  delivered_at: DateTime
+  canceled_at: DateTime
+  provider_id: String
+  tracking_links: [JSON]
+  labels: [JSON]
+  data: JSON
+  metadata: JSON
+}
+
+type OrderSummary {
+  paid_total: Float
+  difference_sum: Float
+  pending_difference: Float
+  current_order_total: Float
+  original_order_total: Float
+  transaction_total: Float
+  refunded_total: Float
+}
+
+type Order {
+  id: String!
+  display_id: Float
+  region_id: String
+  customer_id: String!
+  sales_channel_id: String!
+  email: String!
+  currency_code: String!
+  status: OrderStatus!
+  payment_status: PaymentStatus!
+  fulfillment_status: FulfillmentStatus!
+  shipping_address: Address
+  billing_address: Address
+  items: [OrderLineItem!]!
+  shipping_methods: [OrderShippingMethod!]!
+  fulfillments: [OrderFulfillment!]
+  summary: OrderSummary!
+  metadata: JSON
+  created_at: DateTime!
+  updated_at: DateTime!
+  original_item_total: Float!
+  original_item_subtotal: Float!
+  original_item_tax_total: Float!
+  item_total: Float!
+  item_subtotal: Float!
+  item_tax_total: Float!
+  item_discount_total: Float!
+  original_total: Float!
+  original_subtotal: Float!
+  original_tax_total: Float!
+  total: Float!
+  subtotal: Float!
+  tax_total: Float!
+  discount_total: Float!
+  discount_tax_total: Float!
+  gift_card_total: Float!
+  gift_card_tax_total: Float!
+  shipping_total: Float!
+  shipping_subtotal: Float!
+  shipping_tax_total: Float!
+  shipping_discount_total: Float!
+  original_shipping_total: Float!
+  original_shipping_subtotal: Float!
+  original_shipping_tax_total: Float!
+  credit_line_total: Float!
+}
+
+# ─── Gift Card ────────────────────────────────────────────────────────────────
+
+type GiftCard {
+  id: String!
+  code: String!
+  status: GiftCardStatus
+  value: Float!
+  currency_code: String!
+  customer_id: String
+  customer: Customer
+  reference_id: String
+  note: String
+  balance: Float
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+# ─── Return ───────────────────────────────────────────────────────────────────
+
+type ReturnReason {
+  id: String!
+  value: String!
+  label: String!
+  description: String
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type ReturnItem {
+  id: String!
+  quantity: Float!
+  reason_id: String
+  reason: ReturnReason
+  note: String
+  item_id: String
+  return_id: String
+  damaged_quantity: Float
+  received_quantity: Float
+  metadata: JSON
+}
+
+type Return {
+  id: String!
+  display_id: Float
+  status: ReturnStatus!
+  order_id: String!
+  location_id: String
+  items: [ReturnItem!]!
+  canceled_at: DateTime
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+# ─── Payment ──────────────────────────────────────────────────────────────────
+
+type Payment {
+  id: String!
+  amount: Float!
+  currency_code: String!
+  provider_id: String!
+  cart_id: String
+  order_id: String
+  customer_id: String
+  data: JSON
+  captured_at: DateTime
+  canceled_at: DateTime
+  refunds: [JSON]
+  captures: [JSON]
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+# ─── Store ────────────────────────────────────────────────────────────────────
+
+type Store {
+  id: String!
+  name: String!
+  supported_currencies: [StoreCurrency!]
+  default_sales_channel_id: String
+  default_region_id: String
+  default_location_id: String
+  metadata: JSON
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type StoreCurrency {
+  currency_code: String!
+  is_default: Boolean
+  is_tax_inclusive: Boolean
+  currency: Currency
+}
+
+# ─── Pagination ───────────────────────────────────────────────────────────────
+
+type PageInfo {
+  total_count: Int!
+  limit: Int!
+  offset: Int!
+  count: Int!
+}
+
+type ProductConnection {
+  products: [Product!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type ProductVariantConnection {
+  variants: [ProductVariant!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type CollectionConnection {
+  collections: [ProductCollection!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type CategoryConnection {
+  product_categories: [ProductCategory!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type RegionConnection {
+  regions: [Region!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type CurrencyConnection {
+  currencies: [Currency!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type ShippingOptionConnection {
+  shipping_options: [ShippingOption!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type ReturnReasonConnection {
+  return_reasons: [ReturnReason!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type OrderConnection {
+  orders: [Order!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type CustomerAddressConnection {
+  addresses: [CustomerAddress!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type ProductTagConnection {
+  product_tags: [ProductTag!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+type ProductTypeConnection {
+  product_types: [ProductType!]!
+  count: Int!
+  offset: Int!
+  limit: Int!
+}
+
+# ─── Inputs ───────────────────────────────────────────────────────────────────
+
+input AddressInput {
+  first_name: String
+  last_name: String
+  phone: String
+  company: String
+  address_1: String
+  address_2: String
+  city: String
+  country_code: String
+  province: String
+  postal_code: String
+  metadata: JSON
+}
+
+input CreateCartInput {
+  region_id: String
+  sales_channel_id: String
+  email: String
+  currency_code: String
+  shipping_address: AddressInput
+  billing_address: AddressInput
+  items: [LineItemInput!]
+  metadata: JSON
+}
+
+input LineItemInput {
+  variant_id: String!
+  quantity: Float!
+  metadata: JSON
+}
+
+input UpdateCartInput {
+  region_id: String
+  email: String
+  sales_channel_id: String
+  shipping_address: AddressInput
+  billing_address: AddressInput
+  metadata: JSON
+  promo_codes: [String!]
+}
+
+input CreateCustomerInput {
+  email: String!
+  first_name: String
+  last_name: String
+  phone: String
+  password: String!
+  company_name: String
+  metadata: JSON
+}
+
+input UpdateCustomerInput {
+  first_name: String
+  last_name: String
+  phone: String
+  company_name: String
+  metadata: JSON
+}
+
+input CreateCustomerAddressInput {
+  address_name: String
+  is_default_shipping: Boolean
+  is_default_billing: Boolean
+  company: String
+  first_name: String
+  last_name: String
+  address_1: String
+  address_2: String
+  city: String
+  country_code: String
+  province: String
+  postal_code: String
+  phone: String
+  metadata: JSON
+}
+
+input UpdateCustomerAddressInput {
+  address_name: String
+  is_default_shipping: Boolean
+  is_default_billing: Boolean
+  company: String
+  first_name: String
+  last_name: String
+  address_1: String
+  address_2: String
+  city: String
+  country_code: String
+  province: String
+  postal_code: String
+  phone: String
+  metadata: JSON
+}
+
+input InitializePaymentSessionInput {
+  provider_id: String!
+  context: JSON
+  data: JSON
+}
+
+input CreateReturnInput {
+  order_id: String!
+  items: [ReturnItemInput!]!
+  shipping: ReturnShippingInput
+  note: String
+}
+
+input ReturnItemInput {
+  id: String!
+  quantity: Float!
+  reason_id: String
+  note: String
+}
+
+input ReturnShippingInput {
+  option_id: String!
+  price: Float
+}
+
+input ProductFilterInput {
+  id: [String!]
+  q: String
+  handle: String
+  collection_id: [String!]
+  category_id: [String!]
+  tag_id: [String!]
+  type_id: [String!]
+  sales_channel_id: [String!]
+  region_id: String
+  currency_code: String
+  title: String
+  status: [ProductStatus!]
+  is_giftcard: Boolean
+  order: String
+  offset: Int
+  limit: Int
+}
+
+# ─── Query ────────────────────────────────────────────────────────────────────
+
+type Query {
+  """
+  Retrieve a list of products.
+  """
+  products(
+    id: [String!]
+    q: String
+    handle: String
+    collection_id: [String!]
+    category_id: [String!]
+    tag_id: [String!]
+    type_id: [String!]
+    sales_channel_id: [String!]
+    region_id: String
+    currency_code: String
+    title: String
+    status: [ProductStatus!]
+    is_giftcard: Boolean
+    order: String
+    offset: Int
+    limit: Int
+  ): ProductConnection!
+
+  """
+  Retrieve a single product by ID or handle.
+  """
+  product(id: String, handle: String): Product
+
+  """
+  Retrieve a list of product variants.
+  """
+  productVariants(
+    id: [String!]
+    q: String
+    product_id: [String!]
+    sales_channel_id: [String!]
+    region_id: String
+    currency_code: String
+    order: String
+    offset: Int
+    limit: Int
+  ): ProductVariantConnection!
+
+  """
+  Retrieve a single product variant.
+  """
+  productVariant(id: String!): ProductVariant
+
+  """
+  Retrieve a list of product collections.
+  """
+  collections(
+    id: [String!]
+    q: String
+    handle: [String!]
+    order: String
+    offset: Int
+    limit: Int
+  ): CollectionConnection!
+
+  """
+  Retrieve a single product collection.
+  """
+  collection(id: String, handle: String): ProductCollection
+
+  """
+  Retrieve a list of product categories.
+  """
+  productCategories(
+    id: [String!]
+    q: String
+    handle: String
+    parent_category_id: String
+    include_ancestors_tree: Boolean
+    include_descendants_tree: Boolean
+    order: String
+    offset: Int
+    limit: Int
+  ): CategoryConnection!
+
+  """
+  Retrieve a single product category.
+  """
+  productCategory(id: String, handle: String): ProductCategory
+
+  """
+  Retrieve a list of product tags.
+  """
+  productTags(
+    id: [String!]
+    q: String
+    value: [String!]
+    order: String
+    offset: Int
+    limit: Int
+  ): ProductTagConnection!
+
+  """
+  Retrieve a list of product types.
+  """
+  productTypes(
+    id: [String!]
+    q: String
+    value: [String!]
+    order: String
+    offset: Int
+    limit: Int
+  ): ProductTypeConnection!
+
+  """
+  Retrieve a list of regions.
+  """
+  regions(
+    id: [String!]
+    q: String
+    order: String
+    offset: Int
+    limit: Int
+  ): RegionConnection!
+
+  """
+  Retrieve a single region.
+  """
+  region(id: String!): Region
+
+  """
+  Retrieve a list of currencies.
+  """
+  currencies(
+    code: [String!]
+    q: String
+    order: String
+    offset: Int
+    limit: Int
+  ): CurrencyConnection!
+
+  """
+  Retrieve a single currency.
+  """
+  currency(code: String!): Currency
+
+  """
+  Retrieve a list of shipping options for a cart or return.
+  """
+  shippingOptions(
+    cart_id: String
+    is_return: Boolean
+    region_id: String
+    order: String
+    offset: Int
+    limit: Int
+  ): ShippingOptionConnection!
+
+  """
+  Retrieve a list of return reasons.
+  """
+  returnReasons(
+    id: [String!]
+    offset: Int
+    limit: Int
+  ): ReturnReasonConnection!
+
+  """
+  Retrieve a single return reason.
+  """
+  returnReason(id: String!): ReturnReason
+
+  """
+  Retrieve a cart by ID.
+  """
+  cart(id: String!): Cart
+
+  """
+  Retrieve an order by ID.
+  """
+  order(id: String, display_id: Float): Order
+
+  """
+  Retrieve the authenticated customer's orders.
+  """
+  orders(
+    id: [String!]
+    q: String
+    status: [OrderStatus!]
+    offset: Int
+    limit: Int
+  ): OrderConnection!
+
+  """
+  Retrieve the authenticated customer.
+  """
+  customer: Customer
+
+  """
+  Retrieve the authenticated customer's addresses.
+  """
+  customerAddresses(
+    offset: Int
+    limit: Int
+  ): CustomerAddressConnection!
+
+  """
+  Retrieve a payment collection by ID.
+  """
+  paymentCollection(id: String!): PaymentCollection
+
+  """
+  Retrieve available payment providers.
+  """
+  paymentProviders(
+    region_id: String!
+  ): [PaymentProvider!]!
+
+  """
+  Retrieve the store.
+  """
+  store: Store
+
+  """
+  Retrieve a gift card by code.
+  """
+  giftCard(code: String!): GiftCard
+
+  """
+  Retrieve a return by ID.
+  """
+  return(id: String!): Return
+}
+
+# ─── Mutation ─────────────────────────────────────────────────────────────────
+
+type Mutation {
+  """
+  Create a new cart.
+  """
+  createCart(input: CreateCartInput): Cart!
+
+  """
+  Update a cart.
+  """
+  updateCart(id: String!, input: UpdateCartInput!): Cart!
+
+  """
+  Add a line item to a cart.
+  """
+  addCartLineItem(cart_id: String!, variant_id: String!, quantity: Float!, metadata: JSON): Cart!
+
+  """
+  Update a line item in a cart.
+  """
+  updateCartLineItem(cart_id: String!, item_id: String!, quantity: Float!, metadata: JSON): Cart!
+
+  """
+  Remove a line item from a cart.
+  """
+  removeCartLineItem(cart_id: String!, item_id: String!): Cart!
+
+  """
+  Add promotion codes to a cart.
+  """
+  addCartPromotions(cart_id: String!, promo_codes: [String!]!): Cart!
+
+  """
+  Remove a promotion code from a cart.
+  """
+  removeCartPromotion(cart_id: String!, promo_code: String!): Cart!
+
+  """
+  Add a gift card to a cart.
+  """
+  addGiftCardToCart(cart_id: String!, code: String!): Cart!
+
+  """
+  Remove a gift card from a cart.
+  """
+  removeGiftCardFromCart(cart_id: String!, code: String!): Cart!
+
+  """
+  Create a payment collection for a cart.
+  """
+  createPaymentCollection(cart_id: String!): PaymentCollection!
+
+  """
+  Initialize a payment session.
+  """
+  initializePaymentSession(payment_collection_id: String!, input: InitializePaymentSessionInput!): PaymentCollection!
+
+  """
+  Complete a cart and create an order.
+  """
+  completeCart(id: String!): Order!
+
+  """
+  Register a new customer.
+  """
+  createCustomer(input: CreateCustomerInput!): Customer!
+
+  """
+  Update the authenticated customer.
+  """
+  updateCustomer(input: UpdateCustomerInput!): Customer!
+
+  """
+  Add an address to the authenticated customer.
+  """
+  createCustomerAddress(input: CreateCustomerAddressInput!): CustomerAddress!
+
+  """
+  Update a customer address.
+  """
+  updateCustomerAddress(address_id: String!, input: UpdateCustomerAddressInput!): CustomerAddress!
+
+  """
+  Delete a customer address.
+  """
+  deleteCustomerAddress(address_id: String!): Boolean!
+
+  """
+  Transfer an order to another customer.
+  """
+  requestOrderTransfer(order_id: String!, new_owner_id: String!): Order!
+
+  """
+  Accept an order transfer.
+  """
+  acceptOrderTransfer(order_id: String!, token: String!): Order!
+
+  """
+  Decline an order transfer.
+  """
+  declineOrderTransfer(order_id: String!, token: String!): Order!
+
+  """
+  Create a return for an order.
+  """
+  createReturn(input: CreateReturnInput!): Return!
+
+  """
+  Claim a gift card store credit account.
+  """
+  claimStoreCreditAccount(token: String!): Customer!
+}

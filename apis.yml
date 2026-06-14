@@ -1,0 +1,25 @@
+---
+aid: medusa
+url: https://raw.githubusercontent.com/api-evangelist/medusa/refs/heads/main/apis.yml
+name: Medusa
+type: Index
+tags:
+  - E-Commerce
+  - Headless Commerce
+  - Open Source
+  - GraphQL
+  - Node.js
+description: >-
+  Medusa is an open-source headless commerce platform with a modular architecture.
+apis:
+  - aid: medusa:medusa-graphql-api
+    name: Medusa GraphQL API
+    tags:
+      - GraphQL
+      - E-Commerce
+      - Headless
+    humanURL: https://docs.medusajs.com
+    baseURL: https://your-medusa-instance.com/store/graphql
+    properties:
+      - url: graphql/medusa-graphql.md
+        type: GraphQL
