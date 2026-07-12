@@ -23,3 +23,8 @@ apis:
     properties:
       - url: graphql/medusa-graphql.md
         type: GraphQL
+common:
+  - type: DomainSecurity
+    url: security/medusa-domain-security.yml
+  - url: https://medusajs.com/blog/
+    type: Blog
