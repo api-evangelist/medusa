@@ -1,0 +1,172 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  Derived by binding every documented Medusa MCP tool (mcp/medusa-mcp.yml) to the operations
+  in the published Store and Admin OpenAPI documents (openapi/). No fabrication: the MCP
+  tool list comes from Medusa's own per-tool documentation chapters, the REST operations
+  come from the specs, and the binding below is the honest result of comparing them.
+description: >-
+  The headline finding is a clean, total divergence. Medusa's MCP server and Medusa's REST
+  APIs do not overlap at all. Every one of the seven MCP tools is a DOCUMENTATION or
+  IMPLEMENTATION-GUIDE tool that returns prose and code for a developer's agent to act on;
+  none of them calls a Medusa store. Every one of the 484 REST operations is a live commerce
+  operation with no MCP tool in front of it. An agent connected to Medusa's MCP server can
+  learn how to build a Medusa store; it cannot read a product, price a cart, or refund a
+  payment. That gap is the whole crosswalk, and it is worth stating plainly rather than
+  padding with speculative bindings.
+surfaces:
+  openapi:
+    - file: openapi/medusa-store-openapi.yaml
+      title: Medusa Storefront API
+      version: 2.19.0
+      operations: 77
+      gated: false
+    - file: openapi/medusa-admin-openapi.yaml
+      title: Medusa Admin API
+      version: 2.19.0
+      operations: 407
+      gated: false
+  graphql:
+    endpoint: null
+    artifact: graphql/medusa-graphql.md
+    gated: true
+    note: >-
+      No hosted, introspectable GraphQL endpoint exists — every Medusa application is
+      self-hosted, so there is no single URL to introspect. The SDL in graphql/ was derived
+      from the OAS output schemas in the medusajs/medusa repository.
+  mcp:
+    url: https://docs.medusajs.com/mcp
+    gated: true
+    note: >-
+      tools/list returns HTTP 401 with an RFC 9728 OAuth challenge; the server is limited to
+      Medusa Cloud accounts. Tool names are taken from Medusa's published documentation, so
+      binding confidence is set from name and documented semantics, not from a live schema.
+crosswalk: []
+mcp_only:
+  - tool: ask_medusa_question
+    reason: >-
+      Documentation search. Returns Medusa documentation sections with source URLs. There is no documentation-search operation in either OpenAPI document.
+  - tool: get_import_data_from_shopify_or_other_platform_guide
+    reason: >-
+      Returns a migration implementation guide. Medusa's own data-import REST operations (POST /admin/products/import) are DEPRECATED in the Admin spec, and the tool returns a guide for building a custom import module rather than calling them.
+  - tool: get_payment_provider_integration_guide
+    reason: >-
+      Returns a guide for authoring a Payment Module Provider — a server-side code artifact. The Admin API only lists already-registered providers (GET /admin/payments/payment-providers); it cannot create one.
+  - tool: get_fulfillment_provider_integration_guide
+    reason: >-
+      Returns a guide for authoring a Fulfillment Module Provider. GET /admin/fulfillment-providers lists registered providers; there is no create-provider operation.
+  - tool: get_product_custom_data_guide
+    reason: >-
+      Returns a guide for attaching custom data to product data models via a module link. This is a code-generation task; the closest REST surface is the generic metadata field on product operations, which is not the same capability.
+  - tool: get_medusa_upgrade_instructions
+    reason: >-
+      Returns version upgrade instructions. Upgrading is an operator task performed against the codebase and database, not an API call.
+  - tool: submit_medusa_feedback
+    reason: >-
+      Sends structured feedback to the Medusa team. No public REST equivalent.
+rest_only:
+  note: >-
+    All 484 published REST operations are rest-only — no MCP tool fronts any of them. Listed
+    below grouped by spec and tag rather than one row per operation.
+  specs:
+    - spec: openapi/medusa-store-openapi.yaml
+      operations: 77
+      tags:
+        - { tag: "Auth", operations: 12 }
+        - { tag: "Carts", operations: 15 }
+        - { tag: "Collections", operations: 2 }
+        - { tag: "Currencies", operations: 2 }
+        - { tag: "Customers", operations: 8 }
+        - { tag: "Gift Cards", operations: 1 }
+        - { tag: "Locales", operations: 1 }
+        - { tag: "Multi-Factor Authentication (MFA) Factors", operations: 6 }
+        - { tag: "Orders", operations: 6 }
+        - { tag: "Payment Collections", operations: 2 }
+        - { tag: "Payment Providers", operations: 1 }
+        - { tag: "Product Categories", operations: 2 }
+        - { tag: "Product Options", operations: 2 }
+        - { tag: "Product Tags", operations: 2 }
+        - { tag: "Product Types", operations: 2 }
+        - { tag: "Product Variants", operations: 1 }
+        - { tag: "Products", operations: 2 }
+        - { tag: "Regions", operations: 2 }
+        - { tag: "Return Reasons", operations: 2 }
+        - { tag: "Returns", operations: 1 }
+        - { tag: "Shipping Options", operations: 2 }
+        - { tag: "Store Credit Accounts", operations: 3 }
+    - spec: openapi/medusa-admin-openapi.yaml
+      operations: 407
+      tags:
+        - { tag: "Api Keys", operations: 7 }
+        - { tag: "Auth", operations: 10 }
+        - { tag: "Campaigns", operations: 6 }
+        - { tag: "Claims", operations: 21 }
+        - { tag: "Collections", operations: 6 }
+        - { tag: "Currencies", operations: 2 }
+        - { tag: "Customer Groups", operations: 6 }
+        - { tag: "Customers", operations: 11 }
+        - { tag: "Draft Orders", operations: 21 }
+        - { tag: "Exchanges", operations: 18 }
+        - { tag: "Feature Flags", operations: 1 }
+        - { tag: "Fulfillment Providers", operations: 2 }
+        - { tag: "Fulfillment Sets", operations: 5 }
+        - { tag: "Fulfillments", operations: 3 }
+        - { tag: "Gift Cards", operations: 5 }
+        - { tag: "Index", operations: 2 }
+        - { tag: "Inventory Items", operations: 12 }
+        - { tag: "Invites", operations: 6 }
+        - { tag: "Layouts", operations: 4 }
+        - { tag: "Locales", operations: 2 }
+        - { tag: "Multi-Factor Authentication", operations: 5 }
+        - { tag: "Notifications", operations: 2 }
+        - { tag: "Order Changes", operations: 1 }
+        - { tag: "Order Edits", operations: 11 }
+        - { tag: "Orders", operations: 20 }
+        - { tag: "Payment Collections", operations: 4 }
+        - { tag: "Payments", operations: 5 }
+        - { tag: "Plugins", operations: 1 }
+        - { tag: "Price Lists", operations: 8 }
+        - { tag: "Price Preferences", operations: 5 }
+        - { tag: "Product Categories", operations: 6 }
+        - { tag: "Product Options", operations: 9 }
+        - { tag: "Product Tags", operations: 5 }
+        - { tag: "Product Types", operations: 5 }
+        - { tag: "Product Variants", operations: 1 }
+        - { tag: "Products", operations: 25 }
+        - { tag: "Promotions", operations: 11 }
+        - { tag: "Property Labels", operations: 6 }
+        - { tag: "Refund Reasons", operations: 5 }
+        - { tag: "Regions", operations: 5 }
+        - { tag: "Reservations", operations: 5 }
+        - { tag: "Return Reasons", operations: 5 }
+        - { tag: "Returns", operations: 22 }
+        - { tag: "Sales Channels", operations: 6 }
+        - { tag: "Search", operations: 1 }
+        - { tag: "Shipping Option Types", operations: 5 }
+        - { tag: "Shipping Options", operations: 6 }
+        - { tag: "Shipping Profiles", operations: 5 }
+        - { tag: "Stock Locations", operations: 8 }
+        - { tag: "Store Credit Accounts", operations: 5 }
+        - { tag: "Stores", operations: 3 }
+        - { tag: "Tax Providers", operations: 1 }
+        - { tag: "Tax Rates", operations: 7 }
+        - { tag: "Tax Regions", operations: 5 }
+        - { tag: "Translations", operations: 6 }
+        - { tag: "Uploads", operations: 4 }
+        - { tag: "Users", operations: 5 }
+        - { tag: "Views", operations: 9 }
+        - { tag: "Workflows Executions", operations: 8 }
+        - { tag: "[auth_provider]", operations: 1 }
+coverage:
+  mcp_tools: 7
+  mcp_tools_bound_to_rest: 0
+  rest_operations: 484
+  rest_operations_with_a_tool: 0
+  graphql_fields_bound: 0
+  overlap_percent: 0
+  interpretation: >-
+    Zero overlap is a real architectural fact about Medusa, not a measurement gap. Medusa
+    sells a self-hosted platform: the commerce API belongs to the merchant's own deployment,
+    so a Medusa-operated MCP server has no store to point at. The agent surface Medusa
+    actually ships for operating a store is the published OpenAPI plus the agent skills in
+    skills/ — an agent talks to the merchant's own Medusa instance directly.

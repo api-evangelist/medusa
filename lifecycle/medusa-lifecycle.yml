@@ -1,0 +1,91 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://medusajs.com/changelog, https://github.com/medusajs/medusa/releases,
+  https://docs.medusajs.com/learn/update, https://docs.medusajs.com/learn/codemods,
+  https://status.medusajs.com (Atlassian Statuspage, API confirmed at
+  https://status.medusajs.com/api/v2/summary.json); deprecated operations read from
+  openapi/medusa-admin-openapi.yaml.
+description: >-
+  Medusa versions the software, not the endpoint. There is no version in the URL, no
+  version header and no per-account pinning — the API surface a client sees is the version
+  of Medusa the merchant deployed. That makes upgrade discipline, not deprecation headers,
+  the real lifecycle mechanism here, and Medusa leans into it: breaking changes are called
+  out with a "🚧 Breaking change" marker in each GitHub release, codemods are published for
+  mechanical migrations, and the MCP server ships a dedicated upgrade-instructions tool.
+versioning:
+  scheme: semantic (application version)
+  current: 2.19.0
+  released: '2026-08-13'
+  mechanism: >-
+    No URL path version, no request header, no account pinning. info.version in both
+    published OpenAPI documents tracks the npm release of @medusajs/medusa.
+  major_line: v2 (v1 is a separate, superseded generation — see from_v1_to_v2)
+  from_v1_to_v2: https://docs.medusajs.com/learn/introduction/from-v1-to-v2
+  docs: https://docs.medusajs.com/learn/update
+  upgrade_tooling:
+    codemods: https://docs.medusajs.com/learn/codemods
+    cli: npx medusa codemod
+    mcp_tool: get_medusa_upgrade_instructions
+deprecation:
+  policy_url: null
+  changelog: https://medusajs.com/changelog
+  releases: https://github.com/medusajs/medusa/releases
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  practice: >-
+    Breaking changes are announced per release with an explicit "🚧 Breaking change"
+    heading and a migration paragraph — v2.19.0 (Vite 7 / React Router 7), v2.18.0
+    (BALANCED query load strategy; changed delete() return value), v2.17.2 (widget
+    injection zones), v2.17.0 (Global Product Options; provider-agnostic auth
+    verification). There is no separate written deprecation POLICY document, no advance
+    notice period, and no Sunset/Deprecation response headers.
+  gap: >-
+    An integrator cannot learn from a response that an operation is going away; they have
+    to read the release notes. For a self-hosted platform that is a defensible design, but
+    it is a real difference from a hosted API's deprecation contract.
+deprecated_operations:
+  - source: openapi/medusa-admin-openapi.yaml
+    operationId: PostProductsImport
+    path: POST /admin/products/import
+    summary: Create Product Import
+    note: >-
+      Flagged deprecated:true in the spec. Medusa's MCP migration guide steers agents to
+      build a custom import module instead.
+  - source: openapi/medusa-admin-openapi.yaml
+    operationId: PostProductsImportTransaction_idConfirm
+    path: POST /admin/products/import/{transaction_id}/confirm
+    summary: Confirm Product Import
+    note: Flagged deprecated:true in the spec; paired with PostProductsImport.
+sla:
+  url: https://medusajs.com/pricing
+  public_uptime_target: null
+  notes: >-
+    No numeric uptime SLA is published. "SLA-backed uptime" and "SLA-backed response times"
+    are listed as Enterprise-tier Cloud features on the pricing page; the numbers are not
+    public. The open-source software carries no SLA at all — availability is the merchant's
+    own infrastructure.
+status_page:
+  url: https://status.medusajs.com
+  provider: Atlassian Statuspage
+  page_name: Medusa Cloud
+  api: https://status.medusajs.com/api/v2/summary.json
+  scope: >-
+    Covers Medusa Cloud only (component "API" and its siblings), not a self-hosted Medusa
+    deployment. A merchant running Medusa themselves has no status page to watch — theirs
+    is their own.
+support:
+  contact: https://medusajs.com/contact/
+  community: https://discord.gg/medusajs
+  issues: https://github.com/medusajs/medusa/issues
+  feedback_endpoint: https://docs.medusajs.com/agents/feedback
+  feedback_note: >-
+    Every markdown page of the docs carries an <AgentInstructions> block telling an agent
+    to POST {agent, path, feedback} to https://docs.medusajs.com/agents/feedback when the
+    page is wrong. That is an unusual and genuinely agent-native support channel; the MCP
+    server exposes the same thing as submit_medusa_feedback.
+license:
+  spdx: MIT
+  url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  note: Declared in info.license of both published OpenAPI documents.

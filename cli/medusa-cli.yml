@@ -1,0 +1,95 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://docs.medusajs.com/resources/medusa-cli, https://docs.medusajs.com/resources/create-medusa-app,
+  https://docs.medusajs.com/cloud/cli, https://docs.medusajs.com/cloud/cli/agents, and the
+  mcloud command surface read verbatim from Medusa's own published skills in skills/
+  (medusa-medusa-cloud-*.md).
+description: >-
+  Medusa ships three first-party command-line tools, and they are aimed at three different
+  jobs. `create-medusa-app` scaffolds a project. `medusa` runs and maintains that project
+  locally. `mcloud` operates the same project once it is deployed on Medusa Cloud — and
+  mcloud is explicitly built for agents: Medusa documents an agent-facing guide for it and
+  ships eight Claude Code skills wrapping its command groups, every one of which supports a
+  --json flag so an agent parses structured output instead of scraping a terminal.
+clis:
+  - name: create-medusa-app
+    binary: create-medusa-app
+    package: create-medusa-app
+    version: 2.19.0
+    install: npx create-medusa-app@latest [project-name]
+    docs: https://docs.medusajs.com/resources/create-medusa-app
+    purpose: >-
+      Creates a monorepo containing a Medusa backend and, optionally, the Next.js Starter
+      storefront; also scaffolds a Medusa plugin project.
+    key_flags:
+      - { flag: --repo-url <url>, description: 'Repository to create the project from. Default https://github.com/medusajs/dtc-starter' }
+      - { flag: --db-url <url>, description: 'Use an existing PostgreSQL database instead of creating one' }
+      - { flag: --skip-db, description: 'Skip database creation, migrations and seeding' }
+      - { flag: --no-migrations, description: 'Skip migrations, admin-user creation and seeding' }
+      - { flag: --with-nextjs-starter, description: 'Install the Next.js Starter storefront' }
+      - { flag: --plugin, description: 'Create a Medusa plugin project instead of an application' }
+      - { flag: --version <v>, description: 'Pin the Medusa version to install' }
+      - { flag: --directory-path <path>, description: 'Parent directory for the new project' }
+      - { flag: --use-npm | --use-yarn | --use-pnpm, description: 'Force a package manager' }
+      - { flag: --no-browser, description: 'Do not open a browser on success' }
+      - { flag: --verbose, description: 'Detailed logs' }
+  - name: Medusa CLI
+    binary: medusa
+    package: '@medusajs/cli'
+    version: 2.19.0
+    install: npx medusa --help
+    docs: https://docs.medusajs.com/resources/medusa-cli
+    purpose: Develop, build, run and maintain a Medusa application.
+    commands:
+      - { command: medusa develop, description: 'Run the application in development mode with hot reload', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/develop' }
+      - { command: medusa start, description: 'Run the built application', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/start' }
+      - { command: medusa build, description: 'Build and compile the application', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/build' }
+      - { command: medusa db, description: 'Database group — create, migrate, generate, rollback, sync links', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/db' }
+      - { command: medusa user, description: 'Create an admin user', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/user' }
+      - { command: medusa exec, description: 'Run a custom CLI script inside the Medusa container', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/exec' }
+      - { command: medusa plugin, description: 'Plugin group — build, develop, publish, add to a local project', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/plugin' }
+      - { command: medusa codemod, description: 'Run a published codemod for a version migration', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/codemod' }
+      - { command: medusa lint, description: 'Lint the project with the Medusa ESLint rules', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/lint' }
+      - { command: medusa new, description: 'Create a new project', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/new' }
+      - { command: medusa telemetry, description: 'Enable or disable anonymous telemetry', docs: 'https://docs.medusajs.com/resources/medusa-cli/commands/telemtry' }
+    prerequisites: [Node.js v20.19.0+ or v22.12.0+, Git, PostgreSQL]
+  - name: Medusa Cloud CLI
+    binary: mcloud
+    package: '@medusajs/mcloud'
+    version: 0.1.13
+    published: '2026-08-04'
+    install: npm install @medusajs/mcloud -g
+    docs: https://docs.medusajs.com/cloud/cli
+    agent_docs: https://docs.medusajs.com/cloud/cli/agents
+    purpose: Manage Cloud organizations, projects, environments, variables, deployments and logs from a terminal or an agent.
+    auth:
+      interactive: mcloud login (browser flow)
+      non_interactive: MCLOUD_TOKEN environment variable, or mcloud login --token <access key>
+    agent_native: true
+    agent_note: >-
+      Every command group supports --json. Medusa publishes eight Claude Code skills
+      (mcloud-auth, mcloud-projects, mcloud-environments, mcloud-variables,
+      mcloud-deployments, mcloud-logs, mcloud-organizations, mcloud-local) plus a
+      using-medusa-cloud overview skill wrapping this CLI — see skills/_index.yml.
+    commands:
+      - { command: mcloud login, description: 'Authenticate; --token for CI' }
+      - { command: mcloud logout, description: 'Clear stored credentials' }
+      - { command: mcloud whoami, description: 'Show the authenticated account' }
+      - { command: mcloud signup, description: 'Create a Cloud account' }
+      - { command: mcloud use, description: 'Set the default organization/project; --organization, --project, --clear' }
+      - { command: mcloud organizations list|get, description: 'Organization resources' }
+      - { command: mcloud projects list|get|delete, description: 'Project resources' }
+      - { command: mcloud environments list|get|create|delete|redeploy|trigger-build, description: 'Environment lifecycle' }
+      - { command: mcloud variables list|get|set|delete, description: 'Environment variables' }
+      - { command: mcloud deployments list|get|build-logs, description: 'Deployment history and build logs' }
+      - { command: mcloud logs, description: 'Stream or query logs; --follow, --from, --search, --source, --type, --deployment, --metadata, --json' }
+      - { command: mcloud local build, description: 'Reproduce a Cloud build locally to debug a failure' }
+      - { command: mcloud version, description: 'Print the CLI version' }
+related_tooling:
+  - name: medusa-oas-cli
+    docs: https://docs.medusajs.com/resources/medusa-oas-cli
+    purpose: >-
+      The tool that generates the published Store and Admin OpenAPI documents from the
+      codebase. Worth naming: Medusa's contract is generated, not hand-maintained, which is
+      why info.version tracks the npm release exactly.

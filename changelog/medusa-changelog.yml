@@ -1,0 +1,77 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://medusajs.com/changelog (HTTP 200) and the GitHub Releases feed at
+  https://github.com/medusajs/medusa/releases, read via the GitHub API on 2026-08-26.
+description: >-
+  Medusa ships a dated changelog in two places: a marketing-site changelog page and, in more
+  detail, GitHub Releases on medusajs/medusa. The GitHub release notes are the substantive
+  record — each one opens with a Highlights section and marks every breaking change with a
+  "🚧 Breaking change" heading followed by the migration steps. Releases land roughly every
+  two to four weeks on the 2.x line.
+scheme: semantic
+current_version: 2.19.0
+current_released: '2026-08-13'
+cadence: 2–4 weeks
+urls:
+  changelog: https://medusajs.com/changelog
+  releases: https://github.com/medusajs/medusa/releases
+  upgrade_guide: https://docs.medusajs.com/learn/update
+  codemods: https://docs.medusajs.com/learn/codemods
+  newsletter: https://medusajs.com/blog/?filters=Newsletter
+entries:
+  - version: 2.19.0
+    date: '2026-08-13'
+    title: 'Vite v7 Update, Inventory Export, Custom Fulfillment Addresses'
+    breaking: true
+    highlights:
+      - Admin dashboard moves to Vite 7.3.6 and React Router 7.18.2 — consumers must bump their own vite and react-router/react-router-dom dependencies and use Node ^20.19.0, ^22.12.0 or later.
+      - Export inventory data as CSV.
+      - Pass a custom fulfillment address.
+    url: https://github.com/medusajs/medusa/releases/tag/v2.19.0
+  - version: 2.18.0
+    date: '2026-07-23'
+    breaking: true
+    highlights:
+      - Default database load strategy changed from SELECT_IN to BALANCED, matching MikroORM v7 — review query-heavy paths and query-count assertions.
+      - Return value of a generated internal service's delete method changed.
+    url: https://github.com/medusajs/medusa/releases/tag/v2.18.0
+  - version: 2.17.2
+    date: '2026-07-01'
+    breaking: true
+    highlights:
+      - New Admin Layout Composer — Topbar, Sidebar, Settings Sidebar and pages rearranged by drag and drop, persisted in the database.
+      - Widget .before/.after injection zones no longer control placement inside a LayoutComposer-controlled page; use the Editor view.
+    url: https://github.com/medusajs/medusa/releases/tag/v2.17.2
+  - version: 2.17.1
+    date: '2026-06-25'
+    breaking: false
+    highlights:
+      - Fixes a critical worker-mode regression in the Redis event bus introduced in 2.17.0 (application startup hung indefinitely).
+    url: https://github.com/medusajs/medusa/releases/tag/v2.17.1
+  - version: 2.17.0
+    date: '2026-06-24'
+    breaking: true
+    superseded_by: 2.17.1
+    highlights:
+      - Global Product Options — an option such as Size or Color is defined once at store level and reused across products.
+      - Provider-agnostic auth verification.
+      - Medusa's own release notes advise skipping this version for the worker regression fixed in 2.17.1.
+    url: https://github.com/medusajs/medusa/releases/tag/v2.17.0
+  - version: 2.16.0
+    date: '2026-06-18'
+    breaking: false
+    url: https://github.com/medusajs/medusa/releases/tag/v2.16.0
+  - version: 2.15.5
+    date: '2026-06-01'
+    breaking: false
+    url: https://github.com/medusajs/medusa/releases/tag/v2.15.5
+  - version: 2.15.0
+    date: '2026-05-11'
+    breaking: false
+    url: https://github.com/medusajs/medusa/releases/tag/v2.15.0
+agent_affordance: >-
+  Each recent release note opens with a copy-paste prompt — "Update my Medusa project to
+  v2.19.0" — aimed at the Medusa MCP server's get_medusa_upgrade_instructions tool. Medusa
+  writes its changelog for agents as well as humans, which is rare enough to be worth
+  recording.

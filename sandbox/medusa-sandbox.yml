@@ -1,0 +1,65 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://docs.medusajs.com/learn/debugging-and-testing/testing-tools,
+  https://docs.medusajs.com/resources/test-tools-reference,
+  https://docs.medusajs.com/learn/fundamentals/custom-cli-scripts/seed-data,
+  https://docs.medusajs.com/learn/installation, https://medusajs.com/pricing.
+description: >-
+  Medusa has no hosted sandbox and no test-mode API keys, and that is a consequence of the
+  architecture rather than an omission: you do not get a sandbox tenant on someone else's
+  platform, you run the whole platform yourself. What Medusa publishes instead is a
+  complete local environment — a seeded development instance you get from one command — and
+  a first-party integration test runner that spins up a real Medusa application and a real
+  database per suite. On Medusa Cloud the equivalent of a sandbox is a preview environment
+  created per pull request.
+hosted_sandbox: false
+test_mode_keys: false
+test_cards: false
+test_clock: false
+local_environment:
+  install: npx create-medusa-app@latest my-store
+  default_base_url: http://localhost:9000
+  admin_url: http://localhost:9000/app
+  seeded: >-
+    create-medusa-app creates the database, runs migrations, seeds demo data and creates an
+    admin user unless --skip-db / --no-migrations is passed.
+  docker: https://docs.medusajs.com/learn/installation/docker
+  prerequisites: [Node.js v20.19.0+ or v22.12.0+, PostgreSQL, Git]
+  publishable_key_note: >-
+    /store requests require an x-publishable-api-key. The seeded local install creates one;
+    otherwise create it in the Admin dashboard or with createApiKeysWorkflow. There is no
+    published shared test key — nor should there be, since every instance is its own tenant.
+testing_framework:
+  package: '@medusajs/test-utils'
+  version: 2.19.0
+  docs: https://docs.medusajs.com/learn/debugging-and-testing/testing-tools
+  runners:
+    - name: medusaIntegrationTestRunner
+      description: >-
+        Boots a real Medusa application with a real PostgreSQL database for the suite,
+        exposes an `api` client, and tears it down after. Used for API-route and workflow
+        integration tests.
+      reference: https://docs.medusajs.com/resources/test-tools-reference/medusaIntegrationTestRunner
+    - name: moduleIntegrationTestRunner
+      description: Boots a single module in isolation with its own database for module-level tests.
+  fixtures: >-
+    Tests create their own fixtures through workflows (e.g. createApiKeysWorkflow for a
+    publishable key in a beforeAll hook). Medusa publishes no static fixture file or magic
+    test identifier.
+seed_data:
+  mechanism: A seed script run through `medusa exec ./src/scripts/seed.ts`, customizable per project.
+  docs: https://docs.medusajs.com/learn/fundamentals/custom-cli-scripts/seed-data
+cloud_preview_environments:
+  available: true
+  docs: https://medusajs.com/pricing
+  description: >-
+    Medusa Cloud creates a preview environment per pull request — a running, isolated
+    Medusa application and storefront. Included allowances: 1 on Develop, 3 on Launch, 5 on
+    Scale, then $10 per preview environment per month.
+  note: This is the closest thing Medusa operates to a hosted sandbox, and it is a paid Cloud feature.
+payment_testing:
+  note: >-
+    Test payments run through whichever payment provider module is configured — Stripe test
+    mode, for example. Those test credentials belong to the provider, not to Medusa, and
+    Medusa publishes none of its own.

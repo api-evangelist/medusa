@@ -1,0 +1,94 @@
+generated: '2026-08-26'
+method: searched
+status: published
+source: >-
+  https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server and its eight
+  per-tool chapters; endpoint behaviour confirmed by direct probe on 2026-08-26.
+description: >-
+  Medusa operates one official MCP server. It is REMOTE ONLY — a Streamable HTTP endpoint
+  at https://docs.medusajs.com/mcp. There is no npm/stdio package: @medusajs/mcp does not
+  exist on npm (404, checked 2026-08-26), and Medusa's own Claude Code plugins configure
+  the server as {"type":"http","url":"https://docs.medusajs.com/mcp"}. The server is a
+  DOCUMENTATION and IMPLEMENTATION-GUIDE server, not a commerce-operations server: it does
+  not call the Store or Admin API on a merchant's behalf. Access is gated to Medusa Cloud
+  accounts.
+deployment:
+  mode: remote
+  endpoint: https://docs.medusajs.com/mcp
+  auth: oauth
+  verified: probed
+  note: >-
+    GET https://docs.medusajs.com/mcp returns 400 "No sessionId"; POST of a JSON-RPC
+    initialize returns HTTP 401 with
+    WWW-Authenticate: Bearer realm="medusa",
+    resource_metadata="https://docs.medusajs.com/.well-known/oauth-protected-resource".
+    That is a live, correctly-advertising RFC 9728 MCP endpoint whose tool list is
+    auth-gated. Personal access keys (Cloud) are accepted as a Bearer token as an
+    alternative to the OAuth flow.
+server:
+  name: medusa
+  transport: streamable-http
+  url: https://docs.medusajs.com/mcp
+  auth: oauth2
+  protected_resource: well-known/medusa-oauth-protected-resource.json
+  authorization_server: well-known/medusa-oauth-authorization-server.json
+  authorization_endpoint: https://cloud.medusajs.com/oauth/authorize
+  token_endpoint: https://api.prod.medusajs.cloud/v1/oauth/token
+  registration_endpoint: https://docs.medusajs.com/oauth/register
+  scopes_supported: [openid, email, profile]
+  pkce: S256
+  availability: Medusa Cloud accounts only
+clients_documented:
+  - Claude Code
+  - Codex
+  - Cursor
+  - VS Code
+  - OpenCode
+tool_schema_provenance: >-
+  tools/list is auth-gated (HTTP 401), so per-tool inputSchema could not be introspected
+  anonymously. The tool NAMES and descriptions below are read verbatim from Medusa's own
+  per-tool documentation chapters, where each chapter names the tool it documents. Input
+  schemas require an authenticated introspection and are NOT recorded here.
+tools:
+  - name: ask_medusa_question
+    docs: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server/ask-medusa-question
+    description: >-
+      Searches the official Medusa documentation and returns the most relevant sections for
+      a query, each with its source URL and its actual content. Medusa calls this the
+      foundational tool the other tools build on.
+  - name: get_import_data_from_shopify_or_other_platform_guide
+    docs: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server/migrate-from-shopify
+    description: >-
+      Returns a complete step-by-step implementation guide for importing or migrating store
+      data into Medusa from Shopify (incl. Shopify Plus), WooCommerce, Magento/Adobe
+      Commerce or another platform. Covers products, variants, prices, images, inventory
+      levels, collections and categories.
+  - name: get_payment_provider_integration_guide
+    docs: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server/integrate-providers
+    description: Returns a guide for building a Payment Module Provider that integrates a third-party payment service.
+  - name: get_fulfillment_provider_integration_guide
+    docs: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server/integrate-providers
+    description: Returns a guide for building a Fulfillment Module Provider that integrates a third-party shipping or fulfillment service.
+  - name: get_product_custom_data_guide
+    docs: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server/extend-products
+    description: >-
+      Returns a guide for attaching custom data to the Product Module's product,
+      productVariant and productOption data models via a module link.
+  - name: get_medusa_upgrade_instructions
+    docs: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server/upgrade-instructions
+    description: >-
+      Returns step-by-step upgrade instructions for moving a Medusa project to a specific
+      target version; falls back to GitHub release notes when no curated guide exists.
+  - name: submit_medusa_feedback
+    docs: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server/submit-feedback
+    description: Records structured feedback for the Medusa team from inside the agent session.
+prompts:
+  published: true
+  source: https://medusajs.com/blog/announcing-new-prompts-for-the-medusa-mcp-server
+  note: >-
+    Medusa announced built-in MCP prompts that walk an agent through integrating payment
+    providers, integrating fulfillment providers, and extending products. The prompt list
+    itself is behind the same auth gate as tools/list.
+related:
+  agent_skills: skills/_index.yml
+  crosswalk: mcp/medusa-tool-crosswalk.yml

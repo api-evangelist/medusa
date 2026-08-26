@@ -1,0 +1,156 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  Derived from openapi/medusa-store-openapi.yaml and openapi/medusa-admin-openapi.yaml
+  (2.19.0) and the probed /.well-known documents in well-known/; enriched from
+  https://docs.medusajs.com/learn/fundamentals/api-routes/errors,
+  https://docs.medusajs.com/resources/how-to-tutorials/tutorials/agentic-commerce and
+  https://medusajs.com/pricing.
+description: >-
+  What the Medusa contract itself declares, checked against cross-cutting and
+  commerce-domain standards. Every `conforms: true` below is backed by a location in the
+  spec or a probed document, and every false is a real absence rather than an unchecked
+  box. No published SOC 2 / ISO 27001 / PCI attestation was found for MedusaJS, Inc., so no
+  Compliance pointer was emitted.
+standards:
+  - id: openapi
+    name: OpenAPI 3.0.0
+    conforms: true
+    evidence: >-
+      Two published documents, openapi: 3.0.0, info.version 2.19.0, 484 operations, 593
+      component schemas. Generated from the codebase by medusa-oas-cli and published in the
+      medusajs/medusa repository under www/apps/api-reference/specs/.
+  - id: oauth2
+    name: OAuth 2.0 / 2.1
+    conforms: partial
+    evidence: >-
+      No oauth2 securityScheme in either REST document. OAuth is used only to gate the MCP
+      server, where authorization-code + PKCE (S256) with refresh tokens is advertised at
+      /.well-known/oauth-authorization-server.
+  - id: rfc8414
+    name: RFC 8414 — OAuth 2.0 Authorization Server Metadata
+    conforms: true
+    evidence: well-known/medusa-oauth-authorization-server.json (HTTP 200, application/json)
+  - id: rfc9728
+    name: RFC 9728 — OAuth 2.0 Protected Resource Metadata
+    conforms: true
+    evidence: >-
+      well-known/medusa-oauth-protected-resource.json, and the MCP endpoint returns
+      WWW-Authenticate: Bearer realm="medusa", resource_metadata="…" on 401 — the challenge
+      RFC 9728 specifies.
+  - id: rfc7591
+    name: RFC 7591 — OAuth 2.0 Dynamic Client Registration
+    conforms: true
+    evidence: registration_endpoint https://docs.medusajs.com/oauth/register advertised in the AS metadata.
+  - id: oidc
+    name: OpenID Connect
+    conforms: partial
+    evidence: >-
+      `openid`, `email` and `profile` are advertised in scopes_supported, but no
+      /.well-known/openid-configuration is served (404 on docs.medusajs.com).
+  - id: jwt
+    name: RFC 7519 — JSON Web Token
+    conforms: true
+    evidence: >-
+      jwt_token securityScheme (http/bearer) in both REST documents; RS256 JWKS published at
+      https://api.prod.medusajs.cloud/.well-known/jwks.json for Cloud.
+  - id: rfc9457
+    name: RFC 9457 — Problem Details for HTTP APIs
+    conforms: false
+    evidence: >-
+      Errors are application/json with {type, message, code}. No application/problem+json
+      media type, no title/status members. See errors/medusa-problem-types.yml.
+  - id: rfc9116
+    name: RFC 9116 — security.txt
+    conforms: false
+    evidence: 404 on medusajs.com, docs.medusajs.com and api.prod.medusajs.cloud.
+  - id: rfc8594
+    name: RFC 8594 — Sunset HTTP Header
+    conforms: false
+    evidence: >-
+      No Sunset or Deprecation response header anywhere in either spec; two operations
+      carry deprecated:true but nothing signals a date.
+  - id: pagination
+    name: Offset pagination
+    conforms: true
+    evidence: >-
+      limit/offset/order query parameters and a {limit, offset, count} response envelope on
+      every list operation (67 Admin, 15 Store paths).
+  - id: idempotency
+    name: Idempotency-Key
+    conforms: partial
+    evidence: >-
+      Supported by the workflow engine and named in the fixed 409 CONFLICT message, but no
+      Idempotency-Key parameter is declared on any of the 484 operations. See
+      conventions/medusa-conventions.yml.
+  - id: mcp
+    name: Model Context Protocol
+    conforms: true
+    evidence: >-
+      Streamable HTTP MCP server at https://docs.medusajs.com/mcp; JSON-RPC probe returns a
+      spec-correct 401 OAuth challenge. See mcp/medusa-mcp.yml.
+  - id: a2a
+    name: A2A Agent Card
+    conforms: false
+    evidence: >-
+      /.well-known/agent-card.json and the legacy /.well-known/agent.json both 404 (or
+      return an SPA shell) on every Medusa host. See well-known/medusa-well-known.yml.
+  - id: llmstxt
+    name: llms.txt
+    conforms: true
+    evidence: >-
+      https://docs.medusajs.com/llms.txt and https://medusajs.com/llms.txt both HTTP 200
+      text/plain; llms-full.txt (6.4 MB) is also served, and every docs page has a .md twin
+      plus Accept: text/markdown content negotiation.
+  - id: agent-skills
+    name: Agent Skills (SKILL.md)
+    conforms: true
+    evidence: >-
+      18 provider-authored SKILL.md files across four Claude Code plugins at
+      github.com/medusajs/medusa-agent-skills. See skills/_index.yml.
+domain_standards:
+  - id: agentic-commerce-protocol
+    name: Agentic Commerce Protocol / ChatGPT Instant Checkout
+    market: digital commerce
+    conforms: false
+    evidence: >-
+      Medusa publishes a full tutorial for implementing the OpenAI Agentic Commerce
+      checkout specification on top of Medusa — POST /checkout_sessions, the buyer /
+      fulfillment_address request shape, the messages[] error envelope, and echoing the
+      Idempotency-Key and Request-Id headers the spec requires
+      (https://docs.medusajs.com/resources/how-to-tutorials/tutorials/agentic-commerce).
+      But this is a recipe for code the MERCHANT writes: no /checkout_sessions path and no
+      ACP-shaped operation appears in either published OpenAPI document. Recorded as a
+      documented pathway, not a conformance.
+    note: >-
+      This is the single most interesting near-miss in Medusa's profile. The platform has
+      done the design work for agentic checkout and shipped the guide; it has not put the
+      endpoint in its own contract.
+  - id: gs1-edi-x12-edifact
+    name: GS1 / X12 / EDIFACT commerce messaging
+    market: digital commerce
+    conforms: false
+    evidence: >-
+      No EDI or GS1 message type appears in the contract. Not penalised — Medusa's market
+      is API-native commerce, where no single message standard has taken hold; integrations
+      with ERP/PIM systems are built per-connector through the Framework.
+  - id: schema-org-product
+    name: schema.org Product / Offer vocabulary
+    market: digital commerce
+    conforms: false
+    evidence: >-
+      Medusa's own marketing site emits schema.org Product and Organization JSON-LD, but the
+      Product/Offer schemas in the API use Medusa's native field names, not schema.org terms.
+compliance_certifications:
+  found: false
+  searched:
+    - https://medusajs.com/security/ (404)
+    - https://medusajs.com/trust/ (404)
+    - https://trust.medusajs.com (does not resolve)
+    - https://medusajs.com/pricing (no certification claims)
+  note: >-
+    No SOC 2, ISO 27001, PCI DSS, HIPAA or FedRAMP claim is published anywhere on the
+    Medusa surface, and no trust center exists. No Compliance or TrustCenter pointer was
+    emitted. For a self-hosted platform this is expected — compliance attaches to the
+    merchant's deployment — but Medusa Cloud is a hosted PaaS selling to enterprises, and
+    the absence there is a genuine gap.

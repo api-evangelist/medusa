@@ -1,0 +1,132 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  Live GET probes of /.well-known/* on every host named in apis.yml (baseURL/humanURL)
+  and in the published OpenAPI servers[] blocks, on 2026-08-26.
+description: >-
+  Medusa serves two real /.well-known documents, both on the documentation host and both
+  in service of the Medusa MCP remote server: an RFC 9728 OAuth protected-resource
+  descriptor and an RFC 8414 authorization-server metadata document. The JWKS the
+  authorization-server document points at is served from the Medusa Cloud API host and is
+  saved here too. Nothing else is served. Two negative findings matter: (1) medusajs.com
+  and docs.medusajs.com return real 404s for security.txt, api-catalog, ai-plugin.json and
+  both agent-card paths — an honest absence; (2) cloud.medusajs.com is a single-page app
+  that answers HTTP 200 with an HTML shell for EVERY /.well-known path, so none of its
+  200s are documents and none are credited here.
+hosts:
+  - host: docs.medusajs.com
+    documents:
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        type: application/json
+        file: medusa-oauth-protected-resource.json
+        note: RFC 9728 protected-resource metadata for the MCP server at /mcp.
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        type: application/json
+        file: medusa-oauth-authorization-server.json
+        note: >-
+          RFC 8414 metadata. Issuer docs.medusajs.com; authorization endpoint on
+          cloud.medusajs.com; token endpoint and JWKS on api.prod.medusajs.cloud.
+          Dynamic client registration is supported; PKCE S256 required.
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: medusajs.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: api.prod.medusajs.cloud
+    documents:
+      - path: /.well-known/jwks.json
+        status: 200
+        type: application/json
+        file: medusa-cloud-jwks.json
+        note: >-
+          Not a probe-list path; fetched because the authorization-server document names it
+          as jwks_uri. One RS256 signing key.
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: cloud.medusajs.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        type: text/html
+        note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+      - path: /.well-known/openid-configuration
+        status: 200
+        type: text/html
+        note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        type: text/html
+        note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        type: text/html
+        note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+      - path: /.well-known/api-catalog
+        status: 200
+        type: text/html
+        note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+      - path: /.well-known/ai-plugin.json
+        status: 200
+        type: text/html
+        note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+      - path: /.well-known/agent-card.json
+        status: 200
+        type: text/html
+        note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+      - path: /.well-known/agent.json
+        status: 200
+        type: text/html
+        note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+  - host: api.medusajs.com
+    documents:
+      - path: /.well-known/agent-card.json
+        status: 0
+        note: >-
+          Host does not resolve. api.medusajs.com is declared as a server in both published
+          OpenAPI documents but has no DNS A/AAAA record as of 2026-08-26.
+agent_card:
+  found: false
+  note: >-
+    No A2A agent card on any host. Both the current /.well-known/agent-card.json path and
+    the legacy /.well-known/agent.json path were probed on medusajs.com,
+    docs.medusajs.com, cloud.medusajs.com and api.prod.medusajs.cloud. No a2a/ artifact was
+    written and no AgentCard pointer was emitted.

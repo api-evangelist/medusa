@@ -1,0 +1,162 @@
+generated: '2026-08-26'
+method: searched
+source: https://medusajs.com/pricing (read as machine-readable markdown at https://medusajs.com/pricing.md, HTTP 200, 2026-08-26)
+description: >-
+  Two things are priced here and they should not be confused. The Medusa PLATFORM is
+  MIT-licensed open-source software and costs nothing — no license, no per-seat fee, and
+  explicitly a 0.0% GMV platform fee on every tier. What is priced is Medusa CLOUD, the
+  managed PaaS that hosts a Medusa application. Cloud pricing is infrastructure metering
+  with a small monthly floor, which is why every tier reads "From $X/mo": the listed price
+  is the entry point, and compute hours, data transfer, build minutes, edge requests,
+  environments, seats and emails all meter above an included allowance.
+pricing_url: https://medusajs.com/pricing
+model: infrastructure-metered subscription (open-source core is free)
+currency: USD
+billing_period: month
+gmv_fee_percent: 0.0
+plan_count: 4
+plans:
+  - name: Develop
+    price: 29
+    price_note: from $29/mo
+    currency: USD
+    period: month
+    signup: https://cloud.medusajs.com/signup
+    positioning: The fastest and most reliable place to start building with Medusa.
+    included:
+      compute_hours: 600
+      data_transfer_gb: 10
+      object_storage_gb_mo: 10
+      database_storage_gb_mo: 1
+      build_minutes: 300
+      edge_requests: 1000000
+      long_lived_environments: 1
+      preview_environments: 1
+      cloud_seats: 1
+      bloom_credits_month: 50
+      emails_month: 1000
+      emails_day: 100
+      email_retention: 12 hours
+      backup_retention: null
+    features:
+      - Import from GitHub
+      - Deploy backend and storefront
+      - Medusa Cache
+      - Instant previews on PRs
+      - Medusa Emails
+    overage:
+      compute_hour: $0.16/hr
+      data_transfer: $0.125/GB
+      object_storage: $0.025 GB-mo
+      database_storage: $0.5 GB-mo
+      build_minutes: $0.014/min
+      edge_requests: $0.30 per 1M
+      long_lived_environment: $60/LLE/mo
+      preview_environment: $10/PE/mo
+      cloud_seat: $30/seat/mo
+      emails: hard limit — no overage on this tier
+  - name: Launch
+    price: 99
+    price_note: from $99/mo
+    currency: USD
+    period: month
+    signup: https://cloud.medusajs.com/signup?plan_id=bloom-production
+    positioning: Everything you need to launch your Medusa application.
+    included:
+      compute_hours: 800
+      data_transfer_gb: 40
+      object_storage_gb_mo: 10
+      database_storage_gb_mo: 5
+      build_minutes: 500
+      edge_requests: 5000000
+      long_lived_environments: 1
+      preview_environments: 3
+      cloud_seats: 1
+      key_value_store_mb: 250
+      bloom_credits_month: 50
+      emails_month: 10000
+      emails_day: 1500
+      email_retention: 3 days
+      backup_retention: 7 days
+    features:
+      - Everything in Develop
+      - Production-ready infrastructure
+      - Higher server capacity
+      - Automatic backups (point-in-time)
+      - Concurrent previews
+      - Zero-downtime deployment
+      - Custom domains
+    overage:
+      compute_hour: $0.16/hr
+      data_transfer: $0.125/GB
+      build_minutes: $0.014/min
+      edge_requests: $0.30 per 1M
+      emails: $0.70 per 1000
+      key_value_store: $100 per 5 GB
+      cloud_seat: $30/seat/mo
+  - name: Scale
+    price: 299
+    price_note: from $299/mo
+    currency: USD
+    period: month
+    signup: https://cloud.medusajs.com/signup?plan_id=pro
+    positioning: For scaling stores with growing traffic and teams.
+    included:
+      compute_hours: 2800
+      data_transfer_gb: 100
+      object_storage_gb_mo: 10
+      database_storage_gb_mo: 10
+      build_minutes: 1000
+      edge_requests: 10000000
+      long_lived_environments: 1
+      preview_environments: 5
+      cloud_seats: 3
+      key_value_store_mb: 250
+      bloom_credits_month: 50
+      emails_month: 25000
+      emails_day: 1500
+      email_retention: 3 days
+      backup_retention: 14 days
+    features:
+      - Everything in Launch
+      - Built-in autoscaling
+      - High-performance infrastructure
+      - Dedicated background workers
+      - Zero-downtime deployments
+    overage:
+      compute_hour: $0.16/hr
+      data_transfer: $0.125/GB
+      build_minutes: $0.014/min
+      edge_requests: $0.30 per 1M
+      emails: $0.70 per 1000
+      cloud_seat: $30/seat/mo
+  - name: Enterprise
+    price: null
+    price_note: Custom — contact sales
+    currency: USD
+    period: month
+    contact: https://medusajs.com/contact/?Interested+In=Enterprise
+    positioning: Implementation support, custom Cloud configuration, and platform SLAs.
+    features:
+      - Everything in Scale
+      - Implementation support
+      - Core team access
+      - Custom integrations and modules
+      - SLA-backed response times and SLA-backed uptime
+      - Priority issue resolution and upgrade support
+      - Dedicated support channel
+      - Performance tuning
+      - Custom resource pricing
+free_tier:
+  exists: true
+  form: >-
+    The Medusa platform itself — self-hosted, MIT-licensed, unlimited orders, products,
+    sales channels, regions and currencies, with no platform fee. There is no free Cloud
+    tier; Cloud starts at $29/mo.
+unlimited_on_every_tier:
+  - Orders
+  - Products
+  - Sales channels
+  - Regions and currencies
+  - Deployments
+  - Long-lived environments (metered above the first)

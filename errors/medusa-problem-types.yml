@@ -1,0 +1,140 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  Derived from the shared 4xx/5xx responses and the components.schemas.Error definition in
+  openapi/medusa-store-openapi.yaml and openapi/medusa-admin-openapi.yaml (2.19.0), then
+  enriched from https://docs.medusajs.com/learn/fundamentals/api-routes/errors, which
+  publishes the MedusaError type table and the status code each type maps to.
+description: >-
+  Medusa returns one uniform error envelope from every route. It is NOT RFC 9457
+  problem+json — the media type is application/json and the members are type, message and
+  (sometimes) code. Every one of the 484 published operations declares the same six error
+  responses: 400, 401, 404, 409, 422 and 500. That consistency is real and worth noting;
+  the cost is that the spec cannot tell you which of those six a given operation can
+  actually produce.
+format: custom-json
+media_type: application/json
+rfc9457: false
+envelope:
+  fields:
+    type:
+      description: A slug indicating the type of the error. Always present.
+      enum: [conflict, unauthorized, payment_authorization_error, duplicate_error, not_allowed,
+             invalid_data, not_found, database_error, unexpected_state, invalid_argument,
+             unknown_error, QueryRunnerAlreadyReleasedError, TransactionAlreadyStartedError,
+             TransactionNotStartedError]
+    message:
+      description: Human-readable description of the error.
+      example: first_name must be a string
+    code:
+      description: >-
+        A snake-case slug. Present only for DUPLICATE_ERROR (invalid_request_error),
+        DB_ERROR (api_error), CONFLICT (invalid_state_error) and unidentified errors
+        (unknown_error) — or when the thrower supplies one explicitly as the third
+        MedusaError constructor argument. Absent otherwise, which means a client cannot
+        rely on it.
+      enum: [invalid_state_error, invalid_request_error, api_error, unknown_error]
+problem_types:
+  - type: INVALID_DATA
+    status: 400
+    envelope_type: invalid_data
+    title: Validation error
+    detail: The request body or query parameters failed validation.
+    remediation: Correct the offending field and retry. The message names the field.
+  - type: NOT_ALLOWED
+    status: 400
+    envelope_type: not_allowed
+    title: Operation not allowed
+    detail: >-
+      The operation is not permitted in the resource's current state. Medusa recommends
+      throwing this instead of CONFLICT when the client needs to see the reason, because a
+      CONFLICT message is replaced by a fixed string.
+    remediation: Read the message; move the resource to a state that permits the operation.
+  - type: UNAUTHORIZED
+    status: 401
+    envelope_type: unauthorized
+    title: Unauthorized
+    detail: The caller is not authenticated, or is not authorized to perform the action.
+    remediation: >-
+      Supply a valid JWT bearer token, session cookie or (Admin) secret API key. For /store
+      routes also supply x-publishable-api-key.
+  - type: NOT_FOUND
+    status: 404
+    envelope_type: not_found
+    title: Not found
+    detail: The requested route or record does not exist.
+    remediation: Verify the id and the route path.
+  - type: CONFLICT
+    status: 409
+    envelope_type: conflict
+    code: invalid_state_error
+    title: Request conflict
+    detail: >-
+      The request conflicts with a previous or ongoing request — an in-flight transaction
+      or a lock held by another process. Medusa deliberately discards the thrown message
+      and returns a fixed one so internal state is not leaked.
+    fixed_message: >-
+      The request conflicted with another request. You may retry the request with the
+      provided Idempotency-Key.
+    remediation: Retry, supplying an Idempotency-Key so the retry is de-duplicated.
+    retryable: true
+  - type: DUPLICATE_ERROR
+    status: 422
+    envelope_type: duplicate_error
+    code: invalid_request_error
+    title: Duplicate record
+    detail: A record with the same unique value already exists — e.g. a customer email already registered.
+    remediation: Use a different value, or fetch and update the existing record.
+  - type: PAYMENT_AUTHORIZATION_ERROR
+    status: 422
+    envelope_type: payment_authorization_error
+    title: Payment authorization failed
+    detail: >-
+      An error occurred while authorizing a payment. Medusa does not publish a decline-code
+      registry of its own — the decline reason belongs to the configured payment provider
+      module (Stripe, PayPal, …) and is surfaced in the message, so no
+      errors/medusa-decline-codes.yml artifact was written.
+    remediation: Inspect the provider's error in the message; retry with another payment method.
+  - type: DB_ERROR
+    status: 500
+    envelope_type: database_error
+    code: api_error
+    title: Database error
+    detail: A database-level failure.
+    remediation: Server-side; check application logs.
+    retryable: true
+  - type: INVALID_ARGUMENT
+    status: 500
+    envelope_type: invalid_argument
+    title: Invalid argument
+    detail: Incorrect arguments or an otherwise unexpected internal state.
+    remediation: Server-side; usually a bug in a custom module or workflow.
+  - type: UNEXPECTED_STATE
+    status: 500
+    envelope_type: unexpected_state
+    title: Unexpected state
+    detail: The application reached a state it does not know how to handle.
+  - type: UNKNOWN
+    status: 500
+    envelope_type: unknown_error
+    code: unknown_error
+    title: Unknown error
+    detail: Any unidentified error type.
+coverage:
+  operations_total: 484
+  operations_declaring_400: 484
+  operations_declaring_401: 484
+  operations_declaring_404: 484
+  operations_declaring_409: 484
+  operations_declaring_422: 484
+  operations_declaring_500: 484
+  note: >-
+    The six error responses are attached by $ref to every operation uniformly, so per-
+    operation error precision is low even though error-response coverage is 100%.
+customization:
+  supported: true
+  mechanism: >-
+    defineMiddlewares({ errorHandler }) replaces the default handler for a deployment, so a
+    self-hosted Medusa can emit a different envelope entirely. Consumers of a specific
+    merchant's Medusa should not assume the envelope above without checking.
+  docs: https://docs.medusajs.com/learn/fundamentals/api-routes/errors

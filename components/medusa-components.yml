@@ -1,0 +1,62 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://docs.medusajs.com/ui, https://docs.medusajs.com/learn/fundamentals/admin,
+  https://docs.medusajs.com/resources/admin-widget-injection-zones,
+  https://docs.medusajs.com/resources/nextjs-starter, and the npm registry metadata for
+  @medusajs/ui, @medusajs/icons and @medusajs/ui-preset (2026-08-26).
+description: >-
+  Medusa's client-side component story is a React design system plus an extension surface,
+  not a set of hosted embeddable widgets. There is no drop-in script tag, no iframe-hosted
+  checkout element and no CDN build — everything is an npm package a developer compiles
+  into their own storefront or into the Medusa Admin. The distinctive piece is the Admin
+  extension model: Medusa publishes named injection zones inside its own dashboard, so a
+  third party can render a React component into a page Medusa owns.
+distribution: npm only — no CDN/unpkg/jsDelivr build and no hosted embed is published.
+families:
+  - family: Medusa UI
+    package: '@medusajs/ui'
+    version: 4.2.1
+    published: '2026-08-13'
+    docs: https://docs.medusajs.com/ui
+    type: react-component-library
+    description: >-
+      The Medusa design system — the primitives the Medusa Admin itself is built from, and
+      the recommended library for building admin widgets and UI routes so an extension looks
+      native. Ships with a Tailwind preset (@medusajs/ui-preset) and an icon set
+      (@medusajs/icons).
+    companions:
+      - { package: '@medusajs/icons', version: 2.19.0, description: 'React icon library' }
+      - { package: '@medusajs/ui-preset', version: 2.19.0, description: 'Tailwind CSS preset carrying the design tokens' }
+  - family: Admin Extensions
+    package: '@medusajs/admin-sdk'
+    version: 2.19.0
+    published: '2026-08-13'
+    docs: https://docs.medusajs.com/learn/fundamentals/admin
+    type: host-application-extension
+    description: >-
+      Two extension shapes for the Medusa Admin dashboard. WIDGETS render a React component
+      into a named injection zone on an existing page (product detail, order detail,
+      customer detail and so on — the full list is published as a reference). UI ROUTES add
+      an entirely new page to the dashboard, with its own sidebar entry.
+    surfaces:
+      - { surface: Widgets, reference: 'https://docs.medusajs.com/resources/admin-widget-injection-zones', note: 'Injection zones are a published, versioned contract; 2.17.2 changed how .before/.after behave inside a LayoutComposer page.' }
+      - { surface: UI Routes, reference: 'https://docs.medusajs.com/learn/fundamentals/admin/ui-routes' }
+      - { surface: Layout Composer, reference: 'https://docs.medusajs.com/learn/fundamentals/admin', note: 'Since 2.17.2 merchants rearrange Topbar, Sidebar and page layout by drag and drop; the arrangement persists in the database.' }
+      - { surface: Translations, reference: 'https://docs.medusajs.com/learn/fundamentals/admin/translations' }
+  - family: Storefront Starters
+    type: application-template
+    docs: https://docs.medusajs.com/resources/nextjs-starter
+    description: >-
+      Not a component library but the way most Medusa storefront UI actually ships: complete
+      Next.js (and other framework) starter storefronts wired to the Store API through
+      @medusajs/js-sdk. Medusa Cloud lists six starters. Medusa also publishes an
+      ecommerce-storefront agent skill with reference component specs (navbar, megamenu,
+      product card, cart popup, search, breadcrumbs, country selector, product reviews,
+      product slider, popups, footer, hero) — see skills/.
+loader_libraries: []
+hosted_embeds: []
+gaps:
+  - No hosted or prebuilt checkout/payment element — payment UI comes from the configured provider (e.g. Stripe Elements), not from Medusa.
+  - No web components / custom elements; React only.
+  - No CDN distribution, so no version can be read from a script tag.

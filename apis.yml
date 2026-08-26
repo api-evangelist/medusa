@@ -1,49 +1,245 @@
----
 aid: medusa
 specificationVersion: '0.23'
 accessModel:
-  pricing: unknown
-  onboarding: unknown
+  pricing: paid
+  onboarding: self-serve
   trial: false
   try_now: false
   public: false
-  label: Unknown
-  confidence: low
-  source: []
-  generated: '2026-07-22'
+  label: Paid · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  - scopes
+  - rate-limits
+  - security
+  - sandbox
+  generated: '2026-08-26'
   method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/medusa.png
 url: https://raw.githubusercontent.com/api-evangelist/medusa/refs/heads/main/apis.yml
 name: Medusa
 type: Index
 tags:
-  - E-Commerce
-  - Headless Commerce
-  - Open-Source
-  - GraphQL
-  - Node.js
+- E-Commerce
+- Headless Commerce
+- Open-Source
+- Commerce
+- Storefront
+- Order Management
+- Node.js
+- GraphQL
+- Agentic Commerce
+- MCP
 tags_raw:
-  - E-Commerce
-  - Headless Commerce
-  - Open Source
-  - GraphQL
-  - Node.js
-description: >-
-  Medusa is an open-source headless commerce platform with a modular architecture.
+- E-Commerce
+- Headless Commerce
+- Open Source
+- Commerce
+- Storefront
+- Order Management
+- Node.js
+- GraphQL
+- Agentic Commerce
+- MCP
+description: 'Medusa is an open-source, MIT-licensed digital commerce platform built around a modular
+  architecture: a suite of Commerce Modules (cart, products, orders, pricing, promotions, tax, inventory,
+  fulfillment, payment), a Framework for building custom API routes, data models, workflows and integrations,
+  and a customizable Medusa Admin dashboard. Medusa ships two first-party REST APIs — a Store API for
+  storefronts and an Admin API for merchant operations — both documented with published OpenAPI 3.0 specifications
+  generated from the codebase. Medusa is self-hosted by default; MedusaJS, Inc. also operates Medusa Cloud,
+  a managed PaaS, and a remote MCP server plus published Claude Code agent skills for agentic development.'
 apis:
-  - aid: medusa:medusa-graphql-api
-    name: Medusa GraphQL API
-    tags:
-      - GraphQL
-      - E-Commerce
-      - Headless
-    humanURL: https://docs.medusajs.com
-    baseURL: https://your-medusa-instance.com/store/graphql
-    properties:
-      - url: graphql/medusa-graphql.md
-        type: GraphQL
+- aid: medusa:medusa-store-api
+  name: Medusa Store API
+  description: The Medusa Store API is the customer-facing REST surface of a Medusa application. It exposes
+    products, variants, categories, collections, regions, carts, checkout, payment collections, shipping
+    options, customers, orders, returns and gift cards. Every /store route requires a publishable API
+    key in the x-publishable-api-key header, which scopes the request to one or more sales channels. 77
+    operations across 22 tags.
+  tags:
+  - E-Commerce
+  - Storefront
+  - Commerce
+  - Cart
+  - Checkout
+  - Products
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://{medusa-backend-domain}
+  properties:
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: OpenAPI
+    url: openapi/medusa-store-openapi.yaml
+  - type: OpenAPI Source
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+  - type: Overlay
+    url: overlays/medusa-store-overlay.yaml
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+- aid: medusa:medusa-admin-api
+  name: Medusa Admin API
+  description: The Medusa Admin API is the merchant/operations REST surface of a Medusa application. It
+    covers products, inventory, price lists, promotions and campaigns, orders, draft orders, order edits,
+    claims, exchanges, returns, fulfillments, payments, customers and customer groups, sales channels,
+    stock locations, tax regions, users, API keys, workflow executions and store settings. 407 operations
+    across 59 tags, authenticated with a JWT bearer token, a session cookie, or a secret API key over
+    HTTP Basic.
+  tags:
+  - E-Commerce
+  - Commerce
+  - Order Management
+  - Inventory
+  - Admin
+  - Back Office
+  humanURL: https://docs.medusajs.com/api/admin
+  baseURL: https://{medusa-backend-domain}
+  properties:
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
+  - type: OpenAPI
+    url: openapi/medusa-admin-openapi.yaml
+  - type: OpenAPI Source
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+  - type: Overlay
+    url: overlays/medusa-admin-overlay.yaml
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:medusa-graphql-api
+  name: Medusa GraphQL API
+  tags:
+  - GraphQL
+  - E-Commerce
+  - Headless
+  humanURL: https://docs.medusajs.com
+  baseURL: https://{medusa-backend-domain}/store/graphql
+  properties:
+  - url: graphql/medusa-graphql.md
+    type: GraphQL
+  description: Medusa's GraphQL surface over the store data core. The schema in this repo was derived
+    from the OAS output schemas published in the medusajs/medusa repository; Medusa does not publish a
+    hosted, introspectable GraphQL endpoint of its own because every Medusa application is self-hosted.
+- aid: medusa:medusa-mcp-server
+  name: Medusa MCP Remote Server
+  description: Medusa hosts a Streamable HTTP Model Context Protocol server at https://docs.medusajs.com/mcp.
+    It exposes the Medusa documentation to coding agents plus curated implementation-guide tools for data
+    migration from Shopify/WooCommerce/Magento, payment and fulfillment provider integration, product
+    extension, version upgrades and feedback submission. Access is limited to Medusa Cloud accounts and
+    is authenticated with OAuth 2.1 (RFC 9728 protected resource) or a Cloud personal access key.
+  tags:
+  - MCP
+  - Agentic Commerce
+  - Documentation
+  - AI
+  humanURL: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server
+  baseURL: https://docs.medusajs.com/mcp
+  properties:
+  - type: Documentation
+    url: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server
+  - type: MCPServer
+    url: mcp/medusa-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/medusa-tool-crosswalk.yml
 common:
-  - type: DomainSecurity
-    url: security/medusa-domain-security.yml
-  - url: https://medusajs.com/blog/
-    type: Blog
+- type: Website
+  url: https://medusajs.com/
+- type: DeveloperPortal
+  url: https://docs.medusajs.com
+- type: Documentation
+  url: https://docs.medusajs.com/learn
+- type: APIReference
+  url: https://docs.medusajs.com/api/store
+- type: GettingStarted
+  url: https://docs.medusajs.com/learn/installation
+- type: Support
+  url: https://medusajs.com/contact/
+- type: Discord
+  url: https://discord.gg/medusajs
+- type: Blog
+  url: https://medusajs.com/blog/
+- type: GitHubOrganization
+  url: https://github.com/medusajs
+- type: Pricing
+  url: https://medusajs.com/pricing
+- type: SignUp
+  url: https://cloud.medusajs.com/signup
+- type: TermsOfService
+  url: https://medusajs.com/terms-of-service
+- type: PrivacyPolicy
+  url: https://medusajs.com/privacy-policy
+- type: StatusPage
+  url: https://status.medusajs.com
+- type: Security
+  url: https://github.com/medusajs/medusa/security/policy
+- type: LLMsTxt
+  url: llms/medusa-llms.txt
+- type: Packages
+  url: packages/medusa-packages.yml
+- type: SDKs
+  url: packages/medusa-packages.yml
+- type: WellKnown
+  url: well-known/medusa-well-known.yml
+- type: MCPServer
+  url: mcp/medusa-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/medusa-tool-crosswalk.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Conformance
+  url: conformance/medusa-conformance.yml
+- type: ErrorCatalog
+  url: errors/medusa-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/medusa-lifecycle.yml
+- type: Deprecation
+  url: lifecycle/medusa-lifecycle.yml
+- type: Authentication
+  url: authentication/medusa-authentication.yml
+- type: OAuthScopes
+  url: scopes/medusa-scopes.yml
+- type: DomainSecurity
+  url: security/medusa-domain-security.yml
+- type: VulnerabilityDisclosure
+  url: security/medusa-vulnerability-disclosure.yml
+- type: Sandbox
+  url: sandbox/medusa-sandbox.yml
+- type: Conventions
+  url: conventions/medusa-conventions.yml
+- type: Idempotency
+  url: conventions/medusa-conventions.yml
+- type: ChangeLog
+  url: changelog/medusa-changelog.yml
+- type: CLI
+  url: cli/medusa-cli.yml
+- type: Components
+  url: components/medusa-components.yml
+- type: DataModel
+  url: data-model/medusa-data-model.yml
+- type: Webhooks
+  url: asyncapi/medusa-events.yml
+- type: Plans
+  url: plans/medusa-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/medusa-rate-limits.yml
+- type: GraphQL
+  url: graphql/medusa-graphql.md
+created: '2026-07-22'
+modified: '2026-08-26'
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
+- FN: APIs.json
+  email: info@apis.io
+- name: Medusa
+  email: security@medusajs.com
+  url: https://medusajs.com
+x-enrichment:
+  date: '2026-08-26'
+  status: enriched
+  artifacts_added: 46
+  pass: local-v1

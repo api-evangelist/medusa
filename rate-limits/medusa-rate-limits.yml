@@ -1,0 +1,41 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  Searched https://docs.medusajs.com/llms-full.txt (the complete 6.4 MB documentation
+  corpus), https://docs.medusajs.com/api/store, https://docs.medusajs.com/api/admin and
+  https://medusajs.com/pricing on 2026-08-26; and grepped both published OpenAPI documents
+  (484 operations) for RateLimit-*, X-RateLimit-*, Retry-After and 429.
+description: >-
+  Medusa publishes no rate limits, and this is an honest zero rather than a missing page.
+  Medusa is self-hosted software: the Store and Admin APIs run on the merchant's own
+  infrastructure, so there is no Medusa-operated quota to publish and no throttle for
+  Medusa to signal. Neither published OpenAPI document declares a 429 response, a
+  RateLimit-*/X-RateLimit-* header or Retry-After on any of the 484 operations. The Medusa
+  Cloud pricing page meters compute hours, data transfer, build minutes, edge requests and
+  emails — consumption billing, not request-rate limiting — and states no requests-per-
+  second ceiling.
+limit_count: 0
+limits: []
+response_headers:
+  ratelimit_standard: false
+  x_ratelimit: false
+  retry_after: false
+  observed: []
+exhaustion_status_code: null
+scope: not-applicable
+what_is_metered:
+  note: >-
+    Recorded for completeness — these are Medusa Cloud billing meters from
+    https://medusajs.com/pricing, not API rate limits.
+  meters:
+    - { meter: Edge requests, develop: 1M/mo, launch: 5M/mo, scale: 10M/mo, overage: $0.30 per 1M requests }
+    - { meter: Compute hours, develop: 600/mo, launch: 800/mo, scale: 2800/mo, overage: $0.16/hr }
+    - { meter: Data transfer, develop: 10 GB/mo, launch: 40 GB/mo, scale: 100 GB/mo, overage: $0.125/GB }
+    - { meter: Build minutes, develop: 300/mo, launch: 500/mo, scale: 1000/mo, overage: $0.014/min }
+    - { meter: Monthly emails, develop: 1000 hard limit, launch: 10000, scale: 25000, overage: $0.70 per 1000 }
+    - { meter: Daily emails, develop: 100, launch: 1500, scale: 1500, overage: null }
+guidance_for_agents: >-
+  An agent integrating against a specific merchant's Medusa deployment should treat rate
+  limiting as unknown and unsignalled: back off on 5xx, and expect no Retry-After to tell it
+  how long. The only throttling documented anywhere in the Medusa corpus is advice to use
+  exponential backoff when syncing with THIRD-PARTY services that rate-limit.

@@ -1,0 +1,52 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  https://docs.medusajs.com/.well-known/oauth-authorization-server and
+  https://docs.medusajs.com/.well-known/oauth-protected-resource, fetched anonymously
+  2026-08-26 and saved verbatim to well-known/.
+docs: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server
+description: >-
+  Medusa's Store and Admin REST APIs declare NO oauth2 security scheme — they authenticate
+  with a JWT bearer token, a session cookie or an Admin secret API key, none of which carry
+  scopes. The only OAuth surface Medusa operates is the one in front of the remote MCP
+  server, and it publishes RFC 8414 authorization-server metadata anonymously. The three
+  scopes below are what that document advertises; they are identity scopes for a Medusa
+  Cloud login, not commerce permissions.
+applies_to:
+  - medusa:medusa-mcp-server
+does_not_apply_to:
+  - medusa:medusa-store-api
+  - medusa:medusa-admin-api
+authorization_server:
+  issuer: https://docs.medusajs.com
+  authorization_endpoint: https://cloud.medusajs.com/oauth/authorize
+  token_endpoint: https://api.prod.medusajs.cloud/v1/oauth/token
+  registration_endpoint: https://docs.medusajs.com/oauth/register
+  jwks_uri: https://api.prod.medusajs.cloud/.well-known/jwks.json
+  grant_types_supported: [authorization_code, refresh_token]
+  response_types_supported: [code]
+  token_endpoint_auth_methods_supported: [none]
+  code_challenge_methods_supported: [S256]
+  dynamic_client_registration: true
+protected_resource:
+  resource: https://docs.medusajs.com
+  authorization_servers: [https://docs.medusajs.com]
+scopes:
+  - name: openid
+    description: OpenID Connect — issue an ID token identifying the Medusa Cloud account.
+    source: oauth-authorization-server scopes_supported
+  - name: email
+    description: Access to the account's email address claim.
+    source: oauth-authorization-server scopes_supported
+  - name: profile
+    description: Access to the account's basic profile claims.
+    source: oauth-authorization-server scopes_supported
+scope_count: 3
+alternative_credential:
+  type: personal access key
+  usage: Bearer token in the Authorization header, in place of the OAuth flow.
+  source: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server
+note: >-
+  There is no per-tool or per-resource scope. Access to the MCP server is all-or-nothing on
+  a Medusa Cloud account, so an agent cannot be granted the documentation-search tool
+  without also being granted the feedback-submission tool.

@@ -1,0 +1,53 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay — Medusa Admin API
+  version: 1.0.0
+extends: ../openapi/medusa-admin-openapi.yaml
+x-provenance:
+  generated: '2026-08-26'
+  method: generated
+  source: Authored by the API Evangelist enrichment pipeline against openapi/medusa-admin-openapi.yaml
+    (Medusa Admin API 2.19.0, harvested verbatim from raw.githubusercontent.com/medusajs/medusa). This
+    overlay records OUR annotations only — the original spec is never mutated. Every statement below is
+    evidenced by an artifact in this repository.
+actions:
+- target: $.info
+  description: Record the real base-URL situation and the discovery surface.
+  update:
+    x-apievangelist-base-url-note: Medusa is self-hosted. The two declared servers are http://localhost:9000
+      (the local development default) and https://api.medusajs.com, which had no DNS A/AAAA record when
+      probed on 2026-08-26. The production base URL is the merchant's own deployment or Medusa Cloud backend
+      domain.
+    x-apievangelist-contract-source: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    x-apievangelist-llms-txt: https://docs.medusajs.com/llms.txt
+    x-apievangelist-mcp-server: https://docs.medusajs.com/mcp
+    x-apievangelist-agent-skills: https://github.com/medusajs/medusa-agent-skills
+- target: $.info
+  description: Cross-link the derived runtime-semantics artifacts.
+  update:
+    x-apievangelist-artifacts:
+      conventions: conventions/medusa-conventions.yml
+      errors: errors/medusa-problem-types.yml
+      authentication: authentication/medusa-authentication.yml
+      lifecycle: lifecycle/medusa-lifecycle.yml
+      events: asyncapi/medusa-events.yml
+      data_model: data-model/medusa-data-model.yml
+      rate_limits: rate-limits/medusa-rate-limits.yml
+- target: $.components.securitySchemes.api_token
+  description: Note what the Admin secret-key scheme actually is.
+  update:
+    x-apievangelist-note: 'api_token is declared as http/basic: an Admin secret API key is sent as the
+      HTTP Basic username with an empty password. The alternatives are a JWT bearer token (jwt_token)
+      or a session cookie (cookie_auth, connect.sid). Unlike /store, no publishable key is involved on
+      /admin.'
+- target: $.paths.*.*.responses.409
+  description: Record the fixed CONFLICT message and the retry affordance.
+  update:
+    x-apievangelist-note: Medusa replaces the thrown message on a 409 with a fixed string — "The request
+      conflicted with another request. You may retry the request with the provided Idempotency-Key." —
+      so the body never explains the conflict. Retry with an Idempotency-Key; see conventions/medusa-conventions.yml.
+- target: $.paths.*.*
+  description: Record the absence of a rate-limit signal.
+  update:
+    x-apievangelist-rate-limit-signal: No 429 response, no RateLimit-*/X-RateLimit-* header and no Retry-After
+      is declared on any operation in this document. Throttling, if any, is the merchant's own infrastructure.

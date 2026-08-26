@@ -1,0 +1,184 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  registry.npmjs.org metadata endpoints for every @medusajs scope package named in
+  https://docs.medusajs.com (Tools + References sections) and
+  https://docs.medusajs.com/cloud/cli. Versions and publish dates read from
+  registry.npmjs.org/<pkg> on 2026-08-26. Medusa publishes first-party client and
+  framework libraries to npm only — there is no first-party PyPI, RubyGems, Packagist,
+  Maven Central, NuGet, crates.io or pkg.go.dev distribution, which is expected for a
+  Node.js/TypeScript commerce framework.
+description: >-
+  First-party Medusa packages on npm. Every entry below is published from the
+  medusajs/medusa monorepo by the Medusa team (npm publisher "olijuhl", a Medusa
+  co-founder). The core monorepo releases in lockstep — 2.19.0 was published
+  2026-08-13, the same version the published Store and Admin OpenAPI documents carry
+  in info.version, so the SDK and the contract are in step.
+registries_checked:
+  - registry.npmjs.org
+  - pypi.org
+  - rubygems.org
+  - crates.io
+  - api.nuget.org
+  - search.maven.org
+  - proxy.golang.org
+packages:
+  - name: '@medusajs/js-sdk'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/js-sdk
+    docs: https://docs.medusajs.com/resources/js-sdk
+    language: TypeScript
+    official: true
+    kind: client-sdk
+    version: 2.19.0
+    published: '2026-08-13'
+    note: >-
+      The first-party JavaScript/TypeScript client for the Store and Admin REST APIs;
+      used by storefronts and by Medusa Admin extensions.
+  - name: '@medusajs/medusa'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/medusa
+    language: TypeScript
+    official: true
+    kind: server
+    version: 2.19.0
+    published: '2026-08-13'
+    note: The Medusa application itself — the server that serves the Store and Admin APIs.
+  - name: '@medusajs/framework'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/framework
+    language: TypeScript
+    official: true
+    kind: framework
+    version: 2.19.0
+    published: '2026-08-13'
+    note: API routes, workflows, data models, middlewares and the MedusaError type.
+  - name: '@medusajs/types'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/types
+    language: TypeScript
+    official: true
+    kind: types
+    version: 2.19.0
+    published: '2026-08-13'
+  - name: '@medusajs/admin-sdk'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/admin-sdk
+    language: TypeScript
+    official: true
+    kind: extension-sdk
+    version: 2.19.0
+    published: '2026-08-13'
+    note: SDK for building Medusa Admin widgets and UI routes.
+  - name: '@medusajs/ui'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/ui
+    docs: https://docs.medusajs.com/ui
+    language: TypeScript
+    official: true
+    kind: ui-components
+    version: 4.2.1
+    published: '2026-08-13'
+    note: >-
+      React component library and design system. Versioned independently of the
+      2.x core packages.
+  - name: '@medusajs/icons'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/icons
+    language: TypeScript
+    official: true
+    kind: ui-components
+    version: 2.19.0
+    published: '2026-08-13'
+  - name: '@medusajs/ui-preset'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/ui-preset
+    language: TypeScript
+    official: true
+    kind: ui-components
+    version: 2.19.0
+    published: '2026-08-13'
+  - name: '@medusajs/cli'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/cli
+    docs: https://docs.medusajs.com/resources/medusa-cli
+    language: TypeScript
+    official: true
+    kind: cli
+    version: 2.19.0
+    published: '2026-08-13'
+    note: The `medusa` CLI — build, develop, start, db, exec, lint, plugin, user, telemetry.
+  - name: create-medusa-app
+    registry: npm
+    url: https://www.npmjs.com/package/create-medusa-app
+    docs: https://docs.medusajs.com/resources/create-medusa-app
+    language: TypeScript
+    official: true
+    kind: cli
+    version: 2.19.0
+    published: '2026-08-13'
+  - name: '@medusajs/mcloud'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/mcloud
+    docs: https://docs.medusajs.com/cloud/cli
+    language: TypeScript
+    official: true
+    kind: cli
+    version: 0.1.13
+    published: '2026-08-04'
+    note: >-
+      The Medusa Cloud CLI (`mcloud`) — the only Medusa package on a separate 0.x
+      release line, because Cloud ships independently of the open-source core.
+  - name: '@medusajs/eslint-plugin'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/eslint-plugin
+    docs: https://docs.medusajs.com/resources/lint/rules
+    language: TypeScript
+    official: true
+    kind: linter
+    version: 2.19.0
+    published: '2026-08-13'
+    note: >-
+      Official ESLint plugin; Medusa positions it explicitly as guardrails for AI
+      agents writing Medusa code.
+  - name: '@medusajs/test-utils'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/test-utils
+    docs: https://docs.medusajs.com/learn/debugging-and-testing/testing-tools
+    language: TypeScript
+    official: true
+    kind: testing
+    version: 2.19.0
+    published: '2026-08-13'
+  - name: '@medusajs/event-bus-redis'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/event-bus-redis
+    language: TypeScript
+    official: true
+    kind: infrastructure-module
+    version: 2.19.0
+    published: '2026-08-13'
+  - name: '@medusajs/event-bus-local'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/event-bus-local
+    language: TypeScript
+    official: true
+    kind: infrastructure-module
+    version: 2.19.0
+    published: '2026-08-13'
+  - name: '@medusajs/cache-redis'
+    registry: npm
+    url: https://www.npmjs.com/package/@medusajs/cache-redis
+    language: TypeScript
+    official: true
+    kind: infrastructure-module
+    version: 2.19.0
+    published: '2026-08-13'
+absent:
+  - name: '@medusajs/mcp'
+    registry: npm
+    checked: '2026-08-26'
+    result: 404 Not Found
+    note: >-
+      There is no npm package for the Medusa MCP server. The MCP server is remote-only
+      (https://docs.medusajs.com/mcp) — see mcp/medusa-mcp.yml.

@@ -1,0 +1,267 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://docs.medusajs.com/learn/fundamentals/api-routes/errors,
+  https://docs.medusajs.com/learn/fundamentals/api-routes/parameters,
+  https://docs.medusajs.com/learn/fundamentals/api-routes/protected-routes,
+  https://docs.medusajs.com/api/store, https://docs.medusajs.com/api/admin,
+  https://docs.medusajs.com/resources/how-to-tutorials/tutorials/agentic-commerce;
+  parameter and response shapes cross-checked against openapi/medusa-store-openapi.yaml and
+  openapi/medusa-admin-openapi.yaml (2.19.0).
+description: >-
+  Cross-cutting request/response semantics that apply to every Medusa Store and Admin
+  operation, and that the OpenAPI documents do not fully express.
+base_url: https://{medusa-backend-domain}
+api_style: >-
+  REST over HTTPS, JSON request and response bodies. Medusa is self-hosted, so the host is
+  the merchant's own deployment; the local development default is http://localhost:9000 and
+  both published specs also list https://api.medusajs.com, which does not resolve in DNS.
+
+authentication:
+  scheme: >-
+    Three schemes, declared in the specs: JWT bearer token (jwt_token), session cookie
+    (cookie_auth, cookie name connect.sid), and — Admin only — a secret API key sent over
+    HTTP Basic (api_token).
+  store_requirement: >-
+    Every /store route additionally requires a publishable API key in the
+    x-publishable-api-key header. It is not a credential; it scopes the request to one or
+    more sales channels.
+  route_prefix_rule: >-
+    /admin routes are protected by default (authenticated admin users only);
+    /store/customers/me is protected for authenticated customers; everything else under
+    /store is public. A custom route can opt out with `export const AUTHENTICATE = false`.
+  docs: https://docs.medusajs.com/learn/fundamentals/api-routes/protected-routes
+  detail: authentication/medusa-authentication.yml
+
+idempotency:
+  supported: partial
+  mechanism: Idempotency-Key request header
+  applies_to: >-
+    Workflows. A Medusa workflow accepts an `idempotencyKey` in its run context, and the
+    framework de-duplicates on it; a route handler passes the incoming Idempotency-Key
+    header through. This is the mechanism Medusa's own Agentic Commerce (ChatGPT Instant
+    Checkout) tutorial uses for POST /checkout_sessions, echoing Idempotency-Key and
+    Request-Id back on the response.
+  not_applied_to: >-
+    The core Store and Admin routes do NOT declare an Idempotency-Key parameter in either
+    published OpenAPI document — grep confirms zero idempotency parameters across all 484
+    operations. Idempotency is a capability the framework gives you for the routes you
+    build, not a guarantee the shipped commerce routes make.
+  conflict_behavior: >-
+    A 409 CONFLICT response carries a fixed message: "The request conflicted with another
+    request. You may retry the request with the provided Idempotency-Key." Medusa
+    deliberately replaces the thrown message on CONFLICT so internal lock/transaction
+    detail is not leaked; the header name is named in the client-facing text.
+  key_format: Client-generated unique value.
+  retention: Not documented.
+  docs: https://docs.medusajs.com/learn/fundamentals/api-routes/errors
+
+pagination:
+  style: offset
+  request_params:
+    limit: Maximum number of items to return.
+    offset: Number of items to skip before the returned page.
+    order: Comma-separated sort fields; prefix a field with `-` for descending.
+  response_fields:
+    limit: The maximum number of items returned in the list.
+    offset: The number of items skipped before retrieving the returned items.
+    count: The total count of items.
+    '<resource>': The array of results, keyed by the plural resource name (products, orders, api_keys…).
+  applies_to: >-
+    67 of 267 Admin paths and 15 of 67 Store paths declare limit/offset/order; every list
+    response is an allOf of the {limit, offset, count} envelope and the named result array.
+  docs: https://docs.medusajs.com/api/admin#pagination
+
+field_selection:
+  supported: true
+  mechanism: >-
+    `fields` query parameter — a comma-separated list. Prefix with `+` to add to the
+    defaults, `-` to remove, `*` to expand a relation. Declared on 260 Admin and 52 Store
+    operations, making it the most widely available parameter in the API after the path id.
+  docs: https://docs.medusajs.com/api/admin#select-fields-and-relations
+
+filtering:
+  supported: true
+  mechanism: >-
+    Typed query filters per resource plus `$and` and `$or` compound operators (53 Admin, 13
+    Store operations), a free-text `q` parameter (51 Admin, 10 Store), `with_deleted`, and
+    range filters on created_at / updated_at / deleted_at.
+
+metadata:
+  supported: true
+  mechanism: A `metadata` JSON object on most commerce data models, writable through create/update operations.
+
+localization:
+  supported: true
+  mechanism: >-
+    `x-medusa-locale` request header and a `locale` query parameter, both declared on 59 of
+    the 67 Store paths. The Admin API exposes Translations and Locales resources.
+  docs: https://docs.medusajs.com/learn/fundamentals/api-routes/localization
+
+request_tracing:
+  request_id_header: null
+  note: >-
+    Medusa does not document a Request-Id on core routes. Request-Id appears only in the
+    Agentic Commerce tutorial, where the route echoes the caller's own Request-Id because
+    the OpenAI commerce specification requires it.
+
+versioning:
+  scheme: semantic versioning of the Medusa application (currently 2.19.0)
+  mechanism: >-
+    There is no API version in the URL path, no version request header, and no per-account
+    pinning. The API surface is the version of Medusa the merchant has deployed. Both
+    published OpenAPI documents carry info.version 2.19.0, matching the npm release.
+  detail: lifecycle/medusa-lifecycle.yml
+  changelog: changelog/medusa-changelog.yml
+
+error_envelope:
+  media_type: application/json
+  shape:
+    type: A slug indicating the error type (invalid_data, not_found, unauthorized, conflict, duplicate_error, not_allowed, payment_authorization_error, database_error, invalid_argument, unexpected_state, unknown_error).
+    message: Human-readable description of what went wrong.
+    code: >-
+      A snake-case slug, present only for some types — invalid_request_error, api_error,
+      invalid_state_error, unknown_error — unless the thrower supplied one explicitly.
+  rfc9457: false
+  note: >-
+    Medusa's envelope predates and does not follow RFC 9457 problem+json; there is no `title`
+    or `status` member and the media type is plain application/json.
+  detail: errors/medusa-problem-types.yml
+  docs: https://docs.medusajs.com/learn/fundamentals/api-routes/errors
+
+rate_limit_signaling:
+  supported: false
+  note: >-
+    No RateLimit-*, X-RateLimit-* or Retry-After header appears in either published OpenAPI
+    document, and no rate-limit policy is documented. Expected for self-hosted software —
+    the limit is whatever the merchant's own infrastructure enforces.
+  detail: rate-limits/medusa-rate-limits.yml
+
+dry_run_mode:
+  supported: na
+  note: >-
+    No preview/dry-run/simulate parameter exists on any of the 484 operations. Medusa does
+    ship a related capability at the framework layer — a workflow step declares a
+    compensation function, so a failed multi-step operation is rolled back automatically —
+    but that is recovery after the fact, not a rehearsal before it.
+
+reversibility:
+  grade: verified
+  summary: >-
+    Medusa's write surface is unusually well provided with explicit reversal operations —
+    21 of them — and the reversal WINDOW is stated as a state condition rather than a clock.
+    That is the honest shape of it: Medusa does not say "refund within 180 days", it says
+    which order/return/claim states still accept the reversal, and the state machine is
+    documented per resource. Where a window is a wall-clock duration, Medusa does not state
+    one, and none is asserted here.
+  surfaces:
+    - operation: Cancel Order
+      operationId: PostOrdersIdCancel
+      path: POST /admin/orders/{id}/cancel
+      reverses: order placement
+      window: >-
+        Before the order is fulfilled. Medusa's order state machine rejects a cancel once
+        fulfillments exist; cancel the fulfillments first
+        (PostOrdersIdFulfillmentsFulfillment_idCancel), then the order.
+      docs: https://docs.medusajs.com/api/admin#orders_postordersidcancel
+    - operation: Refund Payment
+      operationId: PostPaymentsIdRefund
+      path: POST /admin/payments/{id}/refund
+      reverses: a captured payment
+      window: >-
+        While the payment is captured and the refundable amount is greater than zero.
+        Medusa itself imposes no time limit; the effective window is the one the underlying
+        payment provider (Stripe, PayPal, …) enforces, and Medusa does not restate it.
+      docs: https://docs.medusajs.com/api/admin#payments_postpaymentsidrefund
+    - operation: Cancel Fulfillment
+      operationId: PostFulfillmentsIdCancel
+      path: POST /admin/fulfillments/{id}/cancel
+      reverses: a created fulfillment
+      window: Before the fulfillment is shipped (a shipment record blocks cancellation).
+    - operation: Cancel a Return
+      operationId: PostReturnsIdCancel
+      path: POST /admin/returns/{id}/cancel
+      reverses: a requested return
+      window: Before the return is received.
+    - operation: Cancel Return Receival
+      operationId: DeleteReturnsIdReceive
+      path: DELETE /admin/returns/{id}/receive
+      reverses: the receive step of a return
+      window: While the receive request is still open (not yet confirmed).
+    - operation: Cancel Return Request
+      operationId: DeleteReturnsIdRequest
+      path: DELETE /admin/returns/{id}/request
+      reverses: an in-progress return request
+      window: While the return request is still a draft order-change, before it is confirmed.
+    - operation: Cancel a Claim
+      operationId: PostClaimsIdCancel
+      path: POST /admin/claims/{id}/cancel
+      reverses: a claim
+      window: Before the claim's associated fulfillments/returns are processed.
+    - operation: Cancel Claim Request
+      operationId: DeleteClaimsIdRequest
+      path: DELETE /admin/claims/{id}/request
+      reverses: an in-progress claim request
+      window: While the claim request is still an unconfirmed order change.
+    - operation: Cancel an Exchange
+      operationId: PostExchangesIdCancel
+      path: POST /admin/exchanges/{id}/cancel
+      reverses: an exchange
+      window: Before the exchange's fulfillments/returns are processed.
+    - operation: Cancel Exchange Request
+      operationId: DeleteExchangesIdRequest
+      path: DELETE /admin/exchanges/{id}/request
+      reverses: an in-progress exchange request
+      window: While the exchange request is still an unconfirmed order change.
+    - operation: Cancel Order Edit
+      operationId: DeleteOrderEditsId
+      path: DELETE /admin/order-edits/{id}
+      reverses: a proposed order edit
+      window: Before the order edit is confirmed.
+    - operation: Cancel Edit on Draft Order
+      operationId: DeleteDraftOrdersIdEdit
+      path: DELETE /admin/draft-orders/{id}/edit
+      reverses: an in-progress draft-order edit
+      window: Before the edit is confirmed.
+    - operation: Cancel Transfer Request (admin)
+      operationId: PostOrdersIdTransferCancel
+      path: POST /admin/orders/{id}/transfer/cancel
+      reverses: an order-ownership transfer request
+      window: While the transfer request is pending acceptance.
+    - operation: Cancel Order Transfer (store)
+      operationId: PostOrdersIdTransferCancel
+      path: POST /store/orders/{id}/transfer/cancel
+      reverses: a customer-initiated order transfer
+      window: While the transfer request is pending acceptance.
+    - operation: Archive an Order
+      operationId: PostOrdersIdArchive
+      path: POST /admin/orders/{id}/archive
+      reverses: nothing — one-way state change
+      window: null
+      note: Listed for completeness; archiving is not a reversal and has no documented undo.
+  soft_delete:
+    supported: true
+    mechanism: >-
+      Most resources are soft-deleted, not destroyed: a deleted_at column, a `with_deleted`
+      query parameter on 66 Admin and 13 Store list operations, and a deleted_at range
+      filter on 41 Admin operations. Deleted records therefore remain queryable.
+    restore_operation: null
+    window: >-
+      No public REST restore operation exists. Restoration is available at the framework
+      layer through the data-model repository's restore method, not over HTTP. Do not
+      assume a delete is reversible through the API.
+  workflow_compensation:
+    supported: true
+    mechanism: >-
+      Every workflow step can define a compensation function that undoes it if a later step
+      fails; the framework runs compensations in reverse order. This makes multi-step
+      commerce operations transactional inside Medusa, independent of any HTTP-level undo.
+    docs: https://docs.medusajs.com/learn/fundamentals/workflows/compensation-function
+  na_reason: null
+
+cross_references:
+  errors: errors/medusa-problem-types.yml
+  lifecycle: lifecycle/medusa-lifecycle.yml
+  authentication: authentication/medusa-authentication.yml
+  rate_limits: rate-limits/medusa-rate-limits.yml
+  events: asyncapi/medusa-events.yml

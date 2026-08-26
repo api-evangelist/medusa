@@ -1,0 +1,2423 @@
+generated: '2026-08-26'
+method: derived
+source: Derived from components.schemas in openapi/medusa-admin-openapi.yaml (593 schemas, 2.19.0) — entities
+  are the schemas carrying an `id` plus `created_at`/`updated_at`; relationships come from $ref links
+  (has_one / has_many) and from `*_id` reference fields (belongs_to). Domain grouping and the module mapping
+  were checked against https://docs.medusajs.com/learn/fundamentals/modules/commerce-modules.
+description: 'Medusa''s data model is deliberately modular, and the graph shows it. Rather than one monolithic
+  schema, the entities cluster into Commerce Modules — Product, Pricing, Cart, Order, Inventory, Fulfillment,
+  Payment, Customer, Promotion, Tax, Sales Channel — that are isolated from each other by design. Cross-module
+  relationships are not foreign keys: Medusa joins them at runtime through MODULE LINKS and the Query/Index
+  layer, which is why the schema references below understate how connected the model actually is at read
+  time. A single 484-operation API sits on top of that graph.'
+entity_count: 159
+schema_count: 593
+relationship_edges: 239
+derivation_caveat: Two honest limits. (1) The Admin document names its schemas Admin* and the Store document
+  names the same underlying records Store* — the graph below is derived from the Admin document, which
+  is the superset. (2) Medusa's module links mean two entities can be related in a live Medusa application
+  without either schema referencing the other; those edges are invisible to a spec-derived graph.
+module_links:
+  mechanism: Module links + the Link/Query/Index layer
+  docs: https://docs.medusajs.com/learn/fundamentals/module-links
+  note: The mechanism a merchant uses to attach a custom data model to a core one — a Brand to a Product,
+    for example — without modifying the core module. This is the extension point Medusa's MCP get_product_custom_data_guide
+    tool generates code for.
+domains:
+- domain: Orders & post-purchase
+  entity_count: 45
+  entities:
+  - AdminClaim
+  - AdminDraftOrder
+  - AdminDraftOrderPreview
+  - AdminExchange
+  - AdminFulfillment
+  - AdminFulfillmentAddress
+  - AdminFulfillmentItem
+  - AdminFulfillmentLabel
+  - AdminFulfillmentSet
+  - AdminGiftCard
+  - AdminOrder
+  - AdminOrderAddress
+  - AdminOrderChange
+  - AdminOrderChangeAction
+  - AdminOrderFulfillment
+  - AdminOrderLinePreview
+  - AdminOrderPreview
+  - AdminReturn
+  - AdminReturnReason
+  - BaseClaimItem
+  - BaseExchangeItem
+  - BaseOrder
+  - BaseOrderAddress
+  - BaseOrderFulfillment
+  - BaseOrderItemDetail
+  - BaseOrderShippingDetail
+  - BaseOrderTransaction
+  - Order
+  - OrderAddress
+  - OrderChange
+  - OrderChangeAction
+  - OrderClaim
+  - OrderCreditLine
+  - OrderExchange
+  - OrderItem
+  - OrderReturnItem
+  - OrderTransaction
+  - Return
+  - StoreFulfillmentAddress
+  - StoreGiftCard
+  - StoreOrder
+  - StoreOrderAddress
+  - StoreOrderFulfillment
+  - StoreReturn
+  - StoreReturnReason
+- domain: Product catalog
+  entity_count: 37
+  entities:
+  - AdminCollection
+  - AdminPaymentCollection
+  - AdminProduct
+  - AdminProductCategory
+  - AdminProductImage
+  - AdminProductOption
+  - AdminProductOptionValue
+  - AdminProductTag
+  - AdminProductType
+  - AdminProductVariant
+  - AdminPropertyLabel
+  - AdminShippingOption
+  - AdminShippingOptionPrice
+  - AdminShippingOptionPriceRule
+  - AdminShippingOptionRule
+  - AdminShippingOptionType
+  - BaseCollection
+  - BasePaymentCollection
+  - BaseProduct
+  - BaseProductCategory
+  - BaseProductImage
+  - BaseProductOption
+  - BaseProductOptionValue
+  - BaseProductTag
+  - BaseProductType
+  - BaseProductVariant
+  - StoreCollection
+  - StorePaymentCollection
+  - StoreProduct
+  - StoreProductCategory
+  - StoreProductImage
+  - StoreProductOption
+  - StoreProductOptionValue
+  - StoreProductTag
+  - StoreProductType
+  - StoreProductVariant
+  - StoreShippingOptionType
+- domain: Cart & checkout
+  entity_count: 33
+  entities:
+  - AdminOrderLineItem
+  - AdminOrderShippingMethod
+  - AdminPayment
+  - AdminRefund
+  - AdminRefundReason
+  - BaseCart
+  - BaseCartLineItem
+  - BaseCartShippingMethod
+  - BaseLineItemAdjustment
+  - BaseLineItemTaxLine
+  - BaseOrderLineItem
+  - BaseOrderLineItemAdjustment
+  - BaseOrderLineItemTaxLine
+  - BaseOrderShippingMethod
+  - BaseOrderShippingMethodAdjustment
+  - BaseOrderShippingMethodTaxLine
+  - BasePayment
+  - BaseRefund
+  - BaseRefundReason
+  - BaseShippingMethodAdjustment
+  - BaseShippingMethodTaxLine
+  - OrderLineItem
+  - OrderLineItemAdjustment
+  - OrderLineItemTaxLine
+  - OrderShippingMethod
+  - OrderShippingMethodAdjustment
+  - OrderShippingMethodTaxLine
+  - StoreCart
+  - StoreCartAddress
+  - StoreCartLineItem
+  - StoreCartShippingMethod
+  - StoreOrderLineItem
+  - StoreOrderShippingMethod
+- domain: Customers & identity
+  entity_count: 13
+  entities:
+  - AdminApiKey
+  - AdminCustomer
+  - AdminCustomerAddress
+  - AdminCustomerGroup
+  - AdminCustomerInGroupFilters
+  - AdminInvite
+  - AdminRbacPolicy
+  - AdminRbacRole
+  - AdminUser
+  - ApiKeyResponse
+  - CustomerGroupInCustomerFilters
+  - StoreCustomer
+  - StoreCustomerAddress
+- domain: Store configuration
+  entity_count: 13
+  entities:
+  - AdminLayoutConfiguration
+  - AdminNotification
+  - AdminRegion
+  - AdminSalesChannel
+  - AdminStoreLocale
+  - AdminTaxRate
+  - AdminTaxRegion
+  - AdminTranslation
+  - AdminTranslationSettings
+  - AdminViewConfiguration
+  - AdminWorkflowExecution
+  - BaseRegion
+  - StoreRegion
+- domain: Pricing & promotions
+  entity_count: 7
+  entities:
+  - AdminCampaign
+  - AdminPrice
+  - AdminPriceList
+  - AdminPriceListPrice
+  - AdminPricePreference
+  - AdminPromotion
+  - AdminStoreCurrency
+- domain: Other
+  entity_count: 6
+  entities:
+  - AdminStore
+  - AdminStoreCreditAccount
+  - AdminTransaction
+  - BaseCapture
+  - IndexInfo
+  - StoreStoreCreditAccount
+- domain: Inventory & fulfillment network
+  entity_count: 5
+  entities:
+  - AdminGeoZone
+  - AdminInventoryLevel
+  - AdminReservation
+  - AdminServiceZone
+  - AdminShippingProfile
+entities:
+- schema: AdminApiKey
+  fields: 12
+  description: The API key's details.
+- schema: AdminCampaign
+  fields: 11
+  description: The campaign's details.
+- schema: AdminClaim
+  fields: 20
+  description: The claim's details.
+  relationships:
+  - to: BaseClaimItem
+    cardinality: has_many
+    via: claim_items
+  - to: BaseClaimItem
+    cardinality: has_many
+    via: additional_items
+  - to: AdminReturn
+    cardinality: has_one
+    via: return
+  - to: AdminOrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: BaseOrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to: AdminOrder
+    cardinality: has_one
+    via: order
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: return
+    cardinality: belongs_to
+    via: return_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+- schema: AdminCollection
+  fields: 10
+  description: The product collection's details.
+  relationships:
+  - to: BaseProduct
+    cardinality: has_many
+    via: products
+  - to: AdminTranslation
+    cardinality: has_many
+    via: translations
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: AdminCustomer
+  fields: 16
+  description: The customer's details.
+  relationships:
+  - to: AdminCustomerGroup
+    cardinality: has_many
+    via: groups
+  - to: AdminCustomerAddress
+    cardinality: has_many
+    via: addresses
+  - to_hint: default_billing_address
+    cardinality: belongs_to
+    via: default_billing_address_id
+  - to_hint: default_shipping_address
+    cardinality: belongs_to
+    via: default_shipping_address_id
+- schema: AdminCustomerAddress
+  fields: 18
+  description: The customer's address.
+  relationships:
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+- schema: AdminCustomerGroup
+  fields: 6
+  description: The customer group's details.
+- schema: AdminCustomerInGroupFilters
+  fields: 11
+  description: Filters to apply on customers to retrieve their groups.
+  relationships:
+  - to_hint: default_billing_address
+    cardinality: belongs_to
+    via: default_billing_address_id
+  - to_hint: default_shipping_address
+    cardinality: belongs_to
+    via: default_shipping_address_id
+- schema: AdminDraftOrder
+  fields: 52
+  description: The draft order's details.
+  relationships:
+  - to: AdminPaymentCollection
+    cardinality: has_many
+    via: payment_collections
+  - to: AdminOrderFulfillment
+    cardinality: has_many
+    via: fulfillments
+  - to: AdminSalesChannel
+    cardinality: has_one
+    via: sales_channel
+  - to: AdminCustomer
+    cardinality: has_one
+    via: customer
+  - to: AdminOrderAddress
+    cardinality: has_one
+    via: shipping_address
+  - to: AdminOrderAddress
+    cardinality: has_one
+    via: billing_address
+  - to: AdminOrderLineItem
+    cardinality: has_many
+    via: items
+  - to: AdminOrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: BaseOrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to: AdminRegion
+    cardinality: has_one
+    via: region
+  - to: OrderCreditLine
+    cardinality: has_many
+    via: credit_lines
+  - to_hint: region
+    cardinality: belongs_to
+    via: region_id
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: sales_channel
+    cardinality: belongs_to
+    via: sales_channel_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+  - to_hint: custom_display
+    cardinality: belongs_to
+    via: custom_display_id
+- schema: AdminDraftOrderPreview
+  fields: 54
+  description: The draft order preview's details.
+  relationships:
+  - to: AdminOrderChange
+    cardinality: has_one
+    via: order_change
+  - to: AdminOrderLinePreview
+    cardinality: has_many
+    via: items
+  - to: BaseOrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: AdminOrderAddress
+    cardinality: has_one
+    via: shipping_address
+  - to: AdminOrderAddress
+    cardinality: has_one
+    via: billing_address
+  - to: AdminPaymentCollection
+    cardinality: has_many
+    via: payment_collections
+  - to: AdminOrderFulfillment
+    cardinality: has_many
+    via: fulfillments
+  - to: BaseOrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to: AdminCustomer
+    cardinality: has_one
+    via: customer
+  - to: AdminSalesChannel
+    cardinality: has_one
+    via: sales_channel
+  - to: AdminRegion
+    cardinality: has_one
+    via: region
+  - to: OrderCreditLine
+    cardinality: has_many
+    via: credit_lines
+  - to_hint: region
+    cardinality: belongs_to
+    via: region_id
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: sales_channel
+    cardinality: belongs_to
+    via: sales_channel_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+  - to_hint: custom_display
+    cardinality: belongs_to
+    via: custom_display_id
+- schema: AdminExchange
+  fields: 20
+  description: The exchange's details.
+  relationships:
+  - to: BaseExchangeItem
+    cardinality: has_many
+    via: additional_items
+  - to: AdminReturn
+    cardinality: has_one
+    via: return
+  - to: BaseOrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: BaseOrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to: BaseOrder
+    cardinality: has_one
+    via: order
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: return
+    cardinality: belongs_to
+    via: return_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+- schema: AdminFulfillment
+  fields: 17
+  description: The fulfillment's details.
+  relationships:
+  - to: AdminFulfillmentAddress
+    cardinality: has_one
+    via: delivery_address
+  - to: AdminFulfillmentItem
+    cardinality: has_many
+    via: items
+  - to: AdminFulfillmentLabel
+    cardinality: has_many
+    via: labels
+  - to_hint: location
+    cardinality: belongs_to
+    via: location_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: AdminFulfillmentAddress
+  fields: 16
+  description: An address's details.
+  relationships:
+  - to_hint: fulfillment
+    cardinality: belongs_to
+    via: fulfillment_id
+- schema: AdminFulfillmentItem
+  fields: 11
+  description: The details of a fulfillment's item.
+  relationships:
+  - to_hint: line_item
+    cardinality: belongs_to
+    via: line_item_id
+  - to_hint: inventory_item
+    cardinality: belongs_to
+    via: inventory_item_id
+  - to_hint: fulfillment
+    cardinality: belongs_to
+    via: fulfillment_id
+- schema: AdminFulfillmentLabel
+  fields: 8
+  description: The details of a fulfillmet's shipment label.
+  relationships:
+  - to_hint: fulfillment
+    cardinality: belongs_to
+    via: fulfillment_id
+- schema: AdminFulfillmentSet
+  fields: 8
+  description: The service zone's fulfillment set.
+  relationships:
+  - to: AdminServiceZone
+    cardinality: has_many
+    via: service_zones
+- schema: AdminGeoZone
+  fields: 9
+  description: The geo zone's geo zones.
+- schema: AdminGiftCard
+  fields: 14
+  description: The gift card's details.
+  relationships:
+  - to: AdminOrderLineItem
+    cardinality: has_one
+    via: line_item
+  - to: AdminCustomer
+    cardinality: has_one
+    via: customer
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: reference
+    cardinality: belongs_to
+    via: reference_id
+- schema: AdminInventoryLevel
+  fields: 12
+  description: The location level's location levels.
+  relationships:
+  - to_hint: inventory_item
+    cardinality: belongs_to
+    via: inventory_item_id
+  - to_hint: location
+    cardinality: belongs_to
+    via: location_id
+- schema: AdminInvite
+  fields: 9
+  description: The invite's details.
+  relationships:
+  - to: AdminRbacRole
+    cardinality: has_many
+    via: rbac_roles
+- schema: AdminLayoutConfiguration
+  fields: 7
+  description: The layout configuration's details.
+  relationships:
+  - to_hint: user
+    cardinality: belongs_to
+    via: user_id
+- schema: AdminNotification
+  fields: 13
+  description: The notification's details.
+  relationships:
+  - to_hint: resource
+    cardinality: belongs_to
+    via: resource_id
+  - to_hint: receiver
+    cardinality: belongs_to
+    via: receiver_id
+  - to_hint: original_notification
+    cardinality: belongs_to
+    via: original_notification_id
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: AdminOrder
+  fields: 52
+  description: The order's details.
+  relationships:
+  - to: AdminPaymentCollection
+    cardinality: has_many
+    via: payment_collections
+  - to: AdminOrderFulfillment
+    cardinality: has_many
+    via: fulfillments
+  - to: AdminSalesChannel
+    cardinality: has_one
+    via: sales_channel
+  - to: AdminCustomer
+    cardinality: has_one
+    via: customer
+  - to: AdminOrderAddress
+    cardinality: has_one
+    via: shipping_address
+  - to: AdminOrderAddress
+    cardinality: has_one
+    via: billing_address
+  - to: AdminOrderLineItem
+    cardinality: has_many
+    via: items
+  - to: AdminOrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: BaseOrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to: AdminRegion
+    cardinality: has_one
+    via: region
+  - to: OrderCreditLine
+    cardinality: has_many
+    via: credit_lines
+  - to_hint: region
+    cardinality: belongs_to
+    via: region_id
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: sales_channel
+    cardinality: belongs_to
+    via: sales_channel_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+  - to_hint: custom_display
+    cardinality: belongs_to
+    via: custom_display_id
+- schema: AdminOrderAddress
+  fields: 16
+  description: An order address.
+  relationships:
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+- schema: AdminOrderChange
+  fields: 29
+  description: The order change's details.
+  relationships:
+  - to: AdminOrder
+    cardinality: has_one
+    via: order
+  - to: AdminReturn
+    cardinality: has_one
+    via: return_order
+  - to: AdminExchange
+    cardinality: has_one
+    via: exchange
+  - to: AdminClaim
+    cardinality: has_one
+    via: claim
+  - to: AdminOrderChangeAction
+    cardinality: has_many
+    via: actions
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: return
+    cardinality: belongs_to
+    via: return_id
+  - to_hint: exchange
+    cardinality: belongs_to
+    via: exchange_id
+  - to_hint: claim
+    cardinality: belongs_to
+    via: claim_id
+- schema: AdminOrderChangeAction
+  fields: 16
+  description: The order change action's details.
+  relationships:
+  - to: AdminOrder
+    cardinality: has_one
+    via: order
+  - to_hint: order_change
+    cardinality: belongs_to
+    via: order_change_id
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: return
+    cardinality: belongs_to
+    via: return_id
+  - to_hint: claim
+    cardinality: belongs_to
+    via: claim_id
+  - to_hint: exchange
+    cardinality: belongs_to
+    via: exchange_id
+  - to_hint: reference
+    cardinality: belongs_to
+    via: reference_id
+- schema: AdminOrderFulfillment
+  fields: 15
+  description: The fulfillment's details.
+  relationships:
+  - to_hint: location
+    cardinality: belongs_to
+    via: location_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: AdminOrderLineItem
+  fields: 44
+  description: The item's details.
+  relationships:
+  - to: AdminProductVariant
+    cardinality: has_one
+    via: variant
+  - to: AdminProduct
+    cardinality: has_one
+    via: product
+  - to: BaseOrderLineItemTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: BaseOrderLineItemAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to_hint: variant
+    cardinality: belongs_to
+    via: variant_id
+  - to_hint: product
+    cardinality: belongs_to
+    via: product_id
+  - to_hint: product_type
+    cardinality: belongs_to
+    via: product_type_id
+- schema: AdminOrderLinePreview
+  fields: 46
+  relationships:
+  - to: AdminOrderChangeAction
+    cardinality: has_many
+    via: actions
+  - to: AdminProductVariant
+    cardinality: has_one
+    via: variant
+  - to: AdminProduct
+    cardinality: has_one
+    via: product
+  - to: BaseOrderLineItemTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: BaseOrderLineItemAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to: BaseOrderItemDetail
+    cardinality: has_one
+    via: detail
+  - to_hint: variant
+    cardinality: belongs_to
+    via: variant_id
+  - to_hint: product
+    cardinality: belongs_to
+    via: product_id
+  - to_hint: product_type
+    cardinality: belongs_to
+    via: product_type_id
+- schema: AdminOrderPreview
+  fields: 54
+  description: A preview of an order if a change, such as exchange, return, edit, or claim is applied
+    on it.
+  relationships:
+  - to: AdminOrderChange
+    cardinality: has_one
+    via: order_change
+  - to: AdminOrderLinePreview
+    cardinality: has_many
+    via: items
+  - to: BaseOrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: AdminOrderAddress
+    cardinality: has_one
+    via: shipping_address
+  - to: AdminOrderAddress
+    cardinality: has_one
+    via: billing_address
+  - to: AdminPaymentCollection
+    cardinality: has_many
+    via: payment_collections
+  - to: AdminOrderFulfillment
+    cardinality: has_many
+    via: fulfillments
+  - to: BaseOrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to: AdminCustomer
+    cardinality: has_one
+    via: customer
+  - to: AdminSalesChannel
+    cardinality: has_one
+    via: sales_channel
+  - to: AdminRegion
+    cardinality: has_one
+    via: region
+  - to: OrderCreditLine
+    cardinality: has_many
+    via: credit_lines
+  - to_hint: region
+    cardinality: belongs_to
+    via: region_id
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: sales_channel
+    cardinality: belongs_to
+    via: sales_channel_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+  - to_hint: custom_display
+    cardinality: belongs_to
+    via: custom_display_id
+- schema: AdminOrderShippingMethod
+  fields: 22
+  description: The shipping method's details.
+  relationships:
+  - to: BaseOrderShippingMethodTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: BaseOrderShippingMethodAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to: BaseOrderShippingDetail
+    cardinality: has_one
+    via: detail
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: AdminPayment
+  fields: 16
+  description: The payment's details.
+  relationships:
+  - to: BaseCapture
+    cardinality: has_many
+    via: captures
+  - to: AdminRefund
+    cardinality: has_many
+    via: refunds
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: AdminPaymentCollection
+  fields: 14
+  description: The payment collection's details.
+  relationships:
+  - to: AdminPayment
+    cardinality: has_many
+    via: payments
+- schema: AdminPrice
+  fields: 11
+  description: The price's details.
+  relationships:
+  - to_hint: price_set
+    cardinality: belongs_to
+    via: price_set_id
+- schema: AdminPriceList
+  fields: 13
+  description: The price list's details.
+  relationships:
+  - to: AdminPriceListPrice
+    cardinality: has_many
+    via: prices
+- schema: AdminPriceListPrice
+  fields: 13
+  description: The details of a price list's price.
+  relationships:
+  - to_hint: variant
+    cardinality: belongs_to
+    via: variant_id
+  - to_hint: price_set
+    cardinality: belongs_to
+    via: price_set_id
+- schema: AdminPricePreference
+  fields: 7
+  description: The price preference's details.
+- schema: AdminProduct
+  fields: 34
+  description: The product's details.
+  relationships:
+  - to: AdminCollection
+    cardinality: has_one
+    via: collection
+  - to: AdminProductCategory
+    cardinality: has_many
+    via: categories
+  - to: AdminSalesChannel
+    cardinality: has_many
+    via: sales_channels
+  - to: AdminProductVariant
+    cardinality: has_many
+    via: variants
+  - to: AdminProductType
+    cardinality: has_one
+    via: type
+  - to: AdminProductTag
+    cardinality: has_many
+    via: tags
+  - to: AdminProductOption
+    cardinality: has_many
+    via: options
+  - to: AdminProductImage
+    cardinality: has_many
+    via: images
+  - to: AdminShippingProfile
+    cardinality: has_one
+    via: shipping_profile
+  - to: AdminTranslation
+    cardinality: has_many
+    via: translations
+  - to_hint: collection
+    cardinality: belongs_to
+    via: collection_id
+  - to_hint: type
+    cardinality: belongs_to
+    via: type_id
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: AdminProductCategory
+  fields: 15
+  description: The product category's details.
+  relationships:
+  - to_hint: parent_category
+    cardinality: belongs_to
+    via: parent_category_id
+- schema: AdminProductImage
+  fields: 9
+  description: The image's details.
+- schema: AdminProductOption
+  fields: 9
+  description: The product option's details.
+- schema: AdminProductOptionValue
+  fields: 9
+  description: The product option value's details.
+  relationships:
+  - to: AdminProductOption
+    cardinality: has_one
+    via: option
+  - to_hint: option
+    cardinality: belongs_to
+    via: option_id
+- schema: AdminProductTag
+  fields: 8
+  description: The product tag's details.
+  relationships:
+  - to: AdminTranslation
+    cardinality: has_many
+    via: translations
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: AdminProductType
+  fields: 8
+  description: The product type's details.
+  relationships:
+  - to: AdminTranslation
+    cardinality: has_many
+    via: translations
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: AdminProductVariant
+  fields: 31
+  description: The product variant's details.
+  relationships:
+  - to: AdminPrice
+    cardinality: has_many
+    via: prices
+  - to: AdminProductOptionValue
+    cardinality: has_many
+    via: options
+  - to: BaseProductImage
+    cardinality: has_many
+    via: images
+  - to: AdminTranslation
+    cardinality: has_many
+    via: translations
+  - to_hint: product
+    cardinality: belongs_to
+    via: product_id
+- schema: AdminPromotion
+  fields: 15
+  description: The promotion's details.
+  relationships:
+  - to: AdminCampaign
+    cardinality: has_one
+    via: campaign
+  - to_hint: campaign
+    cardinality: belongs_to
+    via: campaign_id
+- schema: AdminPropertyLabel
+  fields: 7
+  description: The property label's details.
+- schema: AdminRbacPolicy
+  fields: 11
+  description: The details of an RBAC policy.
+  relationships:
+  - to_hint: inherited_from_role
+    cardinality: belongs_to
+    via: inherited_from_role_id
+- schema: AdminRbacRole
+  fields: 9
+  description: The details of an RBAC role.
+  relationships:
+  - to: AdminRbacPolicy
+    cardinality: has_many
+    via: policies
+  - to_hint: parent
+    cardinality: belongs_to
+    via: parent_id
+- schema: AdminRefund
+  fields: 8
+  description: The refund's details.
+  relationships:
+  - to: BasePayment
+    cardinality: has_one
+    via: payment
+  - to: BaseRefundReason
+    cardinality: has_one
+    via: refund_reason
+  - to_hint: refund_reason
+    cardinality: belongs_to
+    via: refund_reason_id
+- schema: AdminRefundReason
+  fields: 7
+  description: The refund reason's details.
+- schema: AdminRegion
+  fields: 9
+  description: The region's details.
+- schema: AdminReservation
+  fields: 13
+  description: The reservation's details.
+  relationships:
+  - to_hint: line_item
+    cardinality: belongs_to
+    via: line_item_id
+  - to_hint: location
+    cardinality: belongs_to
+    via: location_id
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+  - to_hint: inventory_item
+    cardinality: belongs_to
+    via: inventory_item_id
+- schema: AdminReturn
+  fields: 16
+  description: The return's details.
+  relationships:
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: exchange
+    cardinality: belongs_to
+    via: exchange_id
+  - to_hint: location
+    cardinality: belongs_to
+    via: location_id
+  - to_hint: claim
+    cardinality: belongs_to
+    via: claim_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+- schema: AdminReturnReason
+  fields: 7
+  description: The return reason's details.
+- schema: AdminSalesChannel
+  fields: 8
+  description: The sales channel's details.
+- schema: AdminServiceZone
+  fields: 9
+  description: The shipping option's service zone.
+  relationships:
+  - to: AdminGeoZone
+    cardinality: has_many
+    via: geo_zones
+  - to: AdminShippingOption
+    cardinality: has_many
+    via: shipping_options
+  - to_hint: fulfillment_set
+    cardinality: belongs_to
+    via: fulfillment_set_id
+- schema: AdminShippingOption
+  fields: 18
+  description: The shipping option's details.
+  relationships:
+  - to: AdminShippingOptionType
+    cardinality: has_one
+    via: type
+  - to: AdminShippingProfile
+    cardinality: has_one
+    via: shipping_profile
+  - to: AdminShippingOptionRule
+    cardinality: has_many
+    via: rules
+  - to: AdminShippingOptionPrice
+    cardinality: has_many
+    via: prices
+  - to_hint: service_zone
+    cardinality: belongs_to
+    via: service_zone_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+  - to_hint: shipping_option_type
+    cardinality: belongs_to
+    via: shipping_option_type_id
+  - to_hint: shipping_profile
+    cardinality: belongs_to
+    via: shipping_profile_id
+- schema: AdminShippingOptionPrice
+  fields: 13
+  description: The details of the shipping option's price.
+  relationships:
+  - to: AdminShippingOptionPriceRule
+    cardinality: has_many
+    via: price_rules
+  - to_hint: price_set
+    cardinality: belongs_to
+    via: price_set_id
+- schema: AdminShippingOptionPriceRule
+  fields: 9
+  description: The details of a shipping option price's rule.
+  relationships:
+  - to_hint: price
+    cardinality: belongs_to
+    via: price_id
+- schema: AdminShippingOptionRule
+  fields: 8
+  description: The shipping option rule's details.
+  relationships:
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: AdminShippingOptionType
+  fields: 8
+  description: The shipping option's details.
+  relationships:
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: AdminShippingProfile
+  fields: 7
+  description: The shipping profile's details..
+- schema: AdminStore
+  fields: 10
+  description: The store's details.
+  relationships:
+  - to: AdminStoreCurrency
+    cardinality: has_many
+    via: supported_currencies
+  - to: AdminStoreLocale
+    cardinality: has_many
+    via: supported_locales
+  - to_hint: default_sales_channel
+    cardinality: belongs_to
+    via: default_sales_channel_id
+  - to_hint: default_region
+    cardinality: belongs_to
+    via: default_region_id
+  - to_hint: default_location
+    cardinality: belongs_to
+    via: default_location_id
+- schema: AdminStoreCreditAccount
+  fields: 11
+  description: The store credit account's details.
+  relationships:
+  - to: AdminCustomer
+    cardinality: has_one
+    via: customer
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+- schema: AdminStoreCurrency
+  fields: 8
+  description: The details of a store's currency.
+  relationships:
+  - to_hint: store
+    cardinality: belongs_to
+    via: store_id
+- schema: AdminStoreLocale
+  fields: 7
+  description: The details of a store's locale.
+  relationships:
+  - to_hint: store
+    cardinality: belongs_to
+    via: store_id
+- schema: AdminTaxRate
+  fields: 14
+  description: The tax rate's details.
+  relationships:
+  - to: AdminTaxRegion
+    cardinality: has_one
+    via: tax_region
+  - to_hint: tax_region
+    cardinality: belongs_to
+    via: tax_region_id
+- schema: AdminTaxRegion
+  fields: 12
+  description: The tax region's details.
+  relationships:
+  - to_hint: parent
+    cardinality: belongs_to
+    via: parent_id
+- schema: AdminTransaction
+  fields: 11
+  description: The transaction's details.
+  relationships:
+  - to: AdminStoreCreditAccount
+    cardinality: has_one
+    via: account
+  - to_hint: account
+    cardinality: belongs_to
+    via: account_id
+  - to_hint: reference
+    cardinality: belongs_to
+    via: reference_id
+- schema: AdminTranslation
+  fields: 8
+  description: The translation's details.
+  relationships:
+  - to_hint: reference
+    cardinality: belongs_to
+    via: reference_id
+- schema: AdminTranslationSettings
+  fields: 7
+  description: The translation settings details.
+- schema: AdminUser
+  fields: 9
+  description: The user's details.
+- schema: AdminViewConfiguration
+  fields: 8
+  description: The details of a view configuration.
+  relationships:
+  - to_hint: user
+    cardinality: belongs_to
+    via: user_id
+- schema: AdminWorkflowExecution
+  fields: 9
+  description: The workflows execution's details.
+  relationships:
+  - to_hint: workflow
+    cardinality: belongs_to
+    via: workflow_id
+  - to_hint: transaction
+    cardinality: belongs_to
+    via: transaction_id
+- schema: ApiKeyResponse
+  fields: 10
+  description: The API key's details.
+- schema: BaseCapture
+  fields: 5
+  description: The details of a captured payment.
+- schema: BaseCart
+  fields: 38
+  description: The item's cart.
+  relationships:
+  - to: BaseRegion
+    cardinality: has_one
+    via: region
+  - to: BaseCartShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: BasePaymentCollection
+    cardinality: has_one
+    via: payment_collection
+  - to_hint: region
+    cardinality: belongs_to
+    via: region_id
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: sales_channel
+    cardinality: belongs_to
+    via: sales_channel_id
+- schema: BaseCartLineItem
+  fields: 43
+  description: The tax line's item.
+  relationships:
+  - to: BaseProduct
+    cardinality: has_one
+    via: product
+  - to: BaseProductVariant
+    cardinality: has_one
+    via: variant
+  - to: BaseLineItemAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to: BaseCart
+    cardinality: has_one
+    via: cart
+  - to_hint: product
+    cardinality: belongs_to
+    via: product_id
+  - to_hint: variant
+    cardinality: belongs_to
+    via: variant_id
+  - to_hint: cart
+    cardinality: belongs_to
+    via: cart_id
+- schema: BaseCartShippingMethod
+  fields: 21
+  description: A cart's shipping method.
+  relationships:
+  - to: BaseShippingMethodTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: BaseShippingMethodAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to_hint: cart
+    cardinality: belongs_to
+    via: cart_id
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: BaseClaimItem
+  fields: 11
+  description: The claim item's details.
+  relationships:
+  - to: AdminOrderLineItem
+    cardinality: has_one
+    via: item
+  - to_hint: claim
+    cardinality: belongs_to
+    via: claim_id
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+- schema: BaseCollection
+  fields: 9
+  description: The product collection's details.
+  relationships:
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: BaseExchangeItem
+  fields: 9
+  description: The item's details.
+  relationships:
+  - to: AdminOrderLineItem
+    cardinality: has_one
+    via: item
+  - to_hint: exchange
+    cardinality: belongs_to
+    via: exchange_id
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+- schema: BaseLineItemAdjustment
+  fields: 11
+  description: The adjustment's details.
+  relationships:
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+  - to_hint: cart
+    cardinality: belongs_to
+    via: cart_id
+  - to_hint: promotion
+    cardinality: belongs_to
+    via: promotion_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: BaseLineItemTaxLine
+  fields: 12
+  description: The tax line's details.
+  relationships:
+  - to: BaseCartLineItem
+    cardinality: has_one
+    via: item
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+  - to_hint: tax_rate
+    cardinality: belongs_to
+    via: tax_rate_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: BaseOrder
+  fields: 48
+  description: The order's details.
+  relationships:
+  - to: BasePaymentCollection
+    cardinality: has_many
+    via: payment_collections
+  - to: BaseOrderFulfillment
+    cardinality: has_many
+    via: fulfillments
+  - to: BaseOrderAddress
+    cardinality: has_one
+    via: shipping_address
+  - to: BaseOrderAddress
+    cardinality: has_one
+    via: billing_address
+  - to: BaseOrderLineItem
+    cardinality: has_many
+    via: items
+  - to: BaseOrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: BaseOrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to_hint: region
+    cardinality: belongs_to
+    via: region_id
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: sales_channel
+    cardinality: belongs_to
+    via: sales_channel_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+  - to_hint: custom_display
+    cardinality: belongs_to
+    via: custom_display_id
+- schema: BaseOrderAddress
+  fields: 15
+  description: An order address.
+  relationships:
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+- schema: BaseOrderFulfillment
+  fields: 15
+  description: The fulfillment's details.
+  relationships:
+  - to_hint: location
+    cardinality: belongs_to
+    via: location_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: BaseOrderItemDetail
+  fields: 14
+  description: The item's detail.
+  relationships:
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+- schema: BaseOrderLineItem
+  fields: 44
+  description: The item's items.
+  relationships:
+  - to: BaseProductVariant
+    cardinality: has_one
+    via: variant
+  - to: BaseProduct
+    cardinality: has_one
+    via: product
+  - to: BaseOrderLineItemTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: BaseOrderLineItemAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to: BaseOrderItemDetail
+    cardinality: has_one
+    via: detail
+  - to_hint: variant
+    cardinality: belongs_to
+    via: variant_id
+  - to_hint: product
+    cardinality: belongs_to
+    via: product_id
+  - to_hint: product_type
+    cardinality: belongs_to
+    via: product_type_id
+- schema: BaseOrderLineItemAdjustment
+  fields: 11
+  description: The adjustment's details.
+  relationships:
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: promotion
+    cardinality: belongs_to
+    via: promotion_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: BaseOrderLineItemTaxLine
+  fields: 12
+  description: The tax line's tax lines.
+  relationships:
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+  - to_hint: tax_rate
+    cardinality: belongs_to
+    via: tax_rate_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: BaseOrderShippingDetail
+  fields: 8
+  description: Details of changes to a shipping method.
+  relationships:
+  - to_hint: shipping_method
+    cardinality: belongs_to
+    via: shipping_method_id
+  - to_hint: claim
+    cardinality: belongs_to
+    via: claim_id
+  - to_hint: exchange
+    cardinality: belongs_to
+    via: exchange_id
+  - to_hint: return
+    cardinality: belongs_to
+    via: return_id
+- schema: BaseOrderShippingMethod
+  fields: 22
+  description: The shipping method's details.
+  relationships:
+  - to: BaseOrderShippingMethodTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: BaseOrderShippingMethodAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to: BaseOrderShippingDetail
+    cardinality: has_one
+    via: detail
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: BaseOrderShippingMethodAdjustment
+  fields: 11
+  description: The adjustment's adjustments.
+  relationships:
+  - to_hint: shipping_method
+    cardinality: belongs_to
+    via: shipping_method_id
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: promotion
+    cardinality: belongs_to
+    via: promotion_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: BaseOrderShippingMethodTaxLine
+  fields: 12
+  description: The tax line's details.
+  relationships:
+  - to_hint: shipping_method
+    cardinality: belongs_to
+    via: shipping_method_id
+  - to_hint: tax_rate
+    cardinality: belongs_to
+    via: tax_rate_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: BaseOrderTransaction
+  fields: 9
+  description: An order transaction's details.
+  relationships:
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: reference
+    cardinality: belongs_to
+    via: reference_id
+- schema: BasePayment
+  fields: 16
+  description: The payment's details.
+  relationships:
+  - to: BaseCapture
+    cardinality: has_many
+    via: captures
+  - to: BaseRefund
+    cardinality: has_many
+    via: refunds
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: BasePaymentCollection
+  fields: 14
+  description: The payment collection's details.
+  relationships:
+  - to: BasePayment
+    cardinality: has_many
+    via: payments
+- schema: BaseProduct
+  fields: 31
+  description: The product's details.
+  relationships:
+  - to: BaseCollection
+    cardinality: has_one
+    via: collection
+  - to: BaseProductCategory
+    cardinality: has_many
+    via: categories
+  - to: BaseProductType
+    cardinality: has_one
+    via: type
+  - to: BaseProductTag
+    cardinality: has_many
+    via: tags
+  - to: BaseProductOption
+    cardinality: has_many
+    via: options
+  - to: BaseProductImage
+    cardinality: has_many
+    via: images
+  - to_hint: collection
+    cardinality: belongs_to
+    via: collection_id
+  - to_hint: type
+    cardinality: belongs_to
+    via: type_id
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: BaseProductCategory
+  fields: 15
+  description: The product category's details.
+  relationships:
+  - to: AdminProductCategory
+    cardinality: has_many
+    via: category_children
+  - to: AdminProductCategory
+    cardinality: has_one
+    via: parent_category
+  - to_hint: parent_category
+    cardinality: belongs_to
+    via: parent_category_id
+- schema: BaseProductImage
+  fields: 7
+  description: The image's details.
+- schema: BaseProductOption
+  fields: 9
+  description: The product option's details.
+  relationships:
+  - to: BaseProductOptionValue
+    cardinality: has_many
+    via: values
+- schema: BaseProductOptionValue
+  fields: 9
+  description: The product option value's details.
+  relationships:
+  - to_hint: option
+    cardinality: belongs_to
+    via: option_id
+- schema: BaseProductTag
+  fields: 7
+  description: The product tag's details.
+  relationships:
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: BaseProductType
+  fields: 7
+  description: The product type's details.
+  relationships:
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: BaseProductVariant
+  fields: 28
+  description: The product variant's details.
+  relationships:
+  - to: BaseProductOptionValue
+    cardinality: has_many
+    via: options
+  - to: BaseProduct
+    cardinality: has_one
+    via: product
+  - to: BaseProductImage
+    cardinality: has_many
+    via: images
+  - to_hint: product
+    cardinality: belongs_to
+    via: product_id
+- schema: BaseRefund
+  fields: 8
+  description: The refund's details.
+  relationships:
+  - to: BaseRefundReason
+    cardinality: has_one
+    via: refund_reason
+  - to_hint: refund_reason
+    cardinality: belongs_to
+    via: refund_reason_id
+- schema: BaseRefundReason
+  fields: 7
+  description: The refund reason's details.
+- schema: BaseRegion
+  fields: 9
+  description: The region's details.
+- schema: BaseShippingMethodAdjustment
+  fields: 11
+  description: The adjustment's details.
+  relationships:
+  - to_hint: shipping_method
+    cardinality: belongs_to
+    via: shipping_method_id
+  - to_hint: cart
+    cardinality: belongs_to
+    via: cart_id
+  - to_hint: promotion
+    cardinality: belongs_to
+    via: promotion_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: BaseShippingMethodTaxLine
+  fields: 12
+  description: The tax line's details
+  relationships:
+  - to_hint: shipping_method
+    cardinality: belongs_to
+    via: shipping_method_id
+  - to_hint: tax_rate
+    cardinality: belongs_to
+    via: tax_rate_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: CustomerGroupInCustomerFilters
+  fields: 5
+  description: Filter by customer groups to get their associated customers.
+- schema: IndexInfo
+  fields: 6
+  description: The index's metadata information.
+- schema: Order
+  fields: 51
+  description: The order change's order.
+  relationships:
+  - to: OrderAddress
+    cardinality: has_one
+    via: shipping_address
+  - to: OrderAddress
+    cardinality: has_one
+    via: billing_address
+  - to: OrderLineItem
+    cardinality: has_many
+    via: items
+  - to: OrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: OrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to: OrderCreditLine
+    cardinality: has_many
+    via: credit_lines
+  - to_hint: region
+    cardinality: belongs_to
+    via: region_id
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: sales_channel
+    cardinality: belongs_to
+    via: sales_channel_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+  - to_hint: custom_display
+    cardinality: belongs_to
+    via: custom_display_id
+- schema: OrderAddress
+  fields: 15
+  description: The address's details.
+  relationships:
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+- schema: OrderChange
+  fields: 27
+  description: The order change's details.
+  relationships:
+  - to: OrderExchange
+    cardinality: has_one
+    via: exchange
+  - to: OrderClaim
+    cardinality: has_one
+    via: claim
+  - to: OrderChangeAction
+    cardinality: has_many
+    via: actions
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: return
+    cardinality: belongs_to
+    via: return_id
+  - to_hint: exchange
+    cardinality: belongs_to
+    via: exchange_id
+  - to_hint: claim
+    cardinality: belongs_to
+    via: claim_id
+- schema: OrderChangeAction
+  fields: 16
+  description: The order change action's details.
+  relationships:
+  - to: Order
+    cardinality: has_one
+    via: order
+  - to_hint: order_change
+    cardinality: belongs_to
+    via: order_change_id
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: return
+    cardinality: belongs_to
+    via: return_id
+  - to_hint: claim
+    cardinality: belongs_to
+    via: claim_id
+  - to_hint: exchange
+    cardinality: belongs_to
+    via: exchange_id
+  - to_hint: reference
+    cardinality: belongs_to
+    via: reference_id
+- schema: OrderClaim
+  fields: 21
+  description: The order change's claim.
+  relationships:
+  - to: BaseClaimItem
+    cardinality: has_many
+    via: claim_items
+  - to: BaseClaimItem
+    cardinality: has_many
+    via: additional_items
+  - to: OrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: OrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to: Order
+    cardinality: has_one
+    via: order
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: return
+    cardinality: belongs_to
+    via: return_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+- schema: OrderCreditLine
+  fields: 9
+  description: The credit line's details.
+  relationships:
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: reference
+    cardinality: belongs_to
+    via: reference_id
+- schema: OrderExchange
+  fields: 20
+  description: The order change's exchange.
+  relationships:
+  - to: BaseExchangeItem
+    cardinality: has_many
+    via: additional_items
+  - to: Return
+    cardinality: has_one
+    via: return
+  - to: OrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: OrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to: Order
+    cardinality: has_one
+    via: order
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: return
+    cardinality: belongs_to
+    via: return_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+- schema: OrderItem
+  fields: 14
+  description: The order item's detail.
+  relationships:
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+- schema: OrderLineItem
+  fields: 44
+  description: The order line item's details.
+  relationships:
+  - to: OrderLineItemTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: OrderLineItemAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to: OrderItem
+    cardinality: has_one
+    via: detail
+  - to_hint: variant
+    cardinality: belongs_to
+    via: variant_id
+  - to_hint: product
+    cardinality: belongs_to
+    via: product_id
+  - to_hint: product_type
+    cardinality: belongs_to
+    via: product_type_id
+- schema: OrderLineItemAdjustment
+  fields: 12
+  description: The line item adjustment's details.
+  relationships:
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: promotion
+    cardinality: belongs_to
+    via: promotion_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: OrderLineItemTaxLine
+  fields: 14
+  description: The line item tax line's details.
+  relationships:
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+  - to_hint: tax_rate
+    cardinality: belongs_to
+    via: tax_rate_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: OrderReturnItem
+  fields: 11
+  description: The item's items.
+  relationships:
+  - to_hint: reason
+    cardinality: belongs_to
+    via: reason_id
+  - to_hint: item
+    cardinality: belongs_to
+    via: item_id
+  - to_hint: return
+    cardinality: belongs_to
+    via: return_id
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+- schema: OrderShippingMethod
+  fields: 21
+  description: The shipping method's details.
+  relationships:
+  - to: OrderShippingMethodTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: OrderShippingMethodAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: OrderShippingMethodAdjustment
+  fields: 12
+  description: The shipping method adjustment's details.
+  relationships:
+  - to_hint: shipping_method
+    cardinality: belongs_to
+    via: shipping_method_id
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: promotion
+    cardinality: belongs_to
+    via: promotion_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: OrderShippingMethodTaxLine
+  fields: 14
+  description: The shipping method tax line's details.
+  relationships:
+  - to_hint: shipping_method
+    cardinality: belongs_to
+    via: shipping_method_id
+  - to_hint: tax_rate
+    cardinality: belongs_to
+    via: tax_rate_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+- schema: OrderTransaction
+  fields: 11
+  description: The transaction's details.
+  relationships:
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: reference
+    cardinality: belongs_to
+    via: reference_id
+- schema: Return
+  fields: 24
+  description: The return's details.
+  relationships:
+  - to: OrderReturnItem
+    cardinality: has_many
+    via: items
+  - to: OrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: OrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to: Order
+    cardinality: has_one
+    via: order
+  - to: OrderClaim
+    cardinality: has_one
+    via: claim
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: exchange
+    cardinality: belongs_to
+    via: exchange_id
+  - to_hint: claim
+    cardinality: belongs_to
+    via: claim_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+  - to_hint: location
+    cardinality: belongs_to
+    via: location_id
+- schema: StoreCart
+  fields: 39
+  description: The cart's details.
+  relationships:
+  - to: StoreRegion
+    cardinality: has_one
+    via: region
+  - to: StoreCartAddress
+    cardinality: has_one
+    via: shipping_address
+  - to: StoreCartAddress
+    cardinality: has_one
+    via: billing_address
+  - to: StoreCartLineItem
+    cardinality: has_many
+    via: items
+  - to: StoreCartShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: StorePaymentCollection
+    cardinality: has_one
+    via: payment_collection
+  - to_hint: region
+    cardinality: belongs_to
+    via: region_id
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: sales_channel
+    cardinality: belongs_to
+    via: sales_channel_id
+- schema: StoreCartAddress
+  fields: 15
+  description: The address's details.
+  relationships:
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+- schema: StoreCartLineItem
+  fields: 43
+  description: The item's details.
+  relationships:
+  - to: StoreProduct
+    cardinality: has_one
+    via: product
+  - to: StoreProductVariant
+    cardinality: has_one
+    via: variant
+  - to: BaseLineItemTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: BaseLineItemAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to_hint: product
+    cardinality: belongs_to
+    via: product_id
+  - to_hint: variant
+    cardinality: belongs_to
+    via: variant_id
+  - to_hint: cart
+    cardinality: belongs_to
+    via: cart_id
+- schema: StoreCartShippingMethod
+  fields: 21
+  description: A cart's shipping method.
+  relationships:
+  - to: BaseShippingMethodTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: BaseShippingMethodAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to_hint: cart
+    cardinality: belongs_to
+    via: cart_id
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: StoreCollection
+  fields: 9
+  description: The collection's details.
+  relationships:
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: StoreCustomer
+  fields: 13
+  description: The customer's details.
+  relationships:
+  - to: StoreCustomerAddress
+    cardinality: has_many
+    via: addresses
+  - to_hint: default_billing_address
+    cardinality: belongs_to
+    via: default_billing_address_id
+  - to_hint: default_shipping_address
+    cardinality: belongs_to
+    via: default_shipping_address_id
+- schema: StoreCustomerAddress
+  fields: 18
+  description: The customer address's details
+  relationships:
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+- schema: StoreFulfillmentAddress
+  fields: 13
+  description: The location's address details.
+- schema: StoreGiftCard
+  fields: 14
+  description: The gift card's details.
+  relationships:
+  - to: StoreCustomer
+    cardinality: has_one
+    via: customer
+  - to: StoreOrderLineItem
+    cardinality: has_one
+    via: line_item
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: reference
+    cardinality: belongs_to
+    via: reference_id
+- schema: StoreOrder
+  fields: 48
+  description: The order's details.
+  relationships:
+  - to: StoreOrderAddress
+    cardinality: has_one
+    via: shipping_address
+  - to: StoreOrderAddress
+    cardinality: has_one
+    via: billing_address
+  - to: StoreOrderLineItem
+    cardinality: has_many
+    via: items
+  - to: StoreOrderShippingMethod
+    cardinality: has_many
+    via: shipping_methods
+  - to: StorePaymentCollection
+    cardinality: has_many
+    via: payment_collections
+  - to: StoreOrderFulfillment
+    cardinality: has_many
+    via: fulfillments
+  - to: StoreCustomer
+    cardinality: has_one
+    via: customer
+  - to: BaseOrderTransaction
+    cardinality: has_many
+    via: transactions
+  - to_hint: region
+    cardinality: belongs_to
+    via: region_id
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+  - to_hint: sales_channel
+    cardinality: belongs_to
+    via: sales_channel_id
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+  - to_hint: custom_display
+    cardinality: belongs_to
+    via: custom_display_id
+- schema: StoreOrderAddress
+  fields: 16
+  description: An order address
+  relationships:
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+- schema: StoreOrderFulfillment
+  fields: 15
+  description: The fulfillment's details.
+  relationships:
+  - to_hint: location
+    cardinality: belongs_to
+    via: location_id
+  - to_hint: provider
+    cardinality: belongs_to
+    via: provider_id
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: StoreOrderLineItem
+  fields: 44
+  description: The item's details.
+  relationships:
+  - to: StoreProductVariant
+    cardinality: has_one
+    via: variant
+  - to: StoreProduct
+    cardinality: has_one
+    via: product
+  - to: BaseOrderLineItemTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: BaseOrderLineItemAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to_hint: variant
+    cardinality: belongs_to
+    via: variant_id
+  - to_hint: product
+    cardinality: belongs_to
+    via: product_id
+  - to_hint: product_type
+    cardinality: belongs_to
+    via: product_type_id
+- schema: StoreOrderShippingMethod
+  fields: 22
+  description: The shipping method's details.
+  relationships:
+  - to: BaseOrderShippingMethodTaxLine
+    cardinality: has_many
+    via: tax_lines
+  - to: BaseOrderShippingMethodAdjustment
+    cardinality: has_many
+    via: adjustments
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: StorePaymentCollection
+  fields: 14
+  description: The payment collection's details.
+  relationships:
+  - to: BasePayment
+    cardinality: has_many
+    via: payments
+- schema: StoreProduct
+  fields: 31
+  description: The product's details.
+  relationships:
+  - to: StoreProductType
+    cardinality: has_one
+    via: type
+  - to: StoreProductOption
+    cardinality: has_many
+    via: options
+  - to: StoreProductVariant
+    cardinality: has_many
+    via: variants
+  - to: StoreCollection
+    cardinality: has_one
+    via: collection
+  - to: StoreProductTag
+    cardinality: has_many
+    via: tags
+  - to: StoreProductImage
+    cardinality: has_many
+    via: images
+  - to_hint: collection
+    cardinality: belongs_to
+    via: collection_id
+  - to_hint: type
+    cardinality: belongs_to
+    via: type_id
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: StoreProductCategory
+  fields: 13
+  description: The category's details.
+  relationships:
+  - to: StoreProduct
+    cardinality: has_many
+    via: products
+  - to_hint: parent_category
+    cardinality: belongs_to
+    via: parent_category_id
+- schema: StoreProductImage
+  fields: 7
+  description: The image's details.
+- schema: StoreProductOption
+  fields: 10
+  description: The product option's details.
+  relationships:
+  - to: StoreProductOptionValue
+    cardinality: has_many
+    via: values
+  - to: BaseProduct
+    cardinality: has_many
+    via: products
+- schema: StoreProductOptionValue
+  fields: 9
+  description: The product option value's details.
+  relationships:
+  - to_hint: option
+    cardinality: belongs_to
+    via: option_id
+- schema: StoreProductTag
+  fields: 7
+  description: The tag's details.
+  relationships:
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: StoreProductType
+  fields: 7
+  description: The product type's details.
+  relationships:
+  - to_hint: external
+    cardinality: belongs_to
+    via: external_id
+- schema: StoreProductVariant
+  fields: 28
+  description: The variant's details.
+  relationships:
+  - to: StoreProductOptionValue
+    cardinality: has_many
+    via: options
+  - to: BaseProductImage
+    cardinality: has_many
+    via: images
+  - to_hint: product
+    cardinality: belongs_to
+    via: product_id
+- schema: StoreRegion
+  fields: 9
+  description: The region's details.
+- schema: StoreReturn
+  fields: 14
+  description: The return's details.
+  relationships:
+  - to_hint: display
+    cardinality: belongs_to
+    via: display_id
+  - to_hint: order
+    cardinality: belongs_to
+    via: order_id
+  - to_hint: location
+    cardinality: belongs_to
+    via: location_id
+  - to_hint: exchange
+    cardinality: belongs_to
+    via: exchange_id
+  - to_hint: claim
+    cardinality: belongs_to
+    via: claim_id
+- schema: StoreReturnReason
+  fields: 7
+  description: The return reason's details.
+- schema: StoreShippingOptionType
+  fields: 8
+  description: The shipping option type's details.
+  relationships:
+  - to_hint: shipping_option
+    cardinality: belongs_to
+    via: shipping_option_id
+- schema: StoreStoreCreditAccount
+  fields: 11
+  description: The store credit account's details.
+  relationships:
+  - to: StoreCustomer
+    cardinality: has_one
+    via: customer
+  - to_hint: customer
+    cardinality: belongs_to
+    via: customer_id
+id_conventions:
+  format: Prefixed, underscore-separated string identifiers on every entity (the `id` field).
+  note: Medusa does not publish a table of id prefixes in its API reference; prefixes are visible in example
+    values throughout the docs (e.g. prod_, variant_, cart_, order_, cus_, reg_, sc_).
+soft_delete:
+  supported: true
+  note: Most entities carry deleted_at; list operations accept with_deleted. See conventions/medusa-conventions.yml.

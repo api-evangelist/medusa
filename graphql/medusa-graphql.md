@@ -4,7 +4,7 @@ Medusa is an open-source headless commerce platform with a modular architecture 
 
 - **Docs**: https://docs.medusajs.com
 - **Store API Reference**: https://docs.medusajs.com/api/store
-- **Base URL**: `https://your-medusa-instance.com/store/graphql`
+- **Base URL**: `https://{medusa-backend-domain}/store/graphql`
 - **GitHub**: https://github.com/medusajs/medusa
 - **License**: MIT
 

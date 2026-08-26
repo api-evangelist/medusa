@@ -1,0 +1,493 @@
+generated: '2026-08-26'
+method: searched
+source: https://docs.medusajs.com/resources/references/events (fetched as markdown 2026-08-26) and https://docs.medusajs.com/learn/fundamentals/events-and-subscribers
+spec_format: null
+description: 'Medusa publishes a complete, per-event reference for its event surface — every event name,
+  what emits it, and the exact payload fields — and this file is that catalog captured verbatim. Read
+  the shape carefully, because it is not the shape most commerce platforms have. These are NOT outbound
+  HTTP webhooks. Medusa emits them onto an internal event bus (in-memory locally, Redis in production)
+  and a SUBSCRIBER — a TypeScript file in the merchant''s own Medusa project — handles them. Medusa''s
+  own documentation makes the analogy explicitly: ''You can think of Medusa''s events like you''d think
+  about webhooks in other commerce platforms, but instead of having to expose an endpoint, you write a
+  subscriber.'' The integration burden is therefore inverted: there is no endpoint to register and no
+  signature to verify, but there is also no way for an external system to subscribe without code running
+  inside the Medusa application. A merchant who wants true outbound webhooks writes a subscriber that
+  makes the HTTP call.'
+surface_type: internal event bus consumed by in-application subscribers
+asyncapi_spec:
+  published: false
+  note: 'Medusa publishes no AsyncAPI document. The catalog below was NOT converted into one: an AsyncAPI
+    spec asserts a transport and a channel binding that Medusa does not define, and manufacturing one
+    would claim a contract the provider has not written. The event names and payload fields here are copied
+    from Medusa''s reference page and nothing more.'
+transport:
+  event_bus_modules:
+  - name: '@medusajs/event-bus-local'
+    version: 2.19.0
+    use: development — in-memory, single process
+  - name: '@medusajs/event-bus-redis'
+    version: 2.19.0
+    use: production — Redis-backed, works across server and worker instances
+  consumer: A subscriber file exported from src/subscribers/ in the Medusa application.
+  docs: https://docs.medusajs.com/learn/fundamentals/events-and-subscribers
+  features:
+  - event priority
+  - custom event emission via the event bus service
+  - scheduled jobs as a sibling mechanism
+outbound_webhooks:
+  native: false
+  note: 'Medusa ships no webhook registration API, no delivery/retry log, and no signing secret. Two adjacent
+    capabilities exist and should not be confused with it: the Notification module delivers customer-facing
+    messages (email, SMS) through a provider, and API routes can PRESERVE a raw request body (req.rawBody)
+    so a merchant can RECEIVE and verify inbound webhooks from third parties such as a payment provider.'
+  inbound_raw_body_docs: https://docs.medusajs.com/learn/fundamentals/api-routes/parse-body
+event_count: 83
+category_count: 24
+categories:
+- category: Auth
+  event_count: 5
+  events:
+  - name: auth.mfa_enabled
+    description: Emitted when an MFA factor is enabled for an auth identity.
+    payload:
+    - auth_identity_id
+    - mfa_id
+    - provider
+  - name: auth.mfa_disabled
+    description: Emitted when an MFA factor is disabled for an auth identity.
+    payload:
+    - auth_identity_id
+    - mfa_id
+    - provider
+  - name: auth.mfa_recovery_codes_generated
+    description: Emitted when recovery codes are generated for an auth identity.
+    payload:
+    - auth_identity_id
+    - count
+  - name: auth.password_reset
+    description: Emitted when a reset password token is generated. You can listen to this event to send
+      a reset password email to the user or customer, for example.
+    payload:
+    - entity_id
+    - actor_type
+    - token
+    - metadata
+  - name: auth.verification_requested
+    description: 'Emitted when a verification code is generated. You can listen to this event and decide
+      how to deliver the code to the user or customer. The payload changed in v2.17.0: `actor_type` and
+      `provider_identity_id` were removed, `provider` was renamed to `code_provider`, and `entity_type`
+      was added. Subscribers written before v2.17.0 must be updated to use the payload below.'
+    payload:
+    - entity_id
+    - entity_type
+    - code_provider
+    - auth_identity_id
+    - code
+    - expires_at
+    - metadata
+- category: Cart
+  event_count: 4
+  events:
+  - name: cart.created
+    description: Emitted when a cart is created.
+    payload:
+    - id
+  - name: cart.updated
+    description: Emitted when a cart's details are updated.
+    payload:
+    - id
+  - name: cart.region_updated
+    description: Emitted when the cart's region is updated. This event is emitted alongside the `cart.updated`
+      event.
+    payload:
+    - id
+  - name: cart.customer_transferred
+    description: Emitted when the customer in the cart is transferred.
+    payload:
+    - id
+    - customer_id
+- category: Customer
+  event_count: 3
+  events:
+  - name: customer.created
+    description: Emitted when a customer is created.
+    payload:
+    - id
+  - name: customer.updated
+    description: Emitted when a customer is updated.
+    payload:
+    - id
+  - name: customer.deleted
+    description: Emitted when a customer is deleted.
+    payload:
+    - id
+- category: Fulfillment
+  event_count: 2
+  events:
+  - name: shipment.created
+    description: Emitted when a shipment is created for an order.
+    payload:
+    - id
+    - no_notification
+  - name: delivery.created
+    description: Emitted when a fulfillment is marked as delivered.
+    payload:
+    - id
+- category: Inventory Item
+  event_count: 3
+  events:
+  - name: inventory-item.created
+    description: Emitted when inventory items are created.
+    payload:
+    - id
+  - name: inventory-item.updated
+    description: Emitted when inventory items are updated.
+    payload:
+    - id
+  - name: inventory-item.deleted
+    description: Emitted when inventory items are deleted.
+    payload:
+    - id
+- category: Inventory Level
+  event_count: 3
+  events:
+  - name: inventory-level.created
+    description: Emitted when inventory levels are created.
+    payload:
+    - id
+  - name: inventory-level.updated
+    description: Emitted when inventory levels are updated. This includes adjustments to the stocked or
+      reserved quantity, such as during order fulfillment.
+    payload:
+    - id
+    - order_id
+  - name: inventory-level.deleted
+    description: Emitted when inventory levels are deleted.
+    payload:
+    - id
+- category: Invite
+  event_count: 4
+  events:
+  - name: invite.accepted
+    description: Emitted when an invite is accepted.
+    payload:
+    - id
+  - name: invite.created
+    description: Emitted when invites are created. You can listen to this event to send an email to the
+      invited users, for example.
+    payload:
+    - id
+  - name: invite.deleted
+    description: Emitted when invites are deleted.
+    payload:
+    - id
+  - name: invite.resent
+    description: Emitted when invites should be resent because their token was refreshed. You can listen
+      to this event to send an email to the invited users, for example.
+    payload:
+    - id
+- category: Order
+  event_count: 12
+  events:
+  - name: order.updated
+    description: Emitted when the details of an order or draft order is updated. This doesn't include
+      updates made by an edit.
+    payload:
+    - id
+  - name: order.placed
+    description: Emitted when an order is placed, or when a draft order is converted to an order.
+    payload:
+    - id
+  - name: order.canceled
+    description: Emitted when an order is canceld.
+    payload:
+    - id
+  - name: order.completed
+    description: Emitted when orders are completed.
+    payload:
+    - id
+  - name: order.archived
+    description: Emitted when an order is archived.
+    payload:
+    - id
+  - name: order.fulfillment_created
+    description: Emitted when a fulfillment is created for an order.
+    payload:
+    - order_id
+    - fulfillment_id
+    - no_notification
+  - name: order.fulfillment_canceled
+    description: Emitted when an order's fulfillment is canceled.
+    payload:
+    - order_id
+    - fulfillment_id
+    - no_notification
+  - name: order.return_requested
+    description: Emitted when a return request is confirmed.
+    payload:
+    - order_id
+    - return_id
+  - name: order.return_received
+    description: Emitted when a return is marked as received.
+    payload:
+    - order_id
+    - return_id
+  - name: order.claim_created
+    description: Emitted when a claim is created for an order.
+    payload:
+    - order_id
+    - claim_id
+  - name: order.exchange_created
+    description: Emitted when an exchange is created for an order.
+    payload:
+    - order_id
+    - exchange_id
+  - name: order.transfer_requested
+    description: Emitted when an order is requested to be transferred to another customer.
+    payload:
+    - id
+    - order_change_id
+- category: Order Edit
+  event_count: 3
+  events:
+  - name: order-edit.requested
+    description: Emitted when an order edit is requested.
+    payload:
+    - order_id
+    - actions
+    - no_notification
+  - name: order-edit.confirmed
+    description: Emitted when an order edit request is confirmed.
+    payload:
+    - order_id
+    - actions
+    - no_notification
+  - name: order-edit.canceled
+    description: Emitted when an order edit request is canceled.
+    payload:
+    - order_id
+    - actions
+- category: Payment
+  event_count: 2
+  events:
+  - name: payment.captured
+    description: Emitted when a payment is captured.
+    payload:
+    - id
+  - name: payment.refunded
+    description: Emitted when a payment is refunded.
+    payload:
+    - id
+- category: Product
+  event_count: 3
+  events:
+  - name: product.updated
+    description: Emitted when products are updated.
+    payload:
+    - id
+  - name: product.created
+    description: Emitted when products are created.
+    payload:
+    - id
+  - name: product.deleted
+    description: Emitted when products are deleted.
+    payload:
+    - id
+- category: Product Category
+  event_count: 3
+  events:
+  - name: product-category.created
+    description: Emitted when product categories are created.
+    payload:
+    - id
+  - name: product-category.updated
+    description: Emitted when product categories are updated.
+    payload:
+    - id
+  - name: product-category.deleted
+    description: Emitted when product categories are deleted.
+    payload:
+    - id
+- category: Product Collection
+  event_count: 3
+  events:
+  - name: product-collection.created
+    description: Emitted when product collections are created.
+    payload:
+    - id
+  - name: product-collection.updated
+    description: Emitted when product collections are updated.
+    payload:
+    - id
+  - name: product-collection.deleted
+    description: Emitted when product collections are deleted.
+    payload:
+    - id
+- category: Product Option
+  event_count: 3
+  events:
+  - name: product-option.updated
+    description: Emitted when product options are updated.
+    payload:
+    - id
+  - name: product-option.created
+    description: Emitted when product options are created.
+    payload:
+    - id
+  - name: product-option.deleted
+    description: Emitted when product options are deleted.
+    payload:
+    - id
+- category: Product Tag
+  event_count: 3
+  events:
+  - name: product-tag.updated
+    description: Emitted when product tags are updated.
+    payload:
+    - id
+  - name: product-tag.created
+    description: Emitted when product tags are created.
+    payload:
+    - id
+  - name: product-tag.deleted
+    description: Emitted when product tags are deleted.
+    payload:
+    - id
+- category: Product Type
+  event_count: 3
+  events:
+  - name: product-type.updated
+    description: Emitted when product types are updated.
+    payload:
+    - id
+  - name: product-type.created
+    description: Emitted when product types are created.
+    payload:
+    - id
+  - name: product-type.deleted
+    description: Emitted when product types are deleted.
+    payload:
+    - id
+- category: Product Variant
+  event_count: 3
+  events:
+  - name: product-variant.updated
+    description: Emitted when product variants are updated.
+    payload:
+    - id
+  - name: product-variant.created
+    description: Emitted when product variants are created.
+    payload:
+    - id
+  - name: product-variant.deleted
+    description: Emitted when product variants are deleted.
+    payload:
+    - id
+- category: Region
+  event_count: 3
+  events:
+  - name: region.updated
+    description: Emitted when regions are updated.
+    payload:
+    - id
+  - name: region.created
+    description: Emitted when regions are created.
+    payload:
+    - id
+  - name: region.deleted
+    description: Emitted when regions are deleted.
+    payload:
+    - id
+- category: Reservation Item
+  event_count: 3
+  events:
+  - name: reservation-item.created
+    description: Emitted when reservations are created.
+    payload:
+    - id
+    - order_id
+  - name: reservation-item.updated
+    description: Emitted when reservations are updated.
+    payload:
+    - id
+    - order_id
+  - name: reservation-item.deleted
+    description: Emitted when reservations are deleted.
+    payload:
+    - id
+    - order_id
+- category: Sales Channel
+  event_count: 3
+  events:
+  - name: sales-channel.created
+    description: Emitted when sales channels are created.
+    payload:
+    - id
+  - name: sales-channel.updated
+    description: Emitted when sales channels are updated.
+    payload:
+    - id
+  - name: sales-channel.deleted
+    description: Emitted when sales channels are deleted.
+    payload:
+    - id
+- category: Shipping Option
+  event_count: 3
+  events:
+  - name: shipping-option.created
+    description: Emitted when shipping options are created.
+    payload:
+    - id
+  - name: shipping-option.updated
+    description: Emitted when shipping options are updated.
+    payload:
+    - id
+  - name: shipping-option.deleted
+    description: Emitted when shipping options are deleted.
+    payload:
+    - id
+- category: Shipping Option Type
+  event_count: 3
+  events:
+  - name: shipping-option-type.updated
+    description: Emitted when shipping option types are updated.
+    payload:
+    - id
+  - name: shipping-option-type.created
+    description: Emitted when shipping option types are created.
+    payload:
+    - id
+  - name: shipping-option-type.deleted
+    description: Emitted when shipping option types are deleted.
+    payload:
+    - id
+- category: Translation
+  event_count: 3
+  events:
+  - name: translation.created
+    description: Emitted when translations are created.
+    payload:
+    - id
+  - name: translation.updated
+    description: Emitted when translations are updated.
+    payload:
+    - id
+  - name: translation.deleted
+    description: Emitted when translations are deleted.
+    payload:
+    - id
+- category: User
+  event_count: 3
+  events:
+  - name: user.created
+    description: Emitted when users are created.
+    payload:
+    - id
+  - name: user.updated
+    description: Emitted when users are updated.
+    payload:
+    - id
+  - name: user.deleted
+    description: Emitted when users are deleted.
+    payload:
+    - id

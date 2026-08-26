@@ -1,0 +1,194 @@
+generated: '2026-08-26'
+method: searched
+source: https://github.com/medusajs/medusa-agent-skills (branch main, last commit 2026-08-14) — documented
+  at https://docs.medusajs.com/learn/introduction/build-with-llms-ai/agentic-skills
+description: 'Medusa publishes its own Agent Skills. Nothing in this directory was authored by API Evangelist:
+  every SKILL.md below is saved verbatim from Medusa''s public medusa-agent-skills repository, which ships
+  four Claude Code plugins (medusa-dev, learn-medusa, ecommerce-storefront, medusa-cloud) through a marketplace
+  manifest at .claude-plugin/marketplace.json, marketplace version 1.0.15. The same skills are installable
+  outside Claude Code with `npx skills add medusajs/medusa-agent-skills`. Two of the plugins also bundle
+  a .mcp.json that wires the Medusa remote MCP server (https://docs.medusajs.com/mcp) into the agent alongside
+  the skills.'
+install:
+  claude_code_marketplace: /plugin marketplace add medusajs/medusa-agent-skills
+  claude_code_install:
+  - /plugin install medusa-dev@medusa
+  - /plugin install learn-medusa@medusa
+  - /plugin install ecommerce-storefront@medusa
+  - /plugin install medusa-cloud@medusa
+  other_agents: npx skills add medusajs/medusa-agent-skills
+plugins:
+- name: medusa-dev
+  version: 1.0.12
+  description: 'Comprehensive skills for building Medusa applications: backend (modules, workflows, API
+    routes), admin UI (widgets, forms, tables), and storefronts (SDK integration, React Query).'
+  bundles_mcp: https://docs.medusajs.com/mcp
+  commands:
+  - command: /medusa-dev:db-migrate
+    description: Run database migrations for the Medusa project.
+  - command: /medusa-dev:db-generate <module-name>
+    description: Generate migrations for a custom module.
+  - command: /medusa-dev:new-user <email> <password>
+    description: Create an admin user with the specified email and password.
+- name: learn-medusa
+  version: 1.0.9
+  description: Interactive guided tutorial for learning Medusa development. Teaches you to build custom
+    features step-by-step with a brands example.
+  bundles_mcp: https://docs.medusajs.com/mcp
+- name: ecommerce-storefront
+  version: 1.0.10
+  description: Comprehensive skills for building ecommerce storefronts with best practices for UI/UX,
+    SEO, and mobile responsiveness. Platform-agnostic — not Medusa-specific.
+- name: medusa-cloud
+  version: 1.2.0
+  description: 'Skills for managing Medusa Cloud resources through the Cloud CLI (mcloud): setup, deployments,
+    debugging, local build reproduction, variables, environments, organizations, projects, logs and authentication.'
+skills:
+- file: medusa-ecommerce-storefront-storefront-best-practices.md
+  name: storefront-best-practices
+  description: ALWAYS use this skill when working on ecommerce storefronts, online stores, shopping sites.
+    Use for ANY storefront component including checkout pages, cart, payment flows, product pages, product
+    listings, navigation, homepage, or ANY page/component in a storefront. CRITICAL for adding checkout,
+    implementing cart, integrating Medusa backend, or building any ecommerce functionality. Framework-agnostic
+    (Next.js, SvelteKit, TanStack Start, React, Vue). Provides patterns, decision frameworks, backend
+    integration guidance.
+  bytes: 22292
+  plugin: ecommerce-storefront
+  skill: storefront-best-practices
+- file: medusa-learn-medusa-learning-medusa.md
+  name: learning-medusa
+  description: Load automatically when user asks to learn Medusa development (e.g., "teach me how to build
+    with medusa", "guide me through medusa", "I want to learn medusa"). Interactive guided tutorial where
+    Claude acts as a coding bootcamp instructor, teaching step-by-step with checkpoints and verification.
+  bytes: 16538
+  plugin: learn-medusa
+  skill: learning-medusa
+- file: medusa-medusa-cloud-mcloud-auth.md
+  name: null
+  description: null
+  bytes: 4226
+  plugin: medusa-cloud
+  skill: mcloud-auth
+- file: medusa-medusa-cloud-mcloud-deployments.md
+  name: mcloud-deployments
+  description: Execute mcloud deployments commands to list deployments, retrieve deployment details, and
+    fetch build logs. Use when listing deployments, checking deployment status, or reading build output
+    for debugging build failures.
+  bytes: 3531
+  plugin: medusa-cloud
+  skill: mcloud-deployments
+- file: medusa-medusa-cloud-mcloud-environments.md
+  name: mcloud-environments
+  description: Execute mcloud environments commands to list, get, create, delete, redeploy, or trigger
+    builds for Cloud environments. Use when managing environment lifecycle, redeploying after variable
+    changes, or starting new builds from source.
+  bytes: 4675
+  plugin: medusa-cloud
+  skill: mcloud-environments
+- file: medusa-medusa-cloud-mcloud-local.md
+  name: mcloud-local
+  description: Execute mcloud local build to reproduce a Cloud build on the local machine. Use when debugging
+    a build-failed deployment without pushing to the tracked branch, iterating on a build fix, or testing
+    build-variable changes locally. Requires Docker and must run inside the project's Git repo.
+  bytes: 4010
+  plugin: medusa-cloud
+  skill: mcloud-local
+- file: medusa-medusa-cloud-mcloud-logs.md
+  name: mcloud-logs
+  description: Execute mcloud logs to fetch and stream runtime logs for Cloud environments. Use when reading
+    backend or storefront logs, filtering by time range, searching for errors, or scoping logs to a specific
+    deployment.
+  bytes: 3244
+  plugin: medusa-cloud
+  skill: mcloud-logs
+- file: medusa-medusa-cloud-mcloud-organizations.md
+  name: mcloud-organizations
+  description: Execute mcloud organizations commands to list or get Cloud organizations. Use when discovering
+    organizations, resolving organization IDs by name, or retrieving organization details including members
+    and subscription.
+  bytes: 2452
+  plugin: medusa-cloud
+  skill: mcloud-organizations
+- file: medusa-medusa-cloud-mcloud-projects.md
+  name: mcloud-projects
+  description: Execute mcloud projects commands to list, get, or delete Cloud projects. Use when discovering
+    projects, resolving project handles by name, or retrieving project details including linked environments.
+  bytes: 3296
+  plugin: medusa-cloud
+  skill: mcloud-projects
+- file: medusa-medusa-cloud-mcloud-variables.md
+  name: mcloud-variables
+  description: Execute mcloud variables commands to list, get, set, and delete environment variables for
+    a Cloud environment. Use when inspecting, reading, creating, updating, deleting, or exporting environment
+    variables. Never pass --reveal unless the user explicitly requests secret values.
+  bytes: 6911
+  plugin: medusa-cloud
+  skill: mcloud-variables
+- file: medusa-medusa-cloud-using-medusa-cloud.md
+  name: using-medusa-cloud
+  description: Manages Medusa Cloud resources through the Cloud CLI (mcloud). Use when deploying, debugging
+    deployments, managing environments, environment variables, or any Medusa Cloud operation. CRITICAL
+    for mcloud commands, deployment failures, build logs, Cloud setup, and CI/CD workflows.
+  bytes: 4414
+  plugin: medusa-cloud
+  skill: using-medusa-cloud
+- file: medusa-medusa-dev-building-admin-dashboard-customizations.md
+  name: building-admin-dashboard-customizations
+  description: Load automatically when planning, researching, or implementing Medusa Admin dashboard UI
+    (widgets, custom pages, forms, tables, data loading, navigation). REQUIRED for all admin UI work in
+    ALL modes (planning, implementation, exploration). Contains design patterns, component usage, and
+    data loading patterns that MCP servers don't provide.
+  bytes: 19974
+  plugin: medusa-dev
+  skill: building-admin-dashboard-customizations
+- file: medusa-medusa-dev-building-storefronts.md
+  name: building-storefronts
+  description: Load automatically when planning, researching, or implementing Medusa storefront features
+    (calling custom API routes, SDK integration, React Query patterns, data fetching). REQUIRED for all
+    storefront development in ALL modes (planning, implementation, exploration). Contains SDK usage patterns,
+    frontend integration, and critical rules for calling Medusa APIs.
+  bytes: 7192
+  plugin: medusa-dev
+  skill: building-storefronts
+- file: medusa-medusa-dev-building-with-medusa.md
+  name: building-with-medusa
+  description: Load automatically when planning, researching, or implementing ANY Medusa backend features
+    (custom modules, API routes, workflows, data models, module links, business logic). REQUIRED for all
+    Medusa backend work in ALL modes (planning, implementation, exploration). Contains architectural patterns,
+    best practices, and critical rules that MCP servers don't provide.
+  bytes: 16491
+  plugin: medusa-dev
+  skill: building-with-medusa
+- file: medusa-medusa-dev-creating-internal-agents.md
+  name: creating-agents-in-medusa
+  description: 'Use when building an internal admin-facing AI agent in a Medusa project. These agents
+    are operated by merchants and store operators — not customers. Covers data models, module service,
+    agent runtime (tools, system prompt, streamText), streaming API routes (NDJSON), and admin UI chat
+    extensions. Load for any internal agent type: store operations assistant, product audit, cohort analysis,
+    customer service tooling for support staff, etc. Do NOT use for customer-facing agents (storefront
+    chatbots, buyer-side assistants).'
+  bytes: 7464
+  plugin: medusa-dev
+  skill: creating-internal-agents
+- file: medusa-medusa-dev-db-generate.md
+  name: db-generate
+  description: Generate database migrations for a Medusa module
+  bytes: 768
+  plugin: medusa-dev
+  skill: db-generate
+- file: medusa-medusa-dev-db-migrate.md
+  name: db-migrate
+  description: Run database migrations in Medusa
+  bytes: 411
+  plugin: medusa-dev
+  skill: db-migrate
+- file: medusa-medusa-dev-new-user.md
+  name: new-user
+  description: Create an admin user in Medusa
+  bytes: 793
+  plugin: medusa-dev
+  skill: new-user
+note: 'These skills teach an agent to BUILD and OPERATE a Medusa project — they are grounded in the Medusa
+  framework and the mcloud CLI, not in Store/Admin API operationIds. No API-Evangelist-generated skills
+  were added: the provider already publishes a richer set than this pipeline would generate, and a generated
+  skill would be strictly weaker than a searched one.'
