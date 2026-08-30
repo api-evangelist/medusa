@@ -90,6 +90,11 @@ apis:
   - MCP
   - Agentic Commerce
   - Documentation
+  - Artificial Intelligence
+  tags_raw:
+  - MCP
+  - Agentic Commerce
+  - Documentation
   - AI
   humanURL: https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server
   baseURL: https://docs.medusajs.com/mcp
@@ -114,6 +119,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - APIKeys
+  tags_raw:
   - Api Keys
   properties:
   - type: OpenAPI
@@ -142,6 +149,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - Authentication
+  tags_raw:
   - Auth
   properties:
   - type: OpenAPI
@@ -238,6 +247,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - Cart
+  tags_raw:
   - Carts
   properties:
   - type: OpenAPI
@@ -303,6 +314,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - Collection
+  tags_raw:
   - Collections
   properties:
   - type: OpenAPI
@@ -336,6 +349,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - Currency
+  tags_raw:
   - Currencies
   properties:
   - type: OpenAPI
@@ -902,6 +917,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - Notification
+  tags_raw:
   - Notifications
   properties:
   - type: OpenAPI
@@ -1007,6 +1024,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - Order
+  tags_raw:
   - Orders
   properties:
   - type: OpenAPI
@@ -1436,6 +1455,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - Product
+  tags_raw:
   - Products
   properties:
   - type: OpenAPI
@@ -2166,6 +2187,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
