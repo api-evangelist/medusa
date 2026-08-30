@@ -1,0 +1,2623 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Inventory Items API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'An inventory item is a stock-kept product whose inventory is managed.
+
+
+    These API routes allow admin users to manage inventory items.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Inventory Items
+  description: 'An inventory item is a stock-kept product whose inventory is managed.
+
+
+    These API routes allow admin users to manage inventory items.
+
+    '
+  externalDocs:
+    description: Learn more about inventory items.
+    url: https://docs.medusajs.com/resources/commerce-modules/inventory/concepts
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminInventoryItem'
+paths:
+  /admin/inventory-items:
+    get:
+      operationId: GetInventoryItems
+      summary: List Inventory Items
+      description: Retrieve a list of inventory items. The inventory items can be filtered by fields such as `id`. The inventory items can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: q
+        in: query
+        description: The inventory item's q.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: The inventory item's q.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: The inventory item's ID.
+          - type: array
+            description: The inventory item's ID.
+            items:
+              type: string
+              title: id
+              description: The id's ID.
+      - name: sku
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: sku
+            description: The inventory item's sku.
+          - type: array
+            description: The inventory item's sku.
+            items:
+              type: string
+              title: sku
+              description: The sku's details.
+      - name: origin_country
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: origin_country
+            description: The inventory item's origin country.
+          - type: array
+            description: The inventory item's origin country.
+            items:
+              type: string
+              title: origin_country
+              description: The origin country's details.
+      - name: mid_code
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: mid_code
+            description: The inventory item's mid code.
+          - type: array
+            description: The inventory item's mid code.
+            items:
+              type: string
+              title: mid_code
+              description: The mid code's details.
+      - name: hs_code
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: hs_code
+            description: The inventory item's hs code.
+          - type: array
+            description: The inventory item's hs code.
+            items:
+              type: string
+              title: hs_code
+              description: The hs code's details.
+      - name: material
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: material
+            description: The inventory item's material.
+          - type: array
+            description: The inventory item's material.
+            items:
+              type: string
+              title: material
+              description: The material's details.
+      - name: requires_shipping
+        in: query
+        description: The inventory item's requires shipping.
+        required: false
+        schema:
+          type: boolean
+          title: requires_shipping
+          description: The inventory item's requires shipping.
+      - name: weight
+        in: query
+        description: Filter the inventory item's weight.
+        required: false
+        schema:
+          description: Filter the inventory item's weight.
+          properties:
+            $eq:
+              type: string
+              description: Filter by an exact match.
+            $ne:
+              type: string
+              description: Filter by values not matching this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array's items.
+              items:
+                type: string
+            $nin:
+              type: array
+              description: Filter by values not in this array's items.
+              items:
+                type: string
+            $like:
+              type: string
+              description: Apply a `like` filter. Useful for strings only.
+            $ilike:
+              type: string
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $re:
+              type: string
+              description: Apply a regex filter. Useful for strings only.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+            $gt:
+              type: string
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+      - name: length
+        in: query
+        description: Filter the inventory item's length.
+        required: false
+        schema:
+          description: Filter the inventory item's length.
+          properties:
+            $eq:
+              type: string
+              description: Filter by an exact match.
+            $ne:
+              type: string
+              description: Filter by values not matching this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array's items.
+              items:
+                type: string
+            $nin:
+              type: array
+              description: Filter by values not in this array's items.
+              items:
+                type: string
+            $like:
+              type: string
+              description: Apply a `like` filter. Useful for strings only.
+            $ilike:
+              type: string
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $re:
+              type: string
+              description: Apply a regex filter. Useful for strings only.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+            $gt:
+              type: string
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+      - name: height
+        in: query
+        description: Filter by the inventory item's height.
+        required: false
+        schema:
+          description: Filter by the inventory item's height.
+          properties:
+            $eq:
+              type: string
+              description: Filter by an exact match.
+            $ne:
+              type: string
+              description: Filter by values not matching this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array's items.
+              items:
+                type: string
+            $nin:
+              type: array
+              description: Filter by values not in this array's items.
+              items:
+                type: string
+            $like:
+              type: string
+              description: Apply a `like` filter. Useful for strings only.
+            $ilike:
+              type: string
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $re:
+              type: string
+              description: Apply a regex filter. Useful for strings only.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+            $gt:
+              type: string
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+      - name: width
+        in: query
+        description: Filter by the inventory item's width.
+        required: false
+        schema:
+          description: Filter by the inventory item's width.
+          properties:
+            $eq:
+              type: string
+              description: Filter by an exact match.
+            $ne:
+              type: string
+              description: Filter by values not matching this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array's items.
+              items:
+                type: string
+            $nin:
+              type: array
+              description: Filter by values not in this array's items.
+              items:
+                type: string
+            $like:
+              type: string
+              description: Apply a `like` filter. Useful for strings only.
+            $ilike:
+              type: string
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $re:
+              type: string
+              description: Apply a regex filter. Useful for strings only.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+            $gt:
+              type: string
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+      - name: location_levels
+        in: query
+        description: Filter by the inventory item's associated location IDs.
+        required: false
+        schema:
+          type: object
+          description: Filter by the inventory item's associated location IDs.
+          properties:
+            location_id:
+              oneOf:
+              - type: string
+                title: location_id
+                description: The associated location's ID.
+              - type: array
+                description: The location IDs to retrieve inventory items associated with them.
+                items:
+                  type: string
+                  title: location_id
+                  description: A location's ID.
+      - name: $and
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.list()\n.then(({ inventory_items, count, limit, offset }) => {\n  console.log(inventory_items)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/inventory-items'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The paginated list of inventory items.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of items returned.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of items skipped before retrieving the returned items.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of items.
+                - type: object
+                  description: The paginated list of inventory items.
+                  required:
+                  - inventory_items
+                  properties:
+                    inventory_items:
+                      type: array
+                      description: The inventory item's inventory items.
+                      items:
+                        $ref: '#/components/schemas/AdminInventoryItem'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostInventoryItems
+      summary: Create Inventory Item
+      description: Create an inventory item.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateInventoryItem'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.create({\n  sku: \"SHIRT\"\n})\n.then(({ inventory_item }) => {\n  console.log(inventory_item)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/inventory-items' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"sku\": \"{value}\",\n  \"hs_code\": \"{value}\",\n  \"weight\": 2857134683324416,\n  \"length\": 2322256963305472,\n  \"height\": 8391220613087232,\n  \"width\": 1297863250280448,\n  \"origin_country\": \"{value}\",\n  \"mid_code\": \"{value}\",\n  \"material\": \"{value}\",\n  \"title\": \"{value}\",\n  \"description\": \"{value}\",\n  \"thumbnail\": \"{value}\",\n  \"metadata\": {}\n}'"
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminInventoryItemResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createInventoryItemsWorkflow
+      x-events:
+      - name: inventory-item.created
+        payload: "```ts\n{\n  id, // The ID of the inventory item\n}\n```"
+        description: Emitted when inventory items are created.
+        deprecated: false
+        since: 2.18.0
+      - name: inventory-level.created
+        payload: "```ts\n{\n  id, // The ID of the inventory level\n}\n```"
+        description: Emitted when inventory levels are created.
+        deprecated: false
+        since: 2.18.0
+  /admin/inventory-items/export:
+    post:
+      operationId: PostInventoryItemsExport
+      summary: Export Inventory Items
+      description: 'Start an inventory items export process to retrieve a CSV of exported inventory items.
+
+
+        You''ll receive in the response the transaction ID of the workflow generating the CSV file. To check the status of the execution, send a GET request to `/admin/workflows-executions/export-inventory-items/:transaction-id`.
+
+        Once the execution finishes successfully, a notification is created for the export. You can retrieve the notifications using the `/admin/notification` API route to retrieve the file''s download URL.
+
+        '
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: The ID of the inventory item to export.
+          - type: array
+            description: The IDs of the inventory items to export.
+            items:
+              type: string
+              title: id
+              description: The ID of the inventory item to export.
+      - name: q
+        in: query
+        description: Search query to apply on inventory item searchable fields to filter the results.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search query to apply on inventory item searchable fields to filter the results.
+      - name: sku
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: sku
+            description: Filter by the inventory item's sku.
+          - type: array
+            description: Filter by the inventory items' sku.
+            items:
+              type: string
+              title: sku
+              description: Filter by the inventory item's sku.
+      - name: origin_country
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: origin_country
+            description: Filter by the inventory item's origin country.
+          - type: array
+            description: Filter by the inventory items' origin country.
+            items:
+              type: string
+              title: origin_country
+              description: Filter by the inventory item's origin country.
+      - name: mid_code
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: mid_code
+            description: Filter by the inventory item's mid code.
+          - type: array
+            description: Filter by the inventory items' mid code.
+            items:
+              type: string
+              title: mid_code
+              description: Filter by the inventory item's mid code.
+      - name: hs_code
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: hs_code
+            description: Filter by the inventory item's hs code.
+          - type: array
+            description: Filter by the inventory items' hs code.
+            items:
+              type: string
+              title: hs_code
+              description: Filter by the inventory item's hs code.
+      - name: material
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: material
+            description: Filter by the inventory item's material.
+          - type: array
+            description: Filter by the inventory items' material.
+            items:
+              type: string
+              title: material
+              description: Filter by the inventory item's material.
+      - name: requires_shipping
+        in: query
+        description: Filter by whether the inventory item requires shipping.
+        required: false
+        schema:
+          type: boolean
+          title: requires_shipping
+          description: Whether the inventory item requires shipping.
+      - name: weight
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: number
+            title: weight
+            description: Filter by the inventory item's weight.
+          - type: object
+            properties:
+              $and:
+                type: array
+                description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+                items:
+                  type: object
+              $or:
+                type: array
+                description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+                items:
+                  type: object
+              $eq:
+                oneOf:
+                - type: number
+                  title: $eq
+                  description: Filter by exact value.
+                - type: array
+                  title: $eq
+                  description: Filter by exact value.
+                  items:
+                    type: number
+              $ne:
+                type: number
+                title: $ne
+                description: Filter by not equal to the given value.
+              $in:
+                type: array
+                title: $in
+                description: Filter by values included in the given array.
+                items:
+                  type: number
+              $nin:
+                type: array
+                title: $nin
+                description: Filter by values not included in the given array.
+                items:
+                  type: number
+              $not:
+                oneOf:
+                - type: number
+                  title: $not
+                  description: Filter by not equal to the given value.
+                - type: object
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+                - type: array
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+                  items:
+                    type: number
+              $gt:
+                type: number
+                title: $gt
+                description: Filter by values greater than the given value.
+              $gte:
+                type: number
+                title: $gte
+                description: Filter by values greater than or equal to the given value.
+              $lt:
+                type: number
+                title: $lt
+                description: Filter by values less than the given value.
+              $lte:
+                type: number
+                title: $lte
+                description: Filter by values less than or equal to the given value.
+              $like:
+                type: number
+                title: $like
+                description: Apply a `like` filter. Useful for strings only.
+              $re:
+                type: number
+                title: $re
+                description: Apply a regex filter. Useful for strings only.
+              $ilike:
+                type: number
+                title: $ilike
+                description: Apply a case-insensitive `like` filter. Useful for strings only.
+              $fulltext:
+                type: number
+                title: $fulltext
+                description: Filter to apply on full-text properties.
+              $overlap:
+                type: array
+                title: $overlap
+                description: Filter to apply on array properties to find overlapping values.
+                items:
+                  type: number
+              $contains:
+                type: array
+                title: $contains
+                description: Filter to apply on array properties to find contained values.
+                items:
+                  type: number
+              $contained:
+                type: array
+                title: $contained
+                description: Filter to apply on array properties to find contained values.
+                items:
+                  type: number
+              $exists:
+                type: boolean
+                title: $exists
+                description: Filter by whether a value exists or not.
+            title: weight
+            description: Filter by the inventory item's weight.
+      - name: length
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: number
+            title: length
+            description: Filter by the inventory item's length.
+          - type: object
+            properties:
+              $and:
+                type: array
+                description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+                items:
+                  type: object
+              $or:
+                type: array
+                description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+                items:
+                  type: object
+              $eq:
+                oneOf:
+                - type: number
+                  title: $eq
+                  description: Filter by exact value.
+                - type: array
+                  title: $eq
+                  description: Filter by exact value.
+                  items:
+                    type: number
+              $ne:
+                type: number
+                title: $ne
+                description: Filter by not equal to the given value.
+              $in:
+                type: array
+                title: $in
+                description: Filter by values included in the given array.
+                items:
+                  type: number
+              $nin:
+                type: array
+                title: $nin
+                description: Filter by values not included in the given array.
+                items:
+                  type: number
+              $not:
+                oneOf:
+                - type: number
+                  title: $not
+                  description: Filter by not equal to the given value.
+                - type: object
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+                - type: array
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+                  items:
+                    type: number
+              $gt:
+                type: number
+                title: $gt
+                description: Filter by values greater than the given value.
+              $gte:
+                type: number
+                title: $gte
+                description: Filter by values greater than or equal to the given value.
+              $lt:
+                type: number
+                title: $lt
+                description: Filter by values less than the given value.
+              $lte:
+                type: number
+                title: $lte
+                description: Filter by values less than or equal to the given value.
+              $like:
+                type: number
+                title: $like
+                description: Apply a `like` filter. Useful for strings only.
+              $re:
+                type: number
+                title: $re
+                description: Apply a regex filter. Useful for strings only.
+              $ilike:
+                type: number
+                title: $ilike
+                description: Apply a case-insensitive `like` filter. Useful for strings only.
+              $fulltext:
+                type: number
+                title: $fulltext
+                description: Filter to apply on full-text properties.
+              $overlap:
+                type: array
+                title: $overlap
+                description: Filter to apply on array properties to find overlapping values.
+                items:
+                  type: number
+              $contains:
+                type: array
+                title: $contains
+                description: Filter to apply on array properties to find contained values.
+                items:
+                  type: number
+              $contained:
+                type: array
+                title: $contained
+                description: Filter to apply on array properties to find contained values.
+                items:
+                  type: number
+              $exists:
+                type: boolean
+                title: $exists
+                description: Filter by whether a value exists or not.
+            title: length
+            description: Filter by the inventory item's length.
+      - name: height
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: number
+            title: height
+            description: Filter by the inventory item's height.
+          - type: object
+            properties:
+              $and:
+                type: array
+                description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+                items:
+                  type: object
+              $or:
+                type: array
+                description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+                items:
+                  type: object
+              $eq:
+                oneOf:
+                - type: number
+                  title: $eq
+                  description: Filter by exact value.
+                - type: array
+                  title: $eq
+                  description: Filter by exact value.
+                  items:
+                    type: number
+              $ne:
+                type: number
+                title: $ne
+                description: Filter by not equal to the given value.
+              $in:
+                type: array
+                title: $in
+                description: Filter by values included in the given array.
+                items:
+                  type: number
+              $nin:
+                type: array
+                title: $nin
+                description: Filter by values not included in the given array.
+                items:
+                  type: number
+              $not:
+                oneOf:
+                - type: number
+                  title: $not
+                  description: Filter by not equal to the given value.
+                - type: object
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+                - type: array
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+                  items:
+                    type: number
+              $gt:
+                type: number
+                title: $gt
+                description: Filter by values greater than the given value.
+              $gte:
+                type: number
+                title: $gte
+                description: Filter by values greater than or equal to the given value.
+              $lt:
+                type: number
+                title: $lt
+                description: Filter by values less than the given value.
+              $lte:
+                type: number
+                title: $lte
+                description: Filter by values less than or equal to the given value.
+              $like:
+                type: number
+                title: $like
+                description: Apply a `like` filter. Useful for strings only.
+              $re:
+                type: number
+                title: $re
+                description: Apply a regex filter. Useful for strings only.
+              $ilike:
+                type: number
+                title: $ilike
+                description: Apply a case-insensitive `like` filter. Useful for strings only.
+              $fulltext:
+                type: number
+                title: $fulltext
+                description: Filter to apply on full-text properties.
+              $overlap:
+                type: array
+                title: $overlap
+                description: Filter to apply on array properties to find overlapping values.
+                items:
+                  type: number
+              $contains:
+                type: array
+                title: $contains
+                description: Filter to apply on array properties to find contained values.
+                items:
+                  type: number
+              $contained:
+                type: array
+                title: $contained
+                description: Filter to apply on array properties to find contained values.
+                items:
+                  type: number
+              $exists:
+                type: boolean
+                title: $exists
+                description: Filter by whether a value exists or not.
+            title: height
+            description: Filter by the inventory item's height.
+      - name: width
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: number
+            title: width
+            description: Filter by the inventory item's width.
+          - type: object
+            properties:
+              $and:
+                type: array
+                description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+                items:
+                  type: object
+              $or:
+                type: array
+                description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+                items:
+                  type: object
+              $eq:
+                oneOf:
+                - type: number
+                  title: $eq
+                  description: Filter by exact value.
+                - type: array
+                  title: $eq
+                  description: Filter by exact value.
+                  items:
+                    type: number
+              $ne:
+                type: number
+                title: $ne
+                description: Filter by not equal to the given value.
+              $in:
+                type: array
+                title: $in
+                description: Filter by values included in the given array.
+                items:
+                  type: number
+              $nin:
+                type: array
+                title: $nin
+                description: Filter by values not included in the given array.
+                items:
+                  type: number
+              $not:
+                oneOf:
+                - type: number
+                  title: $not
+                  description: Filter by not equal to the given value.
+                - type: object
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+                - type: array
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+                  items:
+                    type: number
+              $gt:
+                type: number
+                title: $gt
+                description: Filter by values greater than the given value.
+              $gte:
+                type: number
+                title: $gte
+                description: Filter by values greater than or equal to the given value.
+              $lt:
+                type: number
+                title: $lt
+                description: Filter by values less than the given value.
+              $lte:
+                type: number
+                title: $lte
+                description: Filter by values less than or equal to the given value.
+              $like:
+                type: number
+                title: $like
+                description: Apply a `like` filter. Useful for strings only.
+              $re:
+                type: number
+                title: $re
+                description: Apply a regex filter. Useful for strings only.
+              $ilike:
+                type: number
+                title: $ilike
+                description: Apply a case-insensitive `like` filter. Useful for strings only.
+              $fulltext:
+                type: number
+                title: $fulltext
+                description: Filter to apply on full-text properties.
+              $overlap:
+                type: array
+                title: $overlap
+                description: Filter to apply on array properties to find overlapping values.
+                items:
+                  type: number
+              $contains:
+                type: array
+                title: $contains
+                description: Filter to apply on array properties to find contained values.
+                items:
+                  type: number
+              $contained:
+                type: array
+                title: $contained
+                description: Filter to apply on array properties to find contained values.
+                items:
+                  type: number
+              $exists:
+                type: boolean
+                title: $exists
+                description: Filter by whether a value exists or not.
+            title: width
+            description: Filter by the inventory item's width.
+      - name: location_levels
+        in: query
+        description: Filter by the inventory item's location levels.
+        required: false
+        schema:
+          type: object
+          description: Filter by the inventory item's location levels.
+          properties:
+            location_id:
+              oneOf:
+              - type: string
+                title: location_id
+                description: Filter by a location ID.
+              - type: array
+                description: Filter by multiple location IDs.
+                items:
+                  type: string
+                  title: location_id
+                  description: A location ID to filter by.
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+          externalDocs:
+            url: '#pagination'
+      - name: with_deleted
+        in: query
+        description: Whether to include soft-deleted items in the results.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include soft-deleted items in the results.
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.export({})\n.then(({ transaction_id }) => {\n  console.log(transaction_id)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/inventory-items/export'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Inventory Items
+      responses:
+        '202':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminExportInventoryItemResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: exportInventoryItemsWorkflow
+      x-events: []
+  /admin/inventory-items/location-levels/batch:
+    post:
+      operationId: PostInventoryItemsLocationLevelsBatch
+      summary: Manage Inventory Levels
+      description: Manage inventory levels to create, update, or delete them.
+      x-authenticated: true
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminBatchInventoryItemsLocationLevels'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.batchInventoryItemsLocationLevels({\n  create: [{\n    inventory_item_id: \"iitem_123\",\n    location_id: \"sloc_123\",\n    stocked_quantity: 10\n  }],\n  delete: [\"ilvl_123\"]\n})\n.then(({ created, updated, deleted }) => {\n  console.log(created, updated, deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/inventory-items/location-levels/batch' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"create\": [\n    {\n      \"location_id\": \"sloc_123\",\n      \"inventory_item_id\": \"iitem_123\",\n      \"stocked_quantity\": 100,\n      \"incoming_quantity\": 50\n    }\n  ],\n  \"update\": [\n    {\n      \"location_id\": \"sloc_456\",\n      \"inventory_item_id\": \"iitem_456\",\n      \"stocked_quantity\": 200,\n      \"incoming_quantity\": 75\n    }\n  ],\n  \"delete\": [\n    \"iilev_123\"\n  ]\n}'"
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminBatchInventoryItemsLocationLevelsResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: batchInventoryItemLevelsWorkflow
+      x-events:
+      - name: inventory-level.created
+        payload: "```ts\n{\n  id, // The ID of the inventory level\n}\n```"
+        description: Emitted when inventory levels are created.
+        deprecated: false
+        since: 2.18.0
+      - name: inventory-level.updated
+        payload: "```ts\n{\n  id, // The ID of the inventory level\n  order_id, // (optional) The ID of the order, if the update was triggered by an order flow\n}\n```"
+        description: 'Emitted when inventory levels are updated. This includes adjustments to
+
+          the stocked or reserved quantity, such as during order fulfillment.'
+        deprecated: false
+        since: 2.18.0
+      - name: inventory-level.deleted
+        payload: "```ts\n{\n  id, // The ID of the inventory level\n}\n```"
+        description: Emitted when inventory levels are deleted.
+        deprecated: false
+        since: 2.18.0
+  /admin/inventory-items/{id}:
+    get:
+      operationId: GetInventoryItemsId
+      summary: Get a Inventory Item
+      description: Retrieve a inventory item by its ID. You can expand the inventory item's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The inventory item's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.retrieve(\"iitem_123\")\n.then(({ inventory_item }) => {\n  console.log(inventory_item)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/inventory-items/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminInventoryItemResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostInventoryItemsId
+      summary: Update an Inventory Item
+      description: Update an inventory item's details.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The inventory item's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateInventoryItem'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.update(\"iitem_123\", {\n  sku: \"SHIRT\"\n})\n.then(({ inventory_item }) => {\n  console.log(inventory_item)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/inventory-items/{id}' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"sku\": \"{value}\",\n  \"hs_code\": \"{value}\",\n  \"weight\": 8979922215239680,\n  \"length\": 667491233693696,\n  \"height\": 6328111551479808,\n  \"width\": 7175104570064896,\n  \"origin_country\": \"{value}\",\n  \"mid_code\": \"{value}\",\n  \"material\": \"{value}\",\n  \"title\": \"{value}\",\n  \"description\": \"{value}\",\n  \"thumbnail\": \"{value}\",\n  \"metadata\": {}\n}'"
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminInventoryItemResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updateInventoryItemsWorkflow
+      x-events:
+      - name: inventory-item.updated
+        payload: "```ts\n{\n  id, // The ID of the inventory item\n}\n```"
+        description: Emitted when inventory items are updated.
+        deprecated: false
+        since: 2.18.0
+    delete:
+      operationId: DeleteInventoryItemsId
+      summary: Delete Inventory Item
+      description: Delete an inventory item.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The inventory item's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.delete(\"iitem_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/inventory-items/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The deletion's details.
+                required:
+                - id
+                - object
+                - deleted
+                properties:
+                  id:
+                    type: string
+                    title: id
+                    description: The inventory item's ID.
+                  object:
+                    type: string
+                    title: object
+                    description: The name of the deleted object.
+                    default: inventory_item
+                  deleted:
+                    type: boolean
+                    title: deleted
+                    description: Whether the inventory item was deleted.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deleteInventoryItemWorkflow
+      x-events:
+      - name: inventory-item.deleted
+        payload: "```ts\n{\n  id, // The ID of the inventory item\n}\n```"
+        description: Emitted when inventory items are deleted.
+        deprecated: false
+        since: 2.18.0
+  /admin/inventory-items/{id}/location-levels:
+    get:
+      operationId: GetInventoryItemsIdLocationLevels
+      summary: List Inventory Levels
+      description: Retrieve a list of inventory levels associated with an inventory item. The inventory levels can be filtered by fields like `location_id`. The inventory levels can also be paginated.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The inventory item's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: location_id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: location_id
+            description: Filter by the inventory item's location ID.
+          - type: array
+            description: The inventory item's location IDs.
+            items:
+              type: string
+              title: location_id
+              description: The location ID.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.listLevels(\"iitem_123\")\n.then(({ inventory_levels, count, limit, offset }) => {\n  console.log(inventory_levels)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/inventory-items/{id}/location-levels'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The paginated list of inventory levels.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of items returned.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of items skipped before retrieving the returned items.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of items.
+                - type: object
+                  description: The paginated list of inventory levels.
+                  required:
+                  - inventory_levels
+                  properties:
+                    inventory_levels:
+                      type: array
+                      description: The inventory item's inventory levels.
+                      items:
+                        $ref: '#/components/schemas/InventoryLevel'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostInventoryItemsIdLocationLevels
+      summary: Create Inventory Level for Inventory Item
+      x-sidebar-summary: Create Inventory Level
+      description: Create an inventory level for an inventory item.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The inventory item's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminBatchCreateInventoryItemLocationLevels'
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/inventory-items/{id}/location-levels' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"location_id\": \"{value}\"\n}'"
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminInventoryItemResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createInventoryLevelsWorkflow
+      x-events:
+      - name: inventory-level.created
+        payload: "```ts\n{\n  id, // The ID of the inventory level\n}\n```"
+        description: Emitted when inventory levels are created.
+        deprecated: false
+        since: 2.18.0
+  /admin/inventory-items/{id}/location-levels/batch:
+    post:
+      operationId: PostInventoryItemsIdLocationLevelsBatch
+      summary: Manage Inventory Levels of Inventory Item
+      x-sidebar-summary: Manage Inventory Levels
+      description: Manage the inventory levels of an inventory item to create or delete them.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The inventory item's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminBatchInventoryItemLocationLevels'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.batchInventoryItemLocationLevels(\"iitem_123\", {\n  create: [{\n    location_id: \"sloc_123\",\n    stocked_quantity: 10\n  }],\n  delete: [\"ilvl_123\"]\n})\n.then(({ created, updated, deleted }) => {\n  console.log(created, updated, deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/inventory-items/{id}/location-levels/batch'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: batchInventoryItemLevelsWorkflow
+      x-events:
+      - name: inventory-level.created
+        payload: "```ts\n{\n  id, // The ID of the inventory level\n}\n```"
+        description: Emitted when inventory levels are created.
+        deprecated: false
+        since: 2.18.0
+      - name: inventory-level.updated
+        payload: "```ts\n{\n  id, // The ID of the inventory level\n  order_id, // (optional) The ID of the order, if the update was triggered by an order flow\n}\n```"
+        description: 'Emitted when inventory levels are updated. This includes adjustments to
+
+          the stocked or reserved quantity, such as during order fulfillment.'
+        deprecated: false
+        since: 2.18.0
+      - name: inventory-level.deleted
+        payload: "```ts\n{\n  id, // The ID of the inventory level\n}\n```"
+        description: Emitted when inventory levels are deleted.
+        deprecated: false
+        since: 2.18.0
+  /admin/inventory-items/{id}/location-levels/{location_id}:
+    post:
+      operationId: PostInventoryItemsIdLocationLevelsLocation_id
+      summary: Update an Inventory Level of an Inventory Item
+      x-sidebar-summary: Update Inventory Level
+      description: Updates the details of an inventory item's inventory level using its associated location ID.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The inventory item's ID.
+        required: true
+        schema:
+          type: string
+      - name: location_id
+        in: path
+        description: The ID of the location associated with the inventory level.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateInventoryLevel'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.updateLevel(\n  \"iitem_123\",\n  \"sloc_123\",\n  {\n    stocked_quantity: 10\n  }\n)\n.then(({ inventory_item }) => {\n  console.log(inventory_item)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/inventory-items/{id}/location-levels/{location_id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminInventoryItemResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updateInventoryLevelsWorkflow
+      x-events:
+      - name: inventory-level.updated
+        payload: "```ts\n{\n  id, // The ID of the inventory level\n  order_id, // (optional) The ID of the order, if the update was triggered by an order flow\n}\n```"
+        description: 'Emitted when inventory levels are updated. This includes adjustments to
+
+          the stocked or reserved quantity, such as during order fulfillment.'
+        deprecated: false
+        since: 2.18.0
+    delete:
+      operationId: DeleteInventoryItemsIdLocationLevelsLocation_id
+      summary: Remove Inventory Level of Inventory Item
+      x-sidebar-summary: Remove Inventory Level
+      description: 'Remove the inventory level of an inventory item.
+
+
+        If the inventory level has reserved quantity greater than `0`, an error is thrown.
+
+        '
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The inventory item's ID.
+        required: true
+        schema:
+          type: string
+      - name: location_id
+        in: path
+        description: The inventory item's location id.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.inventoryItem.deleteLevel(\n  \"iitem_123\",\n  \"sloc_123\",\n)\n.then(({ deleted, parent: inventoryItem }) => {\n  console.log(deleted, inventoryItem)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/inventory-items/{id}/location-levels/{location_id}'' \ -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Inventory Items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The deletion's details.
+                  required:
+                  - id
+                  - object
+                  - deleted
+                  properties:
+                    id:
+                      type: string
+                      title: id
+                      description: The inventory item's ID.
+                    object:
+                      type: string
+                      title: object
+                      description: The name of the deleted object.
+                    deleted:
+                      type: boolean
+                      title: deleted
+                      description: Whether the Inventory Item was deleted.
+                - type: object
+                  description: The deletion's details.
+                  properties:
+                    parent:
+                      $ref: '#/components/schemas/AdminInventoryItem'
+                description: The deletion's details.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deleteInventoryLevelsWorkflow
+      x-events:
+      - name: inventory-level.deleted
+        payload: "```ts\n{\n  id, // The ID of the inventory level\n}\n```"
+        description: Emitted when inventory levels are deleted.
+        deprecated: false
+        since: 2.18.0
+components:
+  schemas:
+    AdminInventoryItemResponse:
+      type: object
+      description: The inventory item's details.
+      x-schemaName: AdminInventoryItemResponse
+      required:
+      - inventory_item
+      properties:
+        inventory_item:
+          $ref: '#/components/schemas/AdminInventoryItem'
+    AdminBatchInventoryItemsLocationLevels:
+      type: object
+      description: The inventory levels to manage.
+      properties:
+        create:
+          type: array
+          description: The inventory levels to create.
+          items:
+            $ref: '#/components/schemas/AdminBatchCreateInventoryItemsLocationLevels'
+        update:
+          type: array
+          description: The inventory levels to update.
+          items:
+            $ref: '#/components/schemas/AdminBatchUpdateInventoryItemsLocationLevels'
+        delete:
+          type: array
+          description: The IDs of the inventory levels to delete.
+          items:
+            type: string
+            title: delete
+            description: The ID of the inventory level to delete.
+        force:
+          type: boolean
+          title: force
+          description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
+      x-schemaName: AdminBatchInventoryItemsLocationLevels
+    AdminBatchCreateInventoryItemLocationLevels:
+      type: object
+      description: The inventory level's details.
+      required:
+      - location_id
+      properties:
+        location_id:
+          type: string
+          title: location_id
+          description: The ID of the associated location.
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory level's stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The inventory level's incoming quantity.
+      x-schemaName: AdminBatchCreateInventoryItemLocationLevels
+    AdminBatchCreateInventoryItemsLocationLevels:
+      type: object
+      description: The details of an inventory level to create.
+      required:
+      - location_id
+      - inventory_item_id
+      properties:
+        location_id:
+          type: string
+          title: location_id
+          description: The ID of the associated stock location.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The ID of the associated inventory item.
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The incoming quantity to be added to stock.
+      x-schemaName: AdminBatchCreateInventoryItemsLocationLevels
+    InventoryLevel:
+      type: object
+      description: The inventory level's details
+      x-schemaName: InventoryLevel
+      required:
+      - id
+      - inventory_item_id
+      - location_id
+      - stocked_quantity
+      - reserved_quantity
+      - available_quantity
+      - incoming_quantity
+      properties:
+        id:
+          type: string
+          title: id
+          description: The inventory level's ID.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The ID of the associated inventory item.
+        location_id:
+          type: string
+          title: location_id
+          description: The ID of the associated location.
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory level's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The inventory level's reserved quantity.
+        available_quantity:
+          type: number
+          title: available_quantity
+          description: The inventory level's available quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The inventory level's incoming quantity.
+        metadata:
+          type: object
+          description: The inventory level's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminBatchInventoryItemsLocationLevelsResponse:
+      type: object
+      description: The result of managing inventory levels.
+      x-schemaName: AdminBatchInventoryItemsLocationLevelsResponse
+      properties:
+        created:
+          type: array
+          description: The created inventory levels.
+          items:
+            $ref: '#/components/schemas/AdminInventoryLevel'
+        updated:
+          type: array
+          description: The updated inventory levels.
+          items:
+            $ref: '#/components/schemas/AdminInventoryLevel'
+        deleted:
+          type: array
+          description: The IDs of deleted inventory levels.
+          items:
+            type: string
+            title: deleted
+            description: The ID of a deleted inventory level.
+    AdminInventoryItem:
+      type: object
+      description: The inventory item's details.
+      x-schemaName: AdminInventoryItem
+      required:
+      - id
+      - requires_shipping
+      - stocked_quantity
+      - reserved_quantity
+      properties:
+        id:
+          type: string
+          title: id
+          description: The inventory item's ID.
+        sku:
+          type: string
+          title: sku
+          description: The inventory item's sku.
+        origin_country:
+          type: string
+          title: origin_country
+          description: The inventory item's origin country.
+        hs_code:
+          type: string
+          title: hs_code
+          description: The inventory item's HS code.
+        requires_shipping:
+          type: boolean
+          title: requires_shipping
+          description: Whether the inventory item requires shipping.
+        mid_code:
+          type: string
+          title: mid_code
+          description: The inventory item's MID code.
+        material:
+          type: string
+          title: material
+          description: The inventory item's material.
+        weight:
+          type: number
+          title: weight
+          description: The inventory item's weight.
+        length:
+          type: number
+          title: length
+          description: The inventory item's length.
+        height:
+          type: number
+          title: height
+          description: The inventory item's height.
+        width:
+          type: number
+          title: width
+          description: The inventory item's width.
+        title:
+          type: string
+          title: title
+          description: The inventory item's title.
+        description:
+          type: string
+          title: description
+          description: The inventory item's description.
+        thumbnail:
+          type: string
+          title: thumbnail
+          description: The thumbnail URL of the inventory item.
+        metadata:
+          type: object
+          description: Custom key-value pairs, used to store additional information about the inventory item.
+        location_levels:
+          type: array
+          description: The inventory item's location levels.
+          items:
+            $ref: '#/components/schemas/AdminInventoryLevel'
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory item's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The inventory item's reserved quantity.
+    AdminCreateInventoryItem:
+      type: object
+      description: The inventory item's details.
+      x-schemaName: AdminCreateInventoryItem
+      properties:
+        sku:
+          type: string
+          title: sku
+          description: The inventory item's SKU.
+        hs_code:
+          type: string
+          title: hs_code
+          description: The inventory item's HS code.
+        weight:
+          type: number
+          title: weight
+          description: The inventory item's weight.
+        length:
+          type: number
+          title: length
+          description: The inventory item's length.
+        height:
+          type: number
+          title: height
+          description: The inventory item's height.
+        width:
+          type: number
+          title: width
+          description: The inventory item's width.
+        origin_country:
+          type: string
+          title: origin_country
+          description: The inventory item's origin country.
+        mid_code:
+          type: string
+          title: mid_code
+          description: The inventory item's mid code.
+        material:
+          type: string
+          title: material
+          description: The inventory item's material.
+        title:
+          type: string
+          title: title
+          description: The inventory item's title.
+        description:
+          type: string
+          title: description
+          description: The description of the variant associated with the inventory item.
+        requires_shipping:
+          type: boolean
+          title: requires_shipping
+          description: Whether the item requires shipping.
+        thumbnail:
+          type: string
+          title: thumbnail
+          description: The inventory item's thumbnail.
+        metadata:
+          type: object
+          description: The inventory item's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        location_levels:
+          type: array
+          description: The inventory item's location levels.
+          items:
+            $ref: '#/components/schemas/AdminBatchCreateInventoryItemLocationLevels'
+    AdminBatchUpdateInventoryItemsLocationLevels:
+      type: object
+      description: The details of an inventory level to update.
+      required:
+      - location_id
+      - inventory_item_id
+      properties:
+        location_id:
+          type: string
+          title: location_id
+          description: The ID of the associated stock location.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The ID of the associated inventory item.
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The incoming quantity to be added to stock.
+        id:
+          type: string
+          title: id
+          description: The update's ID.
+      x-schemaName: AdminBatchUpdateInventoryItemsLocationLevels
+    AdminUpdateInventoryLevel:
+      type: object
+      description: The properties to update in the inventory level.
+      properties:
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory level's stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The inventory level's incoming quantity.
+      x-schemaName: AdminUpdateInventoryLevel
+    AdminBatchUpdateInventoryItemLocationLevels:
+      type: object
+      description: The inventory level's details.
+      properties:
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory level's stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The inventory level's incoming quantity.
+        location_id:
+          type: string
+          title: location_id
+          description: The associated stock location's ID.
+        id:
+          type: string
+          title: id
+          description: The ID of the location level.
+      required:
+      - location_id
+      x-schemaName: AdminBatchUpdateInventoryItemLocationLevels
+    AdminInventoryLevel:
+      type: object
+      description: The location level's location levels.
+      x-schemaName: AdminInventoryLevel
+      required:
+      - id
+      - created_at
+      - updated_at
+      - deleted_at
+      - inventory_item_id
+      - location_id
+      - stocked_quantity
+      - reserved_quantity
+      - incoming_quantity
+      - metadata
+      - available_quantity
+      properties:
+        id:
+          type: string
+          title: id
+          description: The location level's ID.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The location level's created at.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The location level's updated at.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The location level's deleted at.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The location level's inventory item id.
+        location_id:
+          type: string
+          title: location_id
+          description: The location level's location id.
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The location level's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The location level's reserved quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The location level's incoming quantity.
+        metadata:
+          type: object
+          description: The location level's metadata.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        inventory_item:
+          type: object
+        available_quantity:
+          type: number
+          title: available_quantity
+          description: The location level's available quantity.
+    AdminUpdateInventoryItem:
+      type: object
+      description: The properties to update in the inventory item.
+      properties:
+        sku:
+          type: string
+          title: sku
+          description: The inventory item's SKU.
+        hs_code:
+          type: string
+          title: hs_code
+          description: The inventory item's HS code.
+        weight:
+          type: number
+          title: weight
+          description: The inventory item's weight.
+        length:
+          type: number
+          title: length
+          description: The inventory item's length.
+        height:
+          type: number
+          title: height
+          description: The inventory item's height.
+        width:
+          type: number
+          title: width
+          description: The inventory item's width.
+        origin_country:
+          type: string
+          title: origin_country
+          description: The inventory item's origin country.
+        mid_code:
+          type: string
+          title: mid_code
+          description: The inventory item's MID code.
+        material:
+          type: string
+          title: material
+          description: The inventory item's material.
+        title:
+          type: string
+          title: title
+          description: The inventory item's title.
+        description:
+          type: string
+          title: description
+          description: The inventory item's description.
+        requires_shipping:
+          type: boolean
+          title: requires_shipping
+          description: Whether the inventory item requires shipping.
+        thumbnail:
+          type: string
+          title: thumbnail
+          description: The URL of an image to be used as the inventory item's thumbnail. You can use the Upload API routes to upload an image and get its URL.
+        metadata:
+          type: object
+          description: The inventory item's metadata. Can be custom data in key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+      x-schemaName: AdminUpdateInventoryItem
+    AdminExportInventoryItemResponse:
+      type: object
+      description: The response for initiating an export inventory items workflow.
+      x-schemaName: AdminExportInventoryItemResponse
+      required:
+      - transaction_id
+      properties:
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The ID of the workflow execution's transaction. Use it to check the status of the export by sending a GET request to `/admin/workflows-executions/export-inventory-items/:transaction-id`
+    AdminBatchInventoryItemLocationLevels:
+      type: object
+      description: The inventory levels to create, update, or delete.
+      properties:
+        create:
+          type: array
+          description: The inventory levels to create.
+          items:
+            $ref: '#/components/schemas/AdminBatchCreateInventoryItemLocationLevels'
+        update:
+          type: array
+          description: The inventory levels to update.
+          items:
+            $ref: '#/components/schemas/AdminBatchUpdateInventoryItemLocationLevels'
+        delete:
+          type: array
+          description: The inventory levels to delete.
+          items:
+            type: string
+            title: delete
+            description: The ID of the inventory level to delete.
+        force:
+          type: boolean
+          title: force
+          description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
+      x-schemaName: AdminBatchInventoryItemLocationLevels
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

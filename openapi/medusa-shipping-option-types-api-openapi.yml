@@ -1,0 +1,1098 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Shipping Option Types API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'Shipping option types define a group of shipping options with shared shipping characterstics. For example,  you may have "Standard" and "Express" shipping option types.
+
+    These API routes allow admins to manage shipping option types.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Shipping Option Types
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminShippingOptionType'
+  description: 'Shipping option types define a group of shipping options with shared shipping characterstics. For example,  you may have "Standard" and "Express" shipping option types.
+
+    These API routes allow admins to manage shipping option types.
+
+    '
+  externalDocs:
+    description: Learn more about shipping option types.
+    url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#shipping-profiles-and-types
+paths:
+  /admin/shipping-option-types:
+    get:
+      operationId: GetShippingOptionTypes
+      summary: List Shipping Option Types
+      description: Retrieve a list of shipping option types. The shipping option types can be filtered by fields such as `id`. The shipping option types can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: 'Comma-separated fields that should be included in the returned data.
+
+          if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields.
+
+          without prefix it will replace the entire default fields.'
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+          externalDocs:
+            url: '#pagination'
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: q
+        in: query
+        description: Search query to apply on the shipping option type's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search query to apply on the shipping option type's searchable properties.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a shipping option type's ID.
+          - type: array
+            description: Filter by shipping option type IDs.
+            items:
+              type: string
+              title: id
+              description: A shipping option type's ID.
+      - name: label
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: label
+            description: Filter by a shipping option type's label.
+          - type: array
+            description: Filter by shipping option type labels.
+            items:
+              type: string
+              title: label
+              description: A label.
+      - name: code
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: code
+            description: Filter by a shipping option type's code.
+          - type: array
+            description: Filter by shipping option type codes.
+            items:
+              type: string
+              title: code
+              description: A code.
+      - name: created_at
+        in: query
+        description: Filter by a shipping option type's creation date.
+        required: false
+        schema:
+          type: object
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by exact value.
+              - type: array
+                title: $eq
+                description: Filter by exact value.
+                items:
+                  type: string
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by not equal to the given value.
+            $in:
+              type: array
+              title: $in
+              description: Filter by values included in the given array.
+              items:
+                type: string
+            $nin:
+              type: array
+              title: $nin
+              description: Filter by values not included in the given array.
+              items:
+                type: string
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by not equal to the given value.
+              - type: object
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than the given value.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to the given value.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than the given value.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to the given value.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              title: $overlap
+              description: Filter to apply on array properties to find overlapping values.
+              items:
+                type: string
+            $contains:
+              type: array
+              title: $contains
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $contained:
+              type: array
+              title: $contained
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value exists or not.
+          title: created_at
+          description: The shipping option type's created at.
+      - name: updated_at
+        in: query
+        description: Filter by a shipping option type's update date.
+        required: false
+        schema:
+          type: object
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by exact value.
+              - type: array
+                title: $eq
+                description: Filter by exact value.
+                items:
+                  type: string
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by not equal to the given value.
+            $in:
+              type: array
+              title: $in
+              description: Filter by values included in the given array.
+              items:
+                type: string
+            $nin:
+              type: array
+              title: $nin
+              description: Filter by values not included in the given array.
+              items:
+                type: string
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by not equal to the given value.
+              - type: object
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than the given value.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to the given value.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than the given value.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to the given value.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              title: $overlap
+              description: Filter to apply on array properties to find overlapping values.
+              items:
+                type: string
+            $contains:
+              type: array
+              title: $contains
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $contained:
+              type: array
+              title: $contained
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value exists or not.
+          title: updated_at
+          description: The shipping option type's updated at.
+      - name: deleted_at
+        in: query
+        description: Filter by a shipping option type's deletion date.
+        required: false
+        schema:
+          type: object
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by exact value.
+              - type: array
+                title: $eq
+                description: Filter by exact value.
+                items:
+                  type: string
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by not equal to the given value.
+            $in:
+              type: array
+              title: $in
+              description: Filter by values included in the given array.
+              items:
+                type: string
+            $nin:
+              type: array
+              title: $nin
+              description: Filter by values not included in the given array.
+              items:
+                type: string
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by not equal to the given value.
+              - type: object
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than the given value.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to the given value.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than the given value.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to the given value.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              title: $overlap
+              description: Filter to apply on array properties to find overlapping values.
+              items:
+                type: string
+            $contains:
+              type: array
+              title: $contains
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $contained:
+              type: array
+              title: $contained
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value exists or not.
+          title: deleted_at
+          description: The shipping option type's deleted at.
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: description
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: description
+            description: Filter by a shipping option type's description.
+          - type: array
+            description: Filter by shipping option type descriptions.
+            items:
+              type: string
+              title: description
+              description: A description.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.shippingOptionType.list()\n.then(({ shipping_option_types, count, limit, offset }) => {\n  console.log(shipping_option_types)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/shipping-option-types'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Shipping Option Types
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminShippingOptionTypeListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.10.0
+    post:
+      operationId: PostShippingOptionTypes
+      summary: Create Shipping Option Type
+      description: Create a shipping option type.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: 'Comma-separated fields that should be included in the returned data.
+
+          if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields.
+
+          without prefix it will replace the entire default fields.'
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateShippingOptionType'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.shippingOptionType.create({\n  label: \"Standard\",\n  code: \"standard\",\n  description: \"Ship in 2-3 days.\"\n})\n.then(({ shipping_option_type }) => {\n  console.log(shipping_option_type)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/shipping-option-types' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"label\": \"{value}\",\n  \"code\": \"{value}\"\n}'"
+      tags:
+      - Shipping Option Types
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminShippingOptionTypeResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createShippingOptionTypesWorkflow
+      x-events:
+      - name: shipping-option-type.created
+        payload: "```ts\n{\n  id, // The ID of the shipping option type\n}\n```"
+        description: Emitted when shipping option types are created.
+        deprecated: false
+        since: 2.10.0
+      x-since: 2.10.0
+  /admin/shipping-option-types/{id}:
+    get:
+      operationId: GetShippingOptionTypesId
+      summary: Get a Shipping Option Type
+      description: Retrieve a shipping option type by its ID. You can expand the shipping option type's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The shipping option type's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: 'Comma-separated fields that should be included in the returned data.
+
+          if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields.
+
+          without prefix it will replace the entire default fields.'
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.shippingOptionType.retrieve(\"sotype_123\")\n.then(({ shipping_option_type }) => {\n  console.log(shipping_option_type)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/shipping-option-types/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Shipping Option Types
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminShippingOptionTypeResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.10.0
+    post:
+      operationId: PostShippingOptionTypesId
+      summary: Update a Shipping Option Type
+      description: Update a shipping option type's details.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The shipping option type's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: 'Comma-separated fields that should be included in the returned data.
+
+          if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields.
+
+          without prefix it will replace the entire default fields.'
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateShippingOptionType'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.shippingOptionType.update(\"sotype_123\", {\n  code: \"express\"\n})\n.then(({ shipping_option_type }) => {\n  console.log(shipping_option_type)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/shipping-option-types/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Shipping Option Types
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminShippingOptionTypeResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updateShippingOptionTypesWorkflow
+      x-events:
+      - name: shipping-option-type.updated
+        payload: "```ts\n{\n  id, // The ID of the shipping option type\n}\n```"
+        description: Emitted when shipping option types are updated.
+        deprecated: false
+        since: 2.10.0
+      x-since: 2.10.0
+    delete:
+      operationId: DeleteShippingOptionTypesId
+      summary: Delete a Shipping Option Type
+      x-sidebar-summary: Delete Shipping Option Type
+      description: Delete a shipping option type.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The shipping option type's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.shippingOptionType.delete(\"sotype_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/shipping-option-types/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Shipping Option Types
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminShippingOptionTypeDeleteResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deleteShippingOptionTypesWorkflow
+      x-events:
+      - name: shipping-option-type.deleted
+        payload: "```ts\n{\n  id, // The ID of the shipping option type\n}\n```"
+        description: Emitted when shipping option types are deleted.
+        deprecated: false
+        since: 2.10.0
+      x-since: 2.10.0
+components:
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  schemas:
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminShippingOptionType:
+      type: object
+      description: The shipping option's details.
+      x-schemaName: AdminShippingOptionType
+      required:
+      - id
+      - label
+      - description
+      - code
+      - shipping_option_id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping option's ID.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the shipping option was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the shipping option was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the shipping option was deleted.
+        label:
+          type: string
+          title: label
+          description: The type's label.
+        description:
+          type: string
+          title: description
+          description: The type's description.
+        code:
+          type: string
+          title: code
+          description: The type's code.
+        shipping_option_id:
+          type: string
+          title: shipping_option_id
+          description: The type's shipping option id.
+    AdminShippingOptionTypeListResponse:
+      type: object
+      description: The paginated list of shipping option types.
+      x-schemaName: AdminShippingOptionTypeListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - shipping_option_types
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before returning the results.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+        shipping_option_types:
+          type: array
+          description: The list of shipping option types.
+          items:
+            $ref: '#/components/schemas/AdminShippingOptionType'
+    AdminUpdateShippingOptionType:
+      type: object
+      description: The properties to update in the shipping option type.
+      properties:
+        code:
+          type: string
+          title: code
+          description: The shipping option type's code.
+        description:
+          type: string
+          title: description
+          description: The shipping option type's description.
+        label:
+          type: string
+          title: label
+          description: The shipping option type's label.
+      x-schemaName: AdminUpdateShippingOptionType
+    AdminShippingOptionTypeResponse:
+      type: object
+      description: The shipping option type's details.
+      x-schemaName: AdminShippingOptionTypeResponse
+      required:
+      - shipping_option_type
+      properties:
+        shipping_option_type:
+          $ref: '#/components/schemas/AdminShippingOptionType'
+    AdminShippingOptionTypeDeleteResponse:
+      type: object
+      description: The response returned after deleting a shipping option type.
+      x-schemaName: AdminShippingOptionTypeDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping option type's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: shipping_option_type
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the Shipping Option Type was deleted.
+    AdminCreateShippingOptionType:
+      type: object
+      description: The shipping option type's details.
+      x-schemaName: AdminCreateShippingOptionType
+      required:
+      - code
+      - label
+      properties:
+        label:
+          type: string
+          title: label
+          description: The type's label.
+        description:
+          type: string
+          title: description
+          description: The type's description.
+        code:
+          type: string
+          title: code
+          description: The type's code.
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

@@ -1,0 +1,1160 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Workflows Executions API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'These API routes allow you to track workflow executions in your Medusa application.
+
+
+    Depending on the workflow engine you use, executions may only be retained for a short while, or only until the Medusa application is restarted.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Workflows Executions
+  description: 'These API routes allow you to track workflow executions in your Medusa application.
+
+
+    Depending on the workflow engine you use, executions may only be retained for a short while, or only until the Medusa application is restarted.
+
+    '
+  externalDocs:
+    description: Check out available Workflow Engine Modules
+    url: https://docs.medusajs.com/resources/infrastructure-modules/workflow-engine
+paths:
+  /admin/workflows-executions:
+    get:
+      operationId: GetWorkflowsExecutions
+      summary: List Workflows Executions
+      description: Retrieve a list of workflows executions. The workflows executions can be filtered by fields such as `id`. The workflows executions can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: transaction_id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: transaction_id
+            description: Filter by a transaction ID.
+          - type: array
+            description: Filter by transaction IDs.
+            items:
+              type: string
+              title: transaction_id
+              description: A transaction ID.
+      - name: workflow_id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: workflow_id
+            description: Filter by a workflow ID.
+          - type: array
+            description: Filter by workflow IDs.
+            items:
+              type: string
+              title: workflow_id
+              description: A workflow ID.
+      - name: q
+        in: query
+        description: Search query to filter by a workflow execution's searchable fields.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search query to filter by a workflow execution's searchable fields.
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: state
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: state
+            description: Filter by a workflow execution's state.
+          - type: array
+            description: Filter by workflow execution states.
+            items:
+              type: string
+              title: state
+              description: A workflow execution state.
+      - name: created_at
+        in: query
+        description: Filter by the workflow execution's creation date.
+        required: false
+        schema:
+          type: object
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by exact value.
+              - type: array
+                title: $eq
+                description: Filter by exact value.
+                items:
+                  type: string
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by not equal to the given value.
+            $in:
+              type: array
+              title: $in
+              description: Filter by values included in the given array.
+              items:
+                type: string
+            $nin:
+              type: array
+              title: $nin
+              description: Filter by values not included in the given array.
+              items:
+                type: string
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by not equal to the given value.
+              - type: object
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than the given value.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to the given value.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than the given value.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to the given value.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              title: $overlap
+              description: Filter to apply on array properties to find overlapping values.
+              items:
+                type: string
+            $contains:
+              type: array
+              title: $contains
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $contained:
+              type: array
+              title: $contained
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value exists or not.
+          title: created_at
+          description: The workflows execution's created at.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.workflowExecution.list()\n.then(({ workflow_executions, count, limit, offset }) => {\n  console.log(workflow_executions)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/workflows-executions'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Workflows Executions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The paginated list of workflow executions.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of items returned.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of items skipped before retrieving the returned items.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of items.
+                - type: object
+                  description: The paginated list of workflow executions.
+                  required:
+                  - workflow_executions
+                  properties:
+                    workflow_executions:
+                      type: array
+                      description: The workflows execution's workflow executions.
+                      items:
+                        $ref: '#/components/schemas/AdminWorkflowExecution'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/workflows-executions/{id}:
+    get:
+      operationId: GetWorkflowsExecutionsId
+      summary: Get a Workflows Execution
+      description: Retrieve a workflows execution by its ID. You can expand the workflows execution's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The workflows execution's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.workflowExecution.retrieve(\"wrk_123\")\n.then(({ workflow_execution }) => {\n  console.log(workflow_execution)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/workflows-executions/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Workflows Executions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminWorkflowExecutionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/workflows-executions/{workflow_id}/run:
+    post:
+      operationId: PostWorkflowsExecutionsWorkflow_idRun
+      summary: Execute a Workflow
+      description: Execute a workflow by its ID.
+      x-authenticated: true
+      parameters:
+      - name: workflow_id
+        in: path
+        description: The workflow's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateWorkflowsRun'
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/workflows-executions/{workflow_id}/run'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Workflows Executions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The execution's details.
+                required:
+                - acknowledgement
+                properties:
+                  acknowledgement:
+                    type: object
+                    description: The workflow's details
+                    required:
+                    - workflowId
+                    - transactionId
+                    - hasFinished
+                    - hasFailed
+                    properties:
+                      workflowId:
+                        type: string
+                        description: The ID of the executed workflow.
+                        title: workflowId
+                      transactionId:
+                        type: string
+                        description: The ID of the workflow exection's transaction. Use this later to track the workflow execution's progress or succeed / fail its steps.
+                        title: transactionId
+                      parentStepIdempotencyKey:
+                        type: string
+                        title: parentStepIdempotencyKey
+                        description: The idempotency key of the workflow execution.
+                      hasFinished:
+                        type: boolean
+                        title: hasFinished
+                        description: Whether the workflow execution has finished.
+                      hasFailed:
+                        type: boolean
+                        title: hasFailed
+                        description: Whether the workflow execution has failed.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/workflows-executions/{workflow_id}/steps/failure:
+    post:
+      operationId: PostWorkflowsExecutionsWorkflow_idStepsFailure
+      summary: Fail a Step in a Workflow's Execution
+      x-sidebar-summary: Fail a Step
+      description: Set the status of a step in a workflow's execution as failed. This is useful for long-running workflows.
+      x-authenticated: true
+      parameters:
+      - name: workflow_id
+        in: path
+        description: The workflows execution's workflow id.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateWorkflowsAsyncResponse'
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/workflows-executions/{workflow_id}/steps/failure' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"transaction_id\": \"{value}\",\n  \"step_id\": \"{value}\"\n}'"
+      tags:
+      - Workflows Executions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The details of failing the workflow step.
+                required:
+                - success
+                properties:
+                  success:
+                    type: boolean
+                    title: success
+                    description: Whether the workflow step has failed successfully.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/workflows-executions/{workflow_id}/steps/success:
+    post:
+      operationId: PostWorkflowsExecutionsWorkflow_idStepsSuccess
+      summary: Succeed a Step in a Workflow's Execution
+      x-sidebar-summary: Succed a Step
+      description: Set the status of a step in a workflow's execution as successful. This is useful for long-running workflows.
+      x-authenticated: true
+      parameters:
+      - name: workflow_id
+        in: path
+        description: The workflows execution's workflow id.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateWorkflowsAsyncResponse'
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/workflows-executions/{workflow_id}/steps/success' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"transaction_id\": \"{value}\",\n  \"step_id\": \"{value}\"\n}'"
+      tags:
+      - Workflows Executions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The details of succeeding the workflow step.
+                required:
+                - success
+                properties:
+                  success:
+                    type: boolean
+                    title: success
+                    description: Whether the workflow step was succeeded.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/workflows-executions/{workflow_id}/subscribe:
+    get:
+      operationId: GetWorkflowsExecutionsWorkflow_idSubscribe
+      summary: Subscribe to a Workflow's Execution
+      x-sidebar-summary: Subscribe to Workflow
+      description: 'Subscribe to a workflow''s execution to receive real-time information about its steps, status, and data.
+
+        This route returns an event stream that you can consume using the [EventSource API](https://developer.mozilla.org/en-US/docs/Web/API/EventSource).
+
+        '
+      x-authenticated: true
+      parameters:
+      - name: workflow_id
+        in: path
+        description: The workflows execution's workflow id.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/workflows-executions/{workflow_id}/subscribe'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Workflows Executions
+      responses:
+        '200':
+          description: Stream of the step's status.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: The step's status update and data changes.
+                example: "event: success\n data: {}"
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/workflows-executions/{workflow_id}/{transaction_id}:
+    get:
+      operationId: GetWorkflowsExecutionsWorkflow_idTransaction_id
+      summary: Get Workflow Execution's Details
+      x-sidebar-summary: Get Exection
+      description: Get the details of the workflow's execution.
+      x-authenticated: true
+      parameters:
+      - name: workflow_id
+        in: path
+        description: The workflows execution's workflow id.
+        required: true
+        schema:
+          type: string
+      - name: transaction_id
+        in: path
+        description: The workflows execution's transaction id.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/workflows-executions/{workflow_id}/{transaction_id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Workflows Executions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminWorkflowExecutionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/workflows-executions/{workflow_id}/{transaction_id}/subscribe:
+    get:
+      operationId: GetWorkflowsExecutionsWorkflow_idTransaction_idSubscribe
+      summary: Subscribe to Workflow Execution Events
+      description: Subscribe to workflow execution events for a specific workflow and transaction. This endpoint establishes a Server-Sent Events (SSE) connection, allowing clients to receive real-time updates about the workflow execution. The events include details such as the event type, workflow ID, transaction ID, step information, response, result, and any errors that occur during the execution.
+      x-authenticated: true
+      parameters:
+      - name: workflow_id
+        in: path
+        description: The ID of the workflow to subscribe to.
+        required: true
+        schema:
+          type: string
+      - name: transaction_id
+        in: path
+        description: The ID of the workflow execution transaction to subscribe to.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/workflows-executions/{workflow_id}/{transaction_id}/subscribe'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Workflows Executions
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+components:
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  schemas:
+    WorkflowExecutionDefinition:
+      type: object
+      description: The step's definition details.
+      x-schemaName: WorkflowExecutionDefinition
+      properties:
+        async:
+          type: boolean
+          title: async
+          description: Whether the step is async.
+        compensateAsync:
+          type: boolean
+          title: compensateAsync
+          description: Whether the compensation function of the step is async.
+        noCompensation:
+          type: boolean
+          title: noCompensation
+          description: Whether the step doesn't have a compensation function.
+        continueOnPermanentFailure:
+          type: boolean
+          title: continueOnPermanentFailure
+          description: Whether the workflow should continue executing even if its status is changed to failed.
+        skipOnPermanentFailure:
+          oneOf:
+          - type: string
+            title: skipOnPermanentFailure
+            description: The ID of the step to skip to in case of a permanent failure.
+          - type: boolean
+            title: skipOnPermanentFailure
+            description: Whether the workflow should skip subsequent steps in case of a permanent failure.
+        maxRetries:
+          type: number
+          title: maxRetries
+          description: The maximum number of times to retry the step.
+        noWait:
+          type: boolean
+          title: noWait
+          description: Whether the workflow shouldn't wait for the step to finish before moving to the next step.
+          default: false
+        retryInterval:
+          type: number
+          title: retryInterval
+          description: The interval in seconds between retry attempts when the step fails.
+        retryIntervalAwaiting:
+          type: number
+          title: retryIntervalAwaiting
+          description: The interval in seconds to retry a step even if its status is `waiting_response`.
+        saveResponse:
+          type: boolean
+          title: saveResponse
+          description: Whether the step's response is stored.
+        timeout:
+          type: number
+          title: timeout
+          description: The maximum time in seconds to wait for this step to complete. If the step exceeds this time, the step's state is changed to `timeout`, but the step continues executing.
+        autoRetry:
+          type: boolean
+          title: autoRetry
+          description: Whether the step should be automatically retried if it fails.
+        maxAwaitingRetries:
+          type: number
+          title: maxAwaitingRetries
+          description: The maximum number of times to retry the step while it's in the `waiting_response` state.
+    WorkflowExecutionFn:
+      type: object
+      description: The state of the step's invokation function.
+      x-schemaName: WorkflowExecutionFn
+      required:
+      - state
+      - status
+      properties:
+        state:
+          type: string
+          description: The invokation step's state.
+          enum:
+          - failed
+          - not_started
+          - invoking
+          - compensating
+          - done
+          - reverted
+          - dormant
+          - skipped
+          - skipped_failure
+          - timeout
+        status:
+          type: string
+          description: The invokation step's state.
+          enum:
+          - idle
+          - ok
+          - waiting_response
+          - temp_failure
+          - permanent_failure
+    AdminWorkflowExecution:
+      type: object
+      description: The workflows execution's details.
+      x-schemaName: AdminWorkflowExecution
+      required:
+      - id
+      - workflow_id
+      - transaction_id
+      - execution
+      - context
+      - state
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The workflow execution's ID.
+        workflow_id:
+          type: string
+          title: workflow_id
+          description: The ID of the workflow.
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The workflow execution's transaction ID.
+        execution:
+          $ref: '#/components/schemas/AdminWorkflowExecutionExecution'
+        context:
+          $ref: '#/components/schemas/WorkflowExecutionContext'
+        state:
+          type: string
+          description: The workflow execution's state.
+          enum:
+          - not_started
+          - invoking
+          - waiting_to_compensate
+          - compensating
+          - done
+          - reverted
+          - failed
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the workflow execution was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the workflow execution was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the workflow execution was deleted.
+    AdminWorkflowExecutionExecution:
+      type: object
+      description: The workflow execution's steps details.
+      x-schemaName: AdminWorkflowExecutionExecution
+      required:
+      - steps
+      properties:
+        steps:
+          type: object
+          description: The execution's steps. Each object key is a step ID, and the value is the object whose properties are shown below.
+          required:
+          - id
+          - invoke
+          - definition
+          - compensate
+          - depth
+          - startedAt
+          additionalProperties:
+            type: object
+            properties:
+              id:
+                type: string
+                title: id
+                description: The step's ID.
+              invoke:
+                $ref: '#/components/schemas/WorkflowExecutionFn'
+              definition:
+                $ref: '#/components/schemas/WorkflowExecutionDefinition'
+              compensate:
+                $ref: '#/components/schemas/WorkflowExecutionFn'
+              depth:
+                type: number
+                title: depth
+                description: The step's depth in the workflow's execution.
+              startedAt:
+                type: number
+                title: startedAt
+                description: The timestamp the step started executing.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminCreateWorkflowsAsyncResponse:
+      type: object
+      description: The details of changing a workflow execution's step status.
+      x-schemaName: AdminCreateWorkflowsAsyncResponse
+      required:
+      - transaction_id
+      - step_id
+      properties:
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The workflows execution's transaction ID.
+        step_id:
+          type: string
+          title: step_id
+          description: The ID of the step whose status was changed.
+        response:
+          description: Sets the step's response. It accepts any type.
+        compensate_input:
+          description: Sets the compensation function's input. It accepts any response.
+        action:
+          type: string
+          description: Whether to invoke or compensate the step.
+          enum:
+          - invoke
+          - compensate
+    AdminWorkflowExecutionResponse:
+      type: object
+      description: The workflow execution's details.
+      x-schemaName: AdminWorkflowExecutionResponse
+      required:
+      - workflow_execution
+      properties:
+        workflow_execution:
+          $ref: '#/components/schemas/AdminWorkflowExecution'
+    AdminCreateWorkflowsRun:
+      type: object
+      description: The details of the workflow to execute.
+      x-schemaName: AdminCreateWorkflowsRun
+      properties:
+        input:
+          description: The input to pass to the workflow. Can be of any type.
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The ID of the workflow execution's transaction.
+    WorkflowExecutionContext:
+      type: object
+      description: The workflow execution's context.
+      x-schemaName: WorkflowExecutionContext
+      required:
+      - compensate
+      - errors
+      properties:
+        data:
+          type: object
+          description: The context's data.
+          properties:
+            invoke:
+              type: object
+              description: The step's invokation details.
+              required:
+              - output
+              additionalProperties:
+                type: object
+                properties:
+                  output:
+                    type: object
+                    description: The invokation's details.
+                    required:
+                    - output
+                    - compensateInput
+                    properties:
+                      output:
+                        description: the step's output
+                      compensateInput:
+                        description: the compensation function's input.
+            payload:
+              description: the payload of the transaction.
+          required:
+          - invoke
+        compensate:
+          type: object
+          description: The context's compensate.
+        errors:
+          type: array
+          description: The context's errors.
+          items:
+            type: object
+            description: The error's details.
+            properties:
+              error:
+                type: object
+                description: The error's details.
+              action:
+                type: string
+                title: action
+                description: The error's action.
+              handlerType:
+                type: string
+                title: handlerType
+                description: The error's handler type.
+            required:
+            - error
+            - action
+            - handlerType
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

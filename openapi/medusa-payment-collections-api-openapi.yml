@@ -1,0 +1,1342 @@
+openapi: 3.2.0
+info:
+  title: Medusa Payment Collections API
+  version: 2.19.0
+  description: 'Operations tagged Payment Collections across 2 of this provider''s published API definitions: medusa-admin-openapi.yaml, medusa-store-openapi.yaml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Payment Collections
+  description: 'A payment collection is one or more payments of an order. They''re also used for outstanding payments due to order exchanges or claims.
+
+
+    Every purchase or request for payment starts with a payment collection.
+
+
+    A payment collection holds the payment sessions used to authorize the payment amount, and the payments to be captured / refunded.
+
+
+    These API routes allow admin users to manage payment collections.
+
+    '
+  externalDocs:
+    description: Learn more about payment collections.
+    url: https://docs.medusajs.com/resources/commerce-modules/payment/payment-collection
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminPaymentCollection'
+paths:
+  /admin/payment-collections:
+    post:
+      operationId: PostPaymentCollections
+      summary: Create Payment Collection
+      description: Create a payment collection.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreatePaymentCollection'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.paymentCollection.create({\n  order_id: \"order_123\"\n})\n.then(({ payment_collection }) => {\n  console.log(payment_collection)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/payment-collections' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"order_id\": \"{value}\"\n}'"
+      tags:
+      - Payment Collections
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPaymentCollectionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createOrderPaymentCollectionWorkflow
+      x-events: []
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /admin/payment-collections/{id}:
+    delete:
+      operationId: DeletePaymentCollectionsId
+      summary: Delete a Payment Collection
+      description: Delete a payment collection.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The payment collection's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.paymentCollection.delete(\"paycol_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/payment-collections/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Payment Collections
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminDeletePaymentCollectionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deleteOrderPaymentCollections
+      x-events: []
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /admin/payment-collections/{id}/mark-as-paid:
+    post:
+      operationId: PostPaymentCollectionsIdMarkAsPaid
+      summary: Mark a Payment Collection as Paid
+      x-sidebar-summary: Mark as Paid
+      description: Mark a payment collection as paid. This creates and authorizes a payment session, then capture its payment, using the manual payment provider.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The payment collection's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminMarkPaymentCollectionAsPaid'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.paymentCollection.markAsPaid(\"paycol_123\", {\n  order_id: \"order_123\",\n  // optional: record the payment under a specific provider\n  provider_id: \"pp_system_default\"\n})\n.then(({ payment_collection }) => {\n  console.log(payment_collection)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/payment-collections/{id}/mark-as-paid' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"order_id\": \"{value}\"\n}'"
+      tags:
+      - Payment Collections
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPaymentCollectionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: markPaymentCollectionAsPaid
+      x-events:
+      - name: payment.captured
+        payload: "```ts\n{\n  id, // the ID of the payment\n}\n```"
+        description: Emitted when a payment is captured.
+        deprecated: false
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /admin/payment-collections/{id}/payment-sessions:
+    post:
+      operationId: PostPaymentCollectionsIdPaymentSessions
+      summary: Initialize Payment Session in Payment Collection
+      x-sidebar-summary: Initialize Payment Session
+      description: Initialize a Payment Session in a payment collection. This is useful for orders placed outside the checkout flow, such as draft orders, or when a payment session needs to be re-initialized for an existing payment collection.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the payment collection.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminInitializePaymentSession'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.paymentCollection.createPaymentSession(\"paycol_123\", {\n  provider_id: \"pp_stripe_stripe\"\n})\n.then(({ payment_collection }) => {\n  console.log(payment_collection)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/payment-collections/{id}/payment-sessions' \\\n-H 'Authorization: Bearer {access_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"provider_id\": \"{value}\"\n}'"
+      tags:
+      - Payment Collections
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPaymentCollectionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createPaymentSessionsWorkflow
+      x-events: []
+      x-since: 2.14.2
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /store/payment-collections:
+    post:
+      operationId: PostPaymentCollections
+      summary: Create Payment Collection
+      description: Create a payment collection for a cart. This is used during checkout, where the payment collection holds the cart's payment sessions.
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/checkout/payment
+        description: 'Storefront guide: How to implement payment during checkout.'
+      x-authenticated: false
+      parameters:
+      - name: x-publishable-api-key
+        in: header
+        description: Publishable API Key created in the Medusa Admin.
+        required: true
+        schema:
+          type: string
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#publishable-api-key
+      - name: x-medusa-locale
+        in: header
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: locale
+        in: query
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreCreatePaymentCollection'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nlet MEDUSA_BACKEND_URL = \"http://localhost:9000\"\n\nif (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {\n  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL\n}\n\nexport const sdk = new Medusa({\n  baseUrl: MEDUSA_BACKEND_URL,\n  debug: process.env.NODE_ENV === \"development\",\n  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,\n})\n\nsdk.store.payment.initiatePaymentSession(\n  cart, // assuming you already have the cart object.\n  {\n    provider_id: \"pp_stripe_stripe\",\n    data: {\n      // any data relevant for the provider.\n    }\n  }\n)\n.then(({ payment_collection }) => {\n  console.log(payment_collection)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/store/payment-collections' \\\n-H 'Content-Type: application/json' \\\n-H 'x-publishable-api-key: {your_publishable_api_key}' \\\n--data-raw '{\n  \"cart_id\": \"{value}\"\n}'"
+      tags:
+      - Payment Collections
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorePaymentCollectionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createPaymentCollectionForCartWorkflow
+      x-events: []
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /store/payment-collections/{id}/payment-sessions:
+    post:
+      operationId: PostPaymentCollectionsIdPaymentSessions
+      summary: Initialize Payment Session of a Payment Collection
+      x-sidebar-summary: Initialize Payment Session
+      description: 'Initialize and add a payment session to a payment collection. This is used during checkout, where you create a payment collection for the cart, then initialize a payment session for the payment provider that the customer chooses.
+
+        It''s highly recommended to have an amount greater than `0` in the payment collection, as some payment providers, such as Stripe, require a non-zero amount to create a payment session. Otherwise, an error will be thrown on the payment provider''s side.
+
+        In cases where you want to create a payment session for a payment collection with an amount of `0`, you can use the Manual System Payment Provider instead of third-party payment providers. The Manual System Payment Provider is built into Medusa and allows you to create payment sessions without interacting with an external payment provider.
+
+        Make sure to configure the Manual System Payment Provider in your store''s region. Learn more in the [Manage Region](https://docs.medusajs.com/user-guide/settings/regions#edit-region-details) user guide.
+
+        '
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/checkout/payment
+        description: 'Storefront guide: How to implement payment during checkout.'
+      x-authenticated: false
+      parameters:
+      - name: id
+        in: path
+        description: The payment collection's ID.
+        required: true
+        schema:
+          type: string
+      - name: x-publishable-api-key
+        in: header
+        description: Publishable API Key created in the Medusa Admin.
+        required: true
+        schema:
+          type: string
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#publishable-api-key
+      - name: x-medusa-locale
+        in: header
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: locale
+        in: query
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreInitializePaymentSession'
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/store/payment-collections/{id}/payment-sessions' \\\n-H 'Content-Type: application/json' \\\n-H 'x-publishable-api-key: {your_publishable_api_key}' \\\n--data-raw '{\n  \"provider_id\": \"{value}\"\n}'"
+      tags:
+      - Payment Collections
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorePaymentCollectionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createPaymentSessionsWorkflow
+      x-events: []
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+components:
+  schemas:
+    BaseRefund:
+      type: object
+      description: The refund's details.
+      x-schemaName: BaseRefund
+      required:
+      - id
+      - amount
+      - created_at
+      - payment
+      properties:
+        id:
+          type: string
+          title: id
+          description: The refund's ID.
+        amount:
+          type: number
+          title: amount
+          description: The refund's amount.
+        refund_reason_id:
+          type: string
+          title: refund_reason_id
+          description: The ID of the refund reason.
+        note:
+          type: string
+          title: note
+          description: More details about the refund.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the refund was created.
+        created_by:
+          type: string
+          title: created_by
+          description: The ID of the user that created the refund.
+        payment:
+          type: object
+        refund_reason:
+          $ref: '#/components/schemas/BaseRefundReason'
+    AdminDeletePaymentCollectionResponse:
+      type: object
+      description: The result of deleting the payment collection.
+      x-schemaName: AdminDeletePaymentCollectionResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment collection's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the object that was deleted.
+          default: payment-collection
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the object was deleted.
+    BaseRefundReason:
+      type: object
+      description: The refund reason's details.
+      x-schemaName: BaseRefundReason
+      required:
+      - id
+      - label
+      - code
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The refund reason's ID.
+        label:
+          type: string
+          title: label
+          description: The refund reason's label.
+        description:
+          type: string
+          title: description
+          description: The refund reason's description.
+        metadata:
+          type: object
+          description: The refund reason's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the refund reason was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the refund reason was updated.
+        code:
+          type: string
+          title: code
+          description: The refund reason's code.
+    AdminInitializePaymentSession:
+      type: object
+      description: The details of the payment session to initialize in the payment collection.
+      x-schemaName: AdminInitializePaymentSession
+      required:
+      - provider_id
+      properties:
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the payment provider to initialize the session with.
+          example: pp_stripe_stripe
+        data:
+          type: object
+          description: Any data necessary for the payment provider to process the payment.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/payment/payment-session#data-property
+            description: Learn more about the payment session's data property
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminCreatePaymentCollection:
+      type: object
+      description: The payment collection's details.
+      required:
+      - order_id
+      - amount
+      properties:
+        order_id:
+          type: string
+          title: order_id
+          description: The ID of the associated order.
+        amount:
+          type: number
+          title: amount
+          description: The amount to be paid.
+      x-schemaName: AdminCreatePaymentCollection
+    BaseCapture:
+      type: object
+      description: The details of a captured payment.
+      x-schemaName: BaseCapture
+      required:
+      - id
+      - amount
+      - created_at
+      - payment
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment capture's ID.
+        amount:
+          type: number
+          title: amount
+          description: The captured amount.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the capture was created.
+        created_by:
+          type: string
+          title: created_by
+          description: The ID of the user that captured the payment.
+        payment:
+          type: object
+    AdminPayment:
+      type: object
+      description: The payment's details.
+      x-schemaName: AdminPayment
+      required:
+      - id
+      - amount
+      - currency_code
+      - provider_id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment's ID.
+        amount:
+          type: number
+          title: amount
+          description: The payment's amount.
+        authorized_amount:
+          type: number
+          title: authorized_amount
+          description: The amount authorized of the payment.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The payment's currency code.
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the payment provider used to process this payment.
+        data:
+          type: object
+          description: The payment's data, useful for processing by the payment provider.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/payment/payment#whats-a-payment
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the payment was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the payment was updated.
+        captured_at:
+          type: string
+          format: date-time
+          title: captured_at
+          description: The date the payment was captured.
+        canceled_at:
+          type: string
+          format: date-time
+          title: canceled_at
+          description: The date the payment was canceled.
+        captured_amount:
+          type: number
+          title: captured_amount
+          description: The captured amount of the payment.
+        refunded_amount:
+          type: number
+          title: captured_amount
+          description: The refunded amount of the payment.
+        captures:
+          type: array
+          description: The details of payment captures.
+          items:
+            $ref: '#/components/schemas/BaseCapture'
+        refunds:
+          type: array
+          description: The details of payment refunds.
+          items:
+            $ref: '#/components/schemas/AdminRefund'
+        payment_collection:
+          type: object
+        payment_session:
+          $ref: '#/components/schemas/AdminPaymentSession'
+    AdminPaymentCollectionResponse:
+      type: object
+      description: The payment collection's details.
+      x-schemaName: AdminPaymentCollectionResponse
+      required:
+      - payment_collection
+      properties:
+        payment_collection:
+          $ref: '#/components/schemas/AdminPaymentCollection'
+    AdminRefund:
+      type: object
+      description: The refund's details.
+      x-schemaName: AdminRefund
+      required:
+      - id
+      - amount
+      - created_at
+      - payment
+      properties:
+        id:
+          type: string
+          title: id
+          description: The refund's ID.
+        amount:
+          type: number
+          title: amount
+          description: The refund's amount.
+        refund_reason_id:
+          type: string
+          title: refund_reason_id
+          description: The ID of the refund reason.
+        note:
+          type: string
+          title: note
+          description: More details about the refund.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the refund was created.
+        created_by:
+          type: string
+          title: created_by
+          description: The ID of the user that created the refund.
+        payment:
+          $ref: '#/components/schemas/BasePayment'
+        refund_reason:
+          $ref: '#/components/schemas/BaseRefundReason'
+    BasePayment:
+      type: object
+      description: The payment's details.
+      x-schemaName: BasePayment
+      required:
+      - id
+      - amount
+      - currency_code
+      - provider_id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment's ID.
+        amount:
+          type: number
+          title: amount
+          description: The payment's amount.
+        authorized_amount:
+          type: number
+          title: authorized_amount
+          description: The amount authorized of the payment.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The payment's currency code.
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the payment provider used to process this payment.
+        data:
+          type: object
+          description: The payment's data, useful for processing by the payment provider.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/payment/payment#whats-a-payment
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the payment was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the payment was updated.
+        captured_at:
+          type: string
+          format: date-time
+          title: captured_at
+          description: The date the payment was captured.
+        canceled_at:
+          type: string
+          format: date-time
+          title: canceled_at
+          description: The date the payment was canceled.
+        captured_amount:
+          type: number
+          title: captured_amount
+          description: The captured amount of the payment.
+        refunded_amount:
+          type: number
+          title: captured_amount
+          description: The refunded amount of the payment.
+        captures:
+          type: array
+          description: The details of payment captures.
+          items:
+            $ref: '#/components/schemas/BaseCapture'
+        refunds:
+          type: array
+          description: The details of payment refunds.
+          items:
+            $ref: '#/components/schemas/BaseRefund'
+        payment_collection:
+          type: object
+        payment_session:
+          type: object
+    AdminPaymentCollection:
+      type: object
+      description: The payment collection's details.
+      x-schemaName: AdminPaymentCollection
+      required:
+      - payment_providers
+      - id
+      - currency_code
+      - amount
+      - status
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment collection's ID.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The payment collection's currency code.
+        amount:
+          type: number
+          title: amount
+          description: The total amount to be paid.
+        authorized_amount:
+          type: number
+          title: authorized_amount
+          description: The total authorized amount of the collection's payments.
+        captured_amount:
+          type: number
+          title: captured_amount
+          description: The total captured amount of the collection's payments.
+        refunded_amount:
+          type: number
+          title: refunded_amount
+          description: The total refunded amount of the collection's payments.
+        completed_at:
+          type: string
+          format: date-time
+          title: completed_at
+          description: The date the payment collection was completed.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the payment collection was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the payment collection was updated.
+        metadata:
+          type: object
+          description: The payment collection's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        status:
+          type: string
+          description: The payment collection's status.
+          enum:
+          - canceled
+          - not_paid
+          - awaiting
+          - authorized
+          - partially_authorized
+        payment_providers:
+          type: array
+          description: The payment provider used to process the collection's payments and sessions.
+          items:
+            $ref: '#/components/schemas/AdminPaymentProvider'
+        payment_sessions:
+          type: array
+          description: The payment collection's payment sessions.
+          items:
+            $ref: '#/components/schemas/AdminPaymentSession'
+        payments:
+          type: array
+          description: The payment collection's payments.
+          items:
+            $ref: '#/components/schemas/AdminPayment'
+    AdminPaymentSession:
+      type: object
+      description: The payment session's details.
+      x-schemaName: AdminPaymentSession
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment session's ID.
+        amount:
+          type: number
+          title: amount
+          description: The payment session's amount.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The payment session's currency code.
+          example: usd
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the payment provider processing this session.
+        data:
+          type: object
+          description: The payment session's data, useful for the payment provider processing the payment.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/payment/payment-session#data-property
+        context:
+          type: object
+          description: The context around the payment, such as the customer's details.
+          example:
+            customer:
+              id: cus_123
+        status:
+          type: string
+          description: The payment session's status.
+          enum:
+          - authorized
+          - captured
+          - canceled
+          - pending
+          - requires_more
+          - error
+        authorized_at:
+          type: string
+          title: authorized_at
+          description: The date the payment session was authorized.
+          format: date-time
+        payment_collection:
+          type: object
+        payment:
+          $ref: '#/components/schemas/BasePayment'
+      required:
+      - id
+      - amount
+      - currency_code
+      - provider_id
+      - data
+      - status
+    AdminMarkPaymentCollectionAsPaid:
+      type: object
+      description: The payment details.
+      required:
+      - order_id
+      properties:
+        order_id:
+          type: string
+          title: order_id
+          description: The ID of the order associated with the payment collection.
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the payment provider to use for marking the payment collection as paid. If not provided, the `system` provider will be used.
+      x-schemaName: AdminMarkPaymentCollectionAsPaid
+    AdminPaymentProvider:
+      type: object
+      description: The payment provider's details.
+      x-schemaName: AdminPaymentProvider
+      required:
+      - is_enabled
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment provider's ID.
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: Whether the payment provider is enabled.
+    StoreCreatePaymentCollection:
+      type: object
+      description: The details of the payment collection to create.
+      x-schemaName: StoreCreatePaymentCollection
+      required:
+      - cart_id
+      properties:
+        cart_id:
+          type: string
+          title: cart_id
+          description: The ID of the cart this payment collection is for.
+    StorePaymentSession:
+      type: object
+      description: The payment session's details.
+      x-schemaName: StorePaymentSession
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment session's ID.
+        amount:
+          type: number
+          title: amount
+          description: The payment session's amount.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The payment session's currency code.
+          example: usd
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the payment provider processing this session.
+        data:
+          type: object
+          description: The payment session's data, useful for the payment provider processing the payment.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/payment/payment-session#data-property
+        context:
+          type: object
+          description: The context around the payment, such as the customer's details.
+          example:
+            customer:
+              id: cus_123
+        status:
+          type: string
+          description: The payment session's status.
+          enum:
+          - authorized
+          - captured
+          - canceled
+          - pending
+          - requires_more
+          - error
+        authorized_at:
+          type: string
+          title: authorized_at
+          description: The date the payment session was authorized.
+          format: date-time
+        payment_collection:
+          type: object
+        payment:
+          $ref: '#/components/schemas/BasePayment'
+      required:
+      - id
+      - amount
+      - currency_code
+      - provider_id
+      - data
+      - status
+    StorePaymentProvider:
+      type: object
+      description: The payment provider's details
+      x-schemaName: StorePaymentProvider
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment provider's ID.
+    StorePaymentCollectionResponse:
+      type: object
+      description: The payment collection's details.
+      x-schemaName: StorePaymentCollectionResponse
+      required:
+      - payment_collection
+      properties:
+        payment_collection:
+          $ref: '#/components/schemas/StorePaymentCollection'
+    StorePaymentCollection:
+      type: object
+      description: The payment collection's details.
+      x-schemaName: StorePaymentCollection
+      required:
+      - payment_providers
+      - id
+      - currency_code
+      - amount
+      - status
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment collection's ID.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The payment collection's currency code.
+        amount:
+          type: number
+          title: amount
+          description: The total amount to be paid.
+        authorized_amount:
+          type: number
+          title: authorized_amount
+          description: The total authorized amount of the collection's payments.
+        captured_amount:
+          type: number
+          title: captured_amount
+          description: The total captured amount of the collection's payments.
+        refunded_amount:
+          type: number
+          title: refunded_amount
+          description: The total refunded amount of the collection's payments.
+        completed_at:
+          type: string
+          format: date-time
+          title: completed_at
+          description: The date the payment collection was completed.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the payment collection was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the payment collection was updated.
+        metadata:
+          type: object
+          description: The payment collection's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        status:
+          type: string
+          description: The payment collection's status.
+          enum:
+          - canceled
+          - not_paid
+          - awaiting
+          - authorized
+          - partially_authorized
+        payment_providers:
+          type: array
+          description: The payment provider used to process the collection's payments and sessions.
+          items:
+            $ref: '#/components/schemas/StorePaymentProvider'
+        payment_sessions:
+          type: array
+          description: The payment collection's payment sessions.
+          items:
+            $ref: '#/components/schemas/StorePaymentSession'
+        payments:
+          type: array
+          description: The payment collection's payments.
+          items:
+            $ref: '#/components/schemas/BasePayment'
+    StoreInitializePaymentSession:
+      type: object
+      description: The payment session's details.
+      required:
+      - provider_id
+      properties:
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the payment provider the customer chose.
+          example: pp_stripe_stripe
+        data:
+          type: object
+          description: Any data necessary for the payment provider to process the payment.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/payment/payment-session#data-property
+            description: Learn more about the payment session's data property
+      x-schemaName: StoreInitializePaymentSession
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false
+x-refined-from:
+- medusa-admin-openapi.yaml
+- medusa-store-openapi.yaml

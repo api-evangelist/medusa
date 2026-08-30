@@ -1,0 +1,1568 @@
+openapi: 3.2.0
+info:
+  title: Medusa Regions API
+  version: 2.19.0
+  description: 'Operations tagged Regions across 2 of this provider''s published API definitions: medusa-admin-openapi.yaml, medusa-store-openapi.yaml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Regions
+  description: 'Regions are different countries or geographical regions that the commerce store serves customers in.
+
+
+    These API routes allow admin users to manage regions, their providers, and more.
+
+    '
+  externalDocs:
+    description: Learn more about the Region Module.
+    url: https://docs.medusajs.com/resources/commerce-modules/region
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminRegion'
+paths:
+  /admin/regions:
+    get:
+      operationId: GetRegions
+      summary: List Regions
+      description: Retrieve a list of regions. The regions can be filtered by fields such as `id`. The regions can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: q
+        in: query
+        description: Search term to filter the region's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search term to filter the region's searchable properties.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a region's ID.
+          - type: array
+            description: Filter by region IDs.
+            items:
+              type: string
+              title: id
+              description: A region's ID.
+      - name: name
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: name
+            description: Filter by a region's name.
+          - type: array
+            description: Filter by region names.
+            items:
+              type: string
+              title: name
+              description: A region's name.
+      - name: created_at
+        in: query
+        description: Filter by a region's creation date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a region's creation date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: created_at
+      - name: updated_at
+        in: query
+        description: Filter by a region's update date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a region's update date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: updated_at
+      - name: deleted_at
+        in: query
+        description: Filter by a region's deletion date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a region's deletion date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: deleted_at
+      - name: $and
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: currency_code
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: currency_code
+            description: The region's currency code.
+          - type: array
+            description: The region's currency code.
+            items:
+              type: string
+              title: currency_code
+              description: The currency code's details.
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.region.list()\n.then(({ regions, count, limit, offset }) => {\n  console.log(regions)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/regions'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Regions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The paginated list of regions.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of items returned.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of items skipped before retrieving the returned items.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of items.
+                - type: object
+                  description: The paginated list of regions.
+                  required:
+                  - regions
+                  properties:
+                    regions:
+                      type: array
+                      description: The list of regions.
+                      items:
+                        $ref: '#/components/schemas/AdminRegion'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostRegions
+      summary: Create Region
+      description: Create a region.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateRegion'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.region.create({\n  name: \"United States\",\n  currency_code: \"usd\",\n})\n.then(({ region }) => {\n  console.log(region)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/regions' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"name\": \"Heloise\",\n  \"currency_code\": \"{value}\",\n  \"metadata\": {}\n}'"
+      tags:
+      - Regions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminRegionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createRegionsWorkflow
+      x-events:
+      - name: region.created
+        payload: "```ts\n{\n  id, // The ID of the region\n}\n```"
+        description: Emitted when regions are created.
+        deprecated: false
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /admin/regions/{id}:
+    get:
+      operationId: GetRegionsId
+      summary: Get a Region
+      description: Retrieve a region by its ID. You can expand the region's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The region's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.region.retrieve(\"region_123\")\n.then(({ region }) => {\n  console.log(region)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/regions/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Regions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminRegionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostRegionsId
+      summary: Update a Region
+      description: Update a region's details.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The region's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateRegion'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.region.update(\"region_123\", {\n  name: \"United States\",\n})\n.then(({ region }) => {\n  console.log(region)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/regions/{id}' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"metadata\": {}\n}'"
+      tags:
+      - Regions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminRegionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updateRegionsWorkflow
+      x-events:
+      - name: region.updated
+        payload: "```ts\n{\n  id, // The ID of the region\n}\n```"
+        description: Emitted when regions are updated.
+        deprecated: false
+    delete:
+      operationId: DeleteRegionsId
+      summary: Delete a Region
+      description: Delete a region.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The region's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.region.delete(\"region_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/regions/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Regions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The deletion's details.
+                required:
+                - id
+                - object
+                - deleted
+                properties:
+                  id:
+                    type: string
+                    title: id
+                    description: The region's ID.
+                  object:
+                    type: string
+                    title: object
+                    description: The name of the deleted object.
+                    default: region
+                  deleted:
+                    type: boolean
+                    title: deleted
+                    description: Whether the region was deleted.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deleteRegionsWorkflow
+      x-events:
+      - name: region.deleted
+        payload: "```ts\n{\n  id, // The ID of the region\n}\n```"
+        description: Emitted when regions are deleted.
+        deprecated: false
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /store/regions:
+    get:
+      operationId: GetRegions
+      summary: List Regions
+      description: Retrieve a list of regions. The regions can be filtered by fields such as `id`. The regions can also be sorted or paginated.
+      x-authenticated: false
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/regions/list
+        description: 'Storefront guide: How to retrieve a list of regions.'
+      parameters:
+      - name: x-publishable-api-key
+        in: header
+        description: Publishable API Key created in the Medusa Admin.
+        required: true
+        schema:
+          type: string
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#publishable-api-key
+      - name: x-medusa-locale
+        in: header
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: q
+        in: query
+        description: Search term to filter the region's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search term to filter the region's searchable properties.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a region's ID.
+          - type: array
+            description: Filter by region IDs.
+            items:
+              type: string
+              title: id
+              description: A region's ID.
+      - name: name
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: name
+            description: Filter by a region name.
+          - type: array
+            description: Filter by region names.
+            items:
+              type: string
+              title: name
+              description: A region's name.
+      - name: currency_code
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: currency_code
+            description: Filter by a currency code to retrieve regions that use that code.
+          - type: array
+            description: Filter by currency codes to retrieve regions that use one of these codes.
+            items:
+              type: string
+              title: currency_code
+              description: A currency code.
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: locale
+        in: query
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nlet MEDUSA_BACKEND_URL = \"http://localhost:9000\"\n\nif (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {\n  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL\n}\n\nexport const sdk = new Medusa({\n  baseUrl: MEDUSA_BACKEND_URL,\n  debug: process.env.NODE_ENV === \"development\",\n  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,\n})\n\nsdk.store.region.list()\n.then(({ regions, count, limit, offset }) => {\n  console.log(regions)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/store/regions'' \
+
+          -H ''x-publishable-api-key: {your_publishable_api_key}'''
+      tags:
+      - Regions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The paginated list of regions.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of items returned.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of items skipped before retrieving the returned items.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of items.
+                - type: object
+                  description: The paginated list of regions.
+                  required:
+                  - regions
+                  properties:
+                    regions:
+                      type: array
+                      description: The list of regions.
+                      items:
+                        $ref: '#/components/schemas/StoreRegion'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /store/regions/{id}:
+    get:
+      operationId: GetRegionsId
+      summary: Get a Region
+      description: Retrieve a region by its ID. You can expand the region's relations or select the fields that should be returned.
+      x-authenticated: false
+      parameters:
+      - name: id
+        in: path
+        description: The region's ID.
+        required: true
+        schema:
+          type: string
+      - name: x-publishable-api-key
+        in: header
+        description: Publishable API Key created in the Medusa Admin.
+        required: true
+        schema:
+          type: string
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#publishable-api-key
+      - name: x-medusa-locale
+        in: header
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: locale
+        in: query
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nlet MEDUSA_BACKEND_URL = \"http://localhost:9000\"\n\nif (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {\n  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL\n}\n\nexport const sdk = new Medusa({\n  baseUrl: MEDUSA_BACKEND_URL,\n  debug: process.env.NODE_ENV === \"development\",\n  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,\n})\n\nsdk.store.region.retrieve(\"reg_123\")\n.then(({ region }) => {\n  console.log(region)\n})"
+      - lang: Shell
+        label: cURL
+        source: curl '{backend_url}/store/regions/{id}'
+      tags:
+      - Regions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The region's details.
+                required:
+                - region
+                properties:
+                  region:
+                    $ref: '#/components/schemas/StoreRegion'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+components:
+  schemas:
+    AdminRegionCountry:
+      type: object
+      description: The country's details.
+      x-schemaName: AdminRegionCountry
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The country's ID.
+        iso_2:
+          type: string
+          title: iso_2
+          description: The country's iso 2.
+          example: us
+        iso_3:
+          type: string
+          title: iso_3
+          description: The country's iso 3.
+          example: usa
+        num_code:
+          type: string
+          title: num_code
+          description: The country's num code.
+          example: 840
+        name:
+          type: string
+          title: name
+          description: The country's name.
+        display_name:
+          type: string
+          title: display_name
+          description: The country's display name.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminRegion:
+      type: object
+      description: The region's details.
+      x-schemaName: AdminRegion
+      required:
+      - id
+      - currency_code
+      - name
+      properties:
+        id:
+          type: string
+          title: id
+          description: The region's ID.
+        name:
+          type: string
+          title: name
+          description: The region's name.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The region's currency code.
+          example: usd
+        automatic_taxes:
+          type: boolean
+          title: automatic_taxes
+          description: Whether taxes are applied automatically during checkout.
+        countries:
+          type: array
+          description: The region's countries.
+          items:
+            $ref: '#/components/schemas/AdminRegionCountry'
+        payment_providers:
+          type: array
+          description: The region's payment providers.
+          items:
+            $ref: '#/components/schemas/AdminPaymentProvider'
+        metadata:
+          type: object
+          description: The region's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the region was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the region was updated.
+    AdminUpdateRegion:
+      type: object
+      description: The propeties to update in the region.
+      properties:
+        name:
+          type: string
+          title: name
+          description: The region's name.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The region's currency code.
+        countries:
+          type: array
+          description: The region's countries.
+          items:
+            type: string
+            title: countries
+            description: A country code.
+        automatic_taxes:
+          type: boolean
+          title: automatic_taxes
+          description: Whether taxes are calculated automatically for carts in the region.
+        payment_providers:
+          type: array
+          description: The payment providers enabled in the region.
+          items:
+            type: string
+            title: payment_providers
+            description: A payment provider's ID.
+        metadata:
+          type: object
+          description: The region's metadata. Can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        is_tax_inclusive:
+          type: boolean
+          title: is_tax_inclusive
+          description: Whether the prices in the region are tax inclusive.
+      x-schemaName: AdminUpdateRegion
+    AdminPaymentProvider:
+      type: object
+      description: The payment provider's details.
+      x-schemaName: AdminPaymentProvider
+      required:
+      - is_enabled
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment provider's ID.
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: Whether the payment provider is enabled.
+    AdminCreateRegion:
+      type: object
+      description: The region's details.
+      x-schemaName: AdminCreateRegion
+      required:
+      - name
+      - currency_code
+      properties:
+        name:
+          type: string
+          title: name
+          description: The region's name.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The region's currency code.
+          example: usd
+        countries:
+          type: array
+          description: The region's countries.
+          items:
+            type: string
+            title: countries
+            description: A country code.
+            example: us
+        automatic_taxes:
+          type: boolean
+          title: automatic_taxes
+          description: Whether taxes are calculated automatically during checkout in this region.
+        is_tax_inclusive:
+          type: boolean
+          title: is_tax_inclusive
+          description: Whether prices in this region are tax inclusive.
+        payment_providers:
+          type: array
+          description: The payment providers enabled in this region.
+          items:
+            type: string
+            title: payment_providers
+            description: A payment provider's ID.
+            example: pp_stripe_stripe
+        metadata:
+          type: object
+          description: The region's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+    AdminRegionResponse:
+      type: object
+      description: The region's details.
+      x-schemaName: AdminRegionResponse
+      required:
+      - region
+      properties:
+        region:
+          $ref: '#/components/schemas/AdminRegion'
+    StoreRegion:
+      type: object
+      description: The region's details.
+      x-schemaName: StoreRegion
+      required:
+      - id
+      - name
+      - currency_code
+      properties:
+        id:
+          type: string
+          title: id
+          description: The region's ID.
+        name:
+          type: string
+          title: name
+          description: The region's name.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The region's currency code.
+          example: usd
+        automatic_taxes:
+          type: boolean
+          title: automatic_taxes
+          description: Whether taxes are calculated automatically during checkout for carts that belong to this region.
+        countries:
+          type: array
+          description: The region's countries.
+          items:
+            $ref: '#/components/schemas/BaseRegionCountry'
+        payment_providers:
+          type: array
+          description: The region's payment providers.
+          items:
+            $ref: '#/components/schemas/AdminPaymentProvider'
+        metadata:
+          type: object
+          description: The region's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the region was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the region was updated.
+    BaseRegionCountry:
+      type: object
+      description: The country's details.
+      x-schemaName: BaseRegionCountry
+      properties:
+        id:
+          type: string
+          title: id
+          description: The country's ID.
+        iso_2:
+          type: string
+          title: iso_2
+          description: The country's iso 2.
+          example: us
+        iso_3:
+          type: string
+          title: iso_3
+          description: The country's iso 3.
+          example: usa
+        num_code:
+          type: string
+          title: num_code
+          description: The country's num code.
+          example: 840
+        name:
+          type: string
+          title: name
+          description: The country's name.
+        display_name:
+          type: string
+          title: display_name
+          description: The country's display name.
+      required:
+      - id
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false
+x-refined-from:
+- medusa-admin-openapi.yaml
+- medusa-store-openapi.yaml

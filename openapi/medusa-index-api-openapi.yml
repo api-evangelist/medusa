@@ -1,0 +1,328 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Index API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'The Index Module is a tool to perform high-performance queries across modules, for example, to filter linked modules.
+
+    The Index Module is currently experimental and is hidden behind a feature flag. Learn more about it and how to enable it in the [Index Module guide](https://docs.medusajs.com/learn/fundamentals/module-links/index-module).
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Index
+  description: 'The Index Module is a tool to perform high-performance queries across modules, for example, to filter linked modules.
+
+    The Index Module is currently experimental and is hidden behind a feature flag. Learn more about it and how to enable it in the [Index Module guide](https://docs.medusajs.com/learn/fundamentals/module-links/index-module).
+
+    '
+paths:
+  /admin/index/details:
+    get:
+      operationId: GetIndexDetails
+      summary: Get Index Details
+      description: Retrieve index metadata, including entity type, status, last synced key, and last updated timestamp.
+      x-authenticated: true
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/index/details'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Index
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminIndexDetailsResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.11.2
+      x-featureFlag: index
+  /admin/index/sync:
+    post:
+      operationId: PostIndexSync
+      summary: Trigger Index Sync
+      description: Trigger reindexing or re-ingestion of the Index Module.
+      x-authenticated: true
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminIndexSyncPayload'
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/index/sync' \\\n-H 'Authorization: Bearer {access_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"strategy\": \"full\"\n}'"
+      tags:
+      - Index
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                title: message
+                description: The 200 status code's message.
+                example: OK
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.11.2
+      x-featureFlag: index
+components:
+  examples:
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+  schemas:
+    AdminIndexDetailsResponse:
+      type: object
+      description: The index's metadata details.
+      x-schemaName: AdminIndexDetailsResponse
+      required:
+      - metadata
+      properties:
+        metadata:
+          type: array
+          description: The index's metadata.
+          items:
+            $ref: '#/components/schemas/IndexInfo'
+    AdminIndexSyncPayload:
+      type: object
+      description: The details of the index sync.
+      x-schemaName: AdminIndexSyncPayload
+      required:
+      - strategy
+      properties:
+        strategy:
+          type: string
+          description: The syncing strategy. `full` indicates a full reindex, while `reset` truncates tables and performs a fresh sync.
+          enum:
+          - full
+          - reset
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    IndexInfo:
+      type: object
+      description: The index's metadata information.
+      x-schemaName: IndexInfo
+      required:
+      - id
+      - entity
+      - status
+      - fields
+      - updated_at
+      - last_synced_key
+      properties:
+        id:
+          type: string
+          title: id
+          description: The index's ID.
+        entity:
+          type: string
+          title: entity
+          description: The index's entity.
+        status:
+          type: string
+          description: The index's syncing or ingesting status.
+          enum:
+          - pending
+          - error
+          - done
+          - processing
+        fields:
+          type: array
+          description: The index's fields.
+          items:
+            type: string
+            title: fields
+            description: The index's fields.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the index was last updated.
+        last_synced_key:
+          type: string
+          title: last_synced_key
+          description: The key of the last index sync.
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

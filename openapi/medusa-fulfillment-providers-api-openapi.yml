@@ -1,0 +1,456 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Fulfillment Providers API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'A fulfillment provider is a third-party integration or custom logic used to  fulfill an order''s items.
+
+
+    Fulfillment providers are installed as module providers.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Fulfillment Providers
+  description: 'A fulfillment provider is a third-party integration or custom logic used to  fulfill an order''s items.
+
+
+    Fulfillment providers are installed as module providers.
+
+    '
+  externalDocs:
+    description: Learn more about the fulfillment providers and how to create them.
+    url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/fulfillment-provider
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminFulfillmentProvider'
+paths:
+  /admin/fulfillment-providers:
+    get:
+      operationId: GetFulfillmentProviders
+      summary: List Fulfillment Providers
+      description: Retrieve a list of fulfillment providers. The fulfillment providers can be filtered by fields such as `id`. The fulfillment providers can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a fulfillment provider's ID.
+          - type: array
+            description: Filter by fulfillment provider IDs.
+            items:
+              type: string
+              title: id
+              description: A fulfillment provider ID.
+      - name: is_enabled
+        in: query
+        description: Filter by whether the fulfillment provider is enabled.
+        required: false
+        schema:
+          type: boolean
+          title: is_enabled
+          description: Filter by whether the fulfillment provider is enabled.
+      - name: q
+        in: query
+        description: Search term to filter a fulfillment provider's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search term to filter a fulfillment provider's searchable properties.
+      - name: stock_location_id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: stock_location_id
+            description: Filter by associated stock location's ID.
+          - type: array
+            description: Filter by associated stock location IDs.
+            items:
+              type: string
+              title: stock_location_id
+              description: A stock location's ID.
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.fulfillmentProvider.list()\n.then(({ fulfillment_providers, count, limit, offset }) => {\n  console.log(fulfillment_providers)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/fulfillment-providers'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Fulfillment Providers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminFulfillmentProviderListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/fulfillment-providers/{id}/options:
+    get:
+      operationId: GetFulfillmentProvidersIdOptions
+      summary: List Fulfillment Options
+      description: Retrieve the list of fulfillment options of a fulfillment provider. These options may be retrieved from an integrated third-party service.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The fulfillment provider's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.fulfillmentProvider.listFulfillmentOptions(\"fp_123\")\n.then(({ fulfillment_options }) => {\n  console.log(fulfillment_options)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/fulfillment-providers/{id}/options'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Fulfillment Providers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminFulfillmentProviderOptionsListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+components:
+  examples:
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+  schemas:
+    AdminFulfillmentProviderListResponse:
+      type: object
+      description: The paginated list of fulfillment providers.
+      x-schemaName: AdminFulfillmentProviderListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - fulfillment_providers
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total count of items.
+        fulfillment_providers:
+          type: array
+          description: The list of fulfillment providers.
+          items:
+            $ref: '#/components/schemas/AdminFulfillmentProvider'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    AdminFulfillmentProviderOption:
+      type: object
+      description: The fulfillment option's details.
+      x-schemaName: AdminFulfillmentProviderOption
+      required:
+      - id
+      - is_return
+      properties:
+        id:
+          type: string
+          title: id
+          description: The fulfillment option's ID.
+        is_return:
+          type: boolean
+          title: is_return
+          description: Whether the fulfillment option is used for returns.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminFulfillmentProvider:
+      type: object
+      description: The fulfillment provider's details.
+      x-schemaName: AdminFulfillmentProvider
+      required:
+      - id
+      - is_enabled
+      properties:
+        id:
+          type: string
+          title: id
+          description: The provider's ID.
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: The provider's is enabled.
+    AdminFulfillmentProviderOptionsListResponse:
+      type: object
+      description: The paginated list of fulfillment options.
+      x-schemaName: AdminFulfillmentProviderOptionsListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - fulfillment_options
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        fulfillment_options:
+          type: array
+          description: The list of fulfillment options.
+          items:
+            $ref: '#/components/schemas/AdminFulfillmentProviderOption'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

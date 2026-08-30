@@ -1,0 +1,501 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Notifications API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'A notification informs an admin user of store changes or status changes of background tasks.
+
+
+    These API routes allow admin users to view and manage notifications.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Notifications
+  description: 'A notification informs an admin user of store changes or status changes of background tasks.
+
+
+    These API routes allow admin users to view and manage notifications.
+
+    '
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminNotification'
+paths:
+  /admin/notifications:
+    get:
+      operationId: GetNotifications
+      summary: List Notifications
+      description: Retrieve a list of notifications. The notifications can be filtered by fields such as `id`. The notifications can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: q
+        in: query
+        description: Search term to apply on the notification's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search term to apply on the notification's searchable properties.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a notification ID.
+          - type: array
+            description: Filter by notification IDs.
+            items:
+              type: string
+              title: id
+              description: A notification ID.
+      - name: channel
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: channel
+            description: Filter by a notification channel.
+            example: email
+          - type: array
+            description: Filter by notification channels.
+            items:
+              type: string
+              title: channel
+              description: A notification channel.
+              example: email
+      - name: $and
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: to
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: to
+            description: Filter by who the notification was sent to. Set to `""` to retrieve notifications for all admin users.
+          - type: array
+            description: Filter by who the notification was sent to. Set to `""` to retrieve notifications for all admin users.
+            items:
+              type: string
+              title: to
+              description: Who the notification was sent to. Set to `""` to retrieve notifications for all admin users.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.notification.list()\n.then(({ notifications, count, limit, offset }) => {\n  console.log(notifications)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/notifications'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Notifications
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminNotificationListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/notifications/{id}:
+    get:
+      operationId: GetNotificationsId
+      summary: Get a Notification
+      description: Retrieve a notification by its ID. You can expand the notification's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The notification's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.notification.retrieve(\"notif_123\")\n.then(({ notification }) => {\n  console.log(notification)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/notifications/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Notifications
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminNotificationResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+components:
+  examples:
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+  schemas:
+    AdminNotification:
+      type: object
+      description: The notification's details.
+      x-schemaName: AdminNotification
+      required:
+      - id
+      - to
+      - channel
+      - template
+      - provider_id
+      - created_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The notification's ID.
+        to:
+          type: string
+          title: to
+          description: Where to send the notification to. For example, if `channel` is `email`, this can be an email number.
+        channel:
+          type: string
+          title: channel
+          description: Through which channel is the notification sent through.
+          example: email
+        template:
+          type: string
+          title: template
+          description: The ID of the template in a third-party service used as the notification's shape.
+        data:
+          type: object
+          description: Data payload to send with the notification.
+        trigger_type:
+          type: string
+          title: trigger_type
+          description: What triggered this notification.
+          example: order.created
+        resource_id:
+          type: string
+          title: resource_id
+          description: The ID of the associated resource. For example, if the notification was triggered because an order was created, this would be the ID of the order.
+        resource_type:
+          type: string
+          title: resource_type
+          description: The type of the resource that triggered the notification.
+          example: order
+        receiver_id:
+          type: string
+          title: receiver_id
+          description: The ID of the user or customer that's receiving this notification.
+        original_notification_id:
+          type: string
+          title: original_notification_id
+          description: The ID of the original notification, if this notification is resent.
+        external_id:
+          type: string
+          title: external_id
+          description: The ID of the notification in an external or third-party system.
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the provider used to send the notification.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the notification was created.
+    AdminNotificationResponse:
+      type: object
+      description: The notification's details.
+      x-schemaName: AdminNotificationResponse
+      required:
+      - notification
+      properties:
+        notification:
+          $ref: '#/components/schemas/AdminNotification'
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminNotificationListResponse:
+      type: object
+      description: The paginated list of notifications.
+      x-schemaName: AdminNotificationListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - notifications
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total count of items.
+        notifications:
+          type: array
+          description: The list of notifications.
+          items:
+            $ref: '#/components/schemas/AdminNotification'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

@@ -1,0 +1,1037 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Users API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'A user is an admin user that can authenticate and perform functionalities as an admin user.
+
+
+    An admin user can invite other users to join their team. Once they accept the invite, they''ll become admin users as well.
+
+
+    These API routes allow admin users to manage their team.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Users
+  description: 'A user is an admin user that can authenticate and perform functionalities as an admin user.
+
+
+    An admin user can invite other users to join their team. Once they accept the invite, they''ll become admin users as well.
+
+
+    These API routes allow admin users to manage their team.
+
+    '
+  externalDocs:
+    description: Learn more about the User Module.
+    url: https://docs.medusajs.com/resources/commerce-modules/user
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminUser'
+paths:
+  /admin/users:
+    get:
+      operationId: GetUsers
+      summary: List Users
+      description: Retrieve a list of users. The users can be filtered by fields such as `id`. The users can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: q
+        in: query
+        description: The search term to filter the user's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: The search term to filter the user's searchable properties.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a user's ID.
+          - type: array
+            description: Filter by user IDs.
+            items:
+              type: string
+              title: id
+              description: A user's ID.
+      - name: email
+        in: query
+        description: Filter by an email.
+        required: false
+        schema:
+          type: string
+          title: email
+          description: Filter by an email.
+          format: email
+      - name: first_name
+        in: query
+        description: Filter by a first name.
+        required: false
+        schema:
+          type: string
+          title: first_name
+          description: Filter by a first name.
+      - name: last_name
+        in: query
+        description: Filter by a last name.
+        required: false
+        schema:
+          type: string
+          title: last_name
+          description: Filter by a last name.
+      - name: created_at
+        in: query
+        description: Filter by a user's creation date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a user's creation date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: created_at
+      - name: updated_at
+        in: query
+        description: Filter by a user's update date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a user's update date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: updated_at
+      - name: deleted_at
+        in: query
+        description: Filter by a user's deletion date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a user's deletion date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: deleted_at
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.user.list()\n.then(({ users, count, limit, offset }) => {\n  console.log(users)\n})"
+      - lang: Shell
+        label: cURL
+        source: curl '{backend_url}/admin/users'
+      tags:
+      - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      security:
+      - cookie_auth: []
+      - jwt_token: []
+  /admin/users/me:
+    get:
+      operationId: GetUsersMe
+      summary: Get Logged-In User
+      description: Retrieve the logged-in user's details.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.user.me()\n.then(({ user }) => {\n  console.log(user)\n})"
+      - lang: Shell
+        label: cURL
+        source: curl '{backend_url}/admin/users/me'
+      tags:
+      - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      security:
+      - cookie_auth: []
+      - jwt_token: []
+  /admin/users/{id}:
+    get:
+      operationId: GetUsersId
+      summary: Get a User
+      description: Retrieve a user by its ID. You can expand the user's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The user's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.user.retrieve(\"user_123\")\n.then(({ user }) => {\n  console.log(user)\n})"
+      - lang: Shell
+        label: cURL
+        source: curl '{backend_url}/admin/users/{id}'
+      tags:
+      - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      security:
+      - cookie_auth: []
+      - jwt_token: []
+    post:
+      operationId: PostUsersId
+      summary: Update a User
+      description: Update a user's details.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The user's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateUser'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.user.update(\"user_123\", {\n  first_name: \"John\",\n  last_name: \"Doe\",\n})\n.then(({ user }) => {\n  console.log(user)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/users/{id}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"first_name\": \"{value}\",\n  \"last_name\": \"{value}\",\n  \"avatar_url\": \"{value}\"\n}'"
+      tags:
+      - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updateUsersWorkflow
+      security:
+      - cookie_auth: []
+      - jwt_token: []
+      x-events:
+      - name: user.updated
+        payload: "```ts\n{\n  id, // The ID of the user\n}\n```"
+        description: Emitted when users are updated.
+        deprecated: false
+    delete:
+      operationId: DeleteUsersId
+      summary: Delete a User
+      description: Delete a user.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The user's ID.
+        required: true
+        schema:
+          type: string
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.user.delete(\"user_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: curl -X DELETE '{backend_url}/admin/users/{id}'
+      tags:
+      - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserDeleteResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: removeUserAccountWorkflow
+      security:
+      - cookie_auth: []
+      - jwt_token: []
+      x-events:
+      - name: user.deleted
+        payload: "```ts\n{\n  id, // The ID of the user\n}\n```"
+        description: Emitted when users are deleted.
+        deprecated: false
+components:
+  examples:
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+  schemas:
+    AdminUserDeleteResponse:
+      type: object
+      description: The details of the deleted user.
+      x-schemaName: AdminUserDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The user's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: user
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the user was deleted.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminUserListResponse:
+      type: object
+      description: The paginated list of users.
+      x-schemaName: AdminUserListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - users
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        users:
+          type: array
+          description: The list of users.
+          items:
+            $ref: '#/components/schemas/AdminUser'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    AdminUser:
+      type: object
+      description: The user's details.
+      x-schemaName: AdminUser
+      required:
+      - id
+      - email
+      - first_name
+      - last_name
+      - avatar_url
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The user's ID.
+        email:
+          type: string
+          title: email
+          description: The user's email.
+          format: email
+        first_name:
+          type: string
+          title: first_name
+          description: The user's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The user's last name.
+        avatar_url:
+          type: string
+          title: avatar_url
+          description: The URL of the user's avatar.
+        metadata:
+          type: object
+          description: The user's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the user was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the user was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the user was deleted.
+    AdminUpdateUser:
+      type: object
+      description: The properties to update in a user.
+      x-schemaName: AdminUpdateUser
+      properties:
+        first_name:
+          type: string
+          title: first_name
+          description: The user's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The user's last name.
+        avatar_url:
+          type: string
+          title: avatar_url
+          description: The URL of the user's avatar.
+        metadata:
+          type: object
+          description: The user's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+    AdminUserResponse:
+      type: object
+      description: The user's details.
+      x-schemaName: AdminUserResponse
+      required:
+      - user
+      properties:
+        user:
+          $ref: '#/components/schemas/AdminUser'
+  responses:
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

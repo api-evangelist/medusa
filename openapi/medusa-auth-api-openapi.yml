@@ -1,0 +1,1577 @@
+openapi: 3.2.0
+info:
+  title: Medusa Auth API
+  version: 2.19.0
+  description: 'Operations tagged Auth across 2 of this provider''s published API definitions: medusa-admin-openapi.yaml, medusa-store-openapi.yaml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Auth
+  description: 'Auth API routes allow you to manage an admin user''s authentication.
+
+    '
+paths:
+  /auth/mfa/factors/{id}:
+    delete:
+      operationId: DeleteMfaFactorsId
+      summary: Disable a Multi-Factor Authentication (MFA) Factor
+      x-sidebar-summary: Disable MFA Factor
+      description: 'Disable a multi-factor authentication (MFA) factor for the authenticated user. Once disabled,
+
+        the factor can no longer be used to verify MFA challenges. When disabling a recovery-code
+
+        factor, a valid recovery code must be provided in the request body.
+
+        '
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The MFA factor's ID.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The details required to disable the MFA factor.
+              properties:
+                method:
+                  type: string
+                  title: method
+                  description: The MFA method used to authorize disabling the factor (for example, `recovery-code`).
+                code:
+                  type: string
+                  title: code
+                  description: The verification code associated with the provided `method`, used to confirm the disable action.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nconst { mfa_factor } = await sdk.auth.mfa.disable(\"authmfa_123\")"
+      - lang: Shell
+        label: cURL
+        source: curl -X DELETE '{backend_url}/auth/mfa/factors/{id}'
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.15.3
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/session:
+    post:
+      operationId: PostSession
+      summary: Set Authentication Session
+      description: Set the cookie session ID of an admin user. The admin must be previously authenticated with the `/auth/user/{provider}` API route first, as the JWT token is required in the header of the request.
+      x-authenticated: true
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/auth/session'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthAdminSessionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    delete:
+      operationId: DeleteSession
+      summary: Delete Authentication Session
+      description: Deletes the cookie session ID previously set for authentication.
+      x-authenticated: true
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nawait sdk.auth.logout()\n\n// user is now logged out\n// you can't send any requests that require authentication"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/auth/session'' \
+
+          -H ''Cookie: connect.sid={sid}'''
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The deletion's details.
+                required:
+                - success
+                properties:
+                  success:
+                    type: boolean
+                    title: success
+                    description: Whether the session was deleted successfully.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/token/refresh:
+    post:
+      operationId: PostAdminAuthTokenRefresh
+      summary: Refresh Authentication Token
+      description: Refresh the authentication token of a user. This is useful after authenticating a user with a third-party service to ensure the token holds the new user's details, or when you don't want users to re-login every day.
+      externalDocs:
+        url: https://docs.medusajs.com/resources/commerce-modules/auth/authentication-route#2-third-party-service-authenticate-flow
+        description: Learn about third-party authentication flow.
+      x-authenticated: true
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nconst token = await sdk.auth.refresh()\n\n// all subsequent requests will use the token in the header\nconst { user } = await sdk.admin.user.me()"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/auth/token/refresh'' \
+
+          -H ''Authorization: Bearer {token}'''
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/user/providers:
+    get:
+      operationId: GetUserProviders
+      x-sidebar-summary: List Providers
+      summary: List Auth Providers for Admin Users
+      description: Retrieve a list of auth providers for the user actor type. This is useful to show the authentication option for the available providers.
+      x-authenticated: false
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nconst { providers } = await sdk.auth.listProviders(\"user\")"
+      - lang: Shell
+        label: cURL
+        source: curl '{backend_url}/auth/user/providers'
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthProvidersListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/user/{auth_provider}:
+    post:
+      operationId: PostActor_typeAuth_provider
+      summary: Authenticate User
+      description: 'Authenticate a user and receive the JWT token to be used in the header of subsequent requests.
+
+
+        When used with a third-party provider, such as Google, the request returns a `location` property. You redirect to the specified URL in your frontend to continue authentication with the third-party service.
+
+        '
+      externalDocs:
+        url: https://docs.medusajs.com/resources/commerce-modules/auth/authentication-route#types-of-authentication-flows
+        description: Learn about different authentication flows.
+      x-authenticated: false
+      parameters:
+      - name: auth_provider
+        in: path
+        description: The provider used for authentication.
+        required: true
+        schema:
+          type: string
+          example: emailpass
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              title: input
+              description: "The input data necessary for authentication. \nFor example, for email-pass authentication, pass `email` and `password` properties. \nFor the Google and GitHub authentication providers, you can pass `callback_url` to indicate the URL in the frontend that the user should be redirected to after completing their authentication. This will override the provider's `callbackUrl` configurations in `medusa-config.ts`.\n"
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nconst result = await sdk.auth.login(\n  \"user\",\n  \"emailpass\",\n  {\n    email: \"user@gmail.com\",\n    password: \"supersecret\"\n  }\n)\n\nif (typeof result !== \"string\") {\n  alert(\"Authentication requires additional steps\")\n  // replace with the redirect logic of your application\n  window.location.href = result.location\n  return\n}\n\n// user is now authenticated\n// all subsequent requests will use the token in the header\nconst { user } = await sdk.admin.user.me()"
+      - lang: Bash
+        label: Google Provider
+        source: curl -X POST '{backend_url}/auth/user/google'
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/AuthResponse'
+                - $ref: '#/components/schemas/AuthCallbackResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/user/{auth_provider}/callback:
+    post:
+      operationId: PostActor_typeAuth_providerCallback
+      summary: Validate Authentication Callback
+      description: 'This API route is used by your dashboard or frontend application when a third-party provider redirects to it after authentication. It validates the authentication with the third-party provider and, if successful, returns an authentication token. All query parameters received from the third-party provider, such as `code`, `state`, and `error`, must be passed as query parameters to this route.
+
+
+        You can decode the JWT token using libraries like [react-jwt](https://www.npmjs.com/package/react-jwt) in the frontend. If the decoded data doesn''t  have an `actor_id` property, then you must create a user, typically using the Accept Invite route passing the token in the request''s Authorization header.
+
+        '
+      externalDocs:
+        url: https://docs.medusajs.com/resources/commerce-modules/auth/authentication-route#2-third-party-service-authenticate-flow
+        description: Learn about third-party authentication flow.
+      x-authenticated: false
+      parameters:
+      - name: auth_provider
+        in: path
+        description: The provider used for authentication.
+        required: true
+        schema:
+          type: string
+          example: google
+      x-codeSamples:
+      - lang: JavaScript
+        label: Google Provider
+        source: "import Medusa from \"@medusajs/js-sdk\"\nimport { decodeToken } from \"react-jwt\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nconst token = await sdk.auth.callback(\n  \"user\",\n  \"google\",\n  {\n    code: \"123\",\n    state: \"456\"\n  }\n)\n// all subsequent requests will use the token in the header\n\nconst decodedToken = decodeToken(token) as { actor_id: string, user_metadata: Record<string, unknown> }\n\nconst shouldCreateUser = decodedToken.actor_id === \"\"\n\nif (shouldCreateUser) {\n  const user = await sdk.admin.invite.accept(\n    {\n      email: decodedToken.user_metadata.email as string,\n      first_name: \"John\",\n      last_name: \"Smith\",\n      invite_token: \"12345...\"\n    },\n  )\n\n  // refresh auth token\n  await sdk.auth.refresh()\n  // all subsequent requests will use the new token in the header\n} else {\n  // User already exists and is authenticated\n}"
+      - lang: TypeScript
+        label: GitHub Provider
+        source: "import Medusa from \"@medusajs/js-sdk\"\nimport { decodeToken } from \"react-jwt\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nconst token = await sdk.auth.callback(\n  \"user\",\n  \"github\",\n  {\n    code: \"123\",\n    state: \"456\"\n  }\n)\n// all subsequent requests will use the token in the header\n\nconst decodedToken = decodeToken(token) as { actor_id: string, user_metadata: Record<string, unknown> }\n\nconst shouldCreateUser = decodedToken.actor_id === \"\"\n\nif (shouldCreateUser) {\n  const user = await sdk.admin.invite.accept(\n    {\n      email: decodedToken.user_metadata.email as string,\n      first_name: \"John\",\n      last_name: \"Smith\",\n      invite_token: \"12345...\"\n    },\n  )\n\n  // refresh auth token\n  await sdk.auth.refresh()\n  // all subsequent requests will use the new token in the header\n} else {\n  // User already exists and is authenticated\n}"
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/user/{auth_provider}/register:
+    post:
+      operationId: PostActor_typeAuth_provider_register
+      summary: Retrieve Registration JWT Token
+      description: This API route retrieves a registration JWT token of a user that hasn't been registered yet. The token is used in the header of requests that create a user, such as the Accept Invite API route.
+      externalDocs:
+        url: https://docs.medusajs.com/resources/commerce-modules/auth/authentication-route#1-basic-authentication-flow
+        description: Learn about the basic authentication flow.
+      x-authenticated: false
+      parameters:
+      - name: auth_provider
+        in: path
+        description: The provider used for authentication.
+        required: true
+        schema:
+          type: string
+          example: emailpass
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              title: input
+              description: The input data necessary for authentication. For example, for email-pass authentication, pass `email` and `password` properties.
+              example:
+                email: admin@medusa-test.com
+                password: supersecret
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nconst token = await sdk.auth.register(\"user\", \"emailpass\", {\n  email: \"user@gmail.com\",\n  password: \"supersecret\"\n})\n\n// all subsequent requests will use the token in the header\nconst { user } = await sdk.admin.invite.accept(\n  {\n    email: \"user@gmail.com\",\n    first_name: \"John\",\n    last_name: \"Smith\",\n    invite_token: \"12345...\"\n  },\n)"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/auth/user/emailpass/register' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"email\": \"admin@medusa-test.com\",\n  \"password\": \"supersecret\"\n}'"
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/user/{auth_provider}/reset-password:
+    post:
+      operationId: PostActor_typeAuth_providerResetPassword
+      summary: Generate Reset Password Token for Admin User
+      x-sidebar-summary: Generate Reset Password Token
+      description: "Generate a reset password token for an admin user. This API route doesn't reset the admin's password or send them the reset instructions in a notification.\n\nInstead, This API route emits the `auth.password_reset` event, passing it the token as a payload. You can listen to that event in a subscriber as explained in [this guide](https://docs.medusajs.com/resources/commerce-modules/auth/reset-password), then send the user a notification. The notification is sent using a [Notification Module Provider](https://docs.medusajs.com/resources/infrastructure-modules/notification), and it should have the URL to reset the password in the Medusa Admin dashboard, such as `http://localhost:9000/app/reset-password?token=123`.\n\n\n Use the generated token to update the user's password using the [Reset Password API route](https://docs.medusajs.com/api/admin#auth_postactor_typeauth_providerupdate).\n"
+      externalDocs:
+        url: https://docs.medusajs.com/resources/commerce-modules/auth/authentication-route#generate-reset-password-token-route
+        description: Learn more about this API route.
+      x-authenticated: false
+      parameters:
+      - name: auth_provider
+        in: path
+        description: The provider used for authentication.
+        required: true
+        schema:
+          type: string
+          example: emailpass
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The input data necessary to generate a reset password token.
+              required:
+              - identifier
+              properties:
+                identifier:
+                  type: string
+                  description: The identifier of the admin user. For example, their email address.
+                  example: admin@medusa-test.com
+                metadata:
+                  type: object
+                  description: Optional metadata to include with the reset password token generation request.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.auth.resetPassword(\n  \"user\",\n  \"emailpass\",\n  {\n    identifier: \"user@gmail.com\"\n  }\n)\n.then(() => {\n  // user receives token\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/auth/user/emailpass/reset-password' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"identifier\": \"admin@medusa-test.com\"\n}'"
+      tags:
+      - Auth
+      responses:
+        '201':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                title: message
+                description: The 201 status code's message.
+                example: Created
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: generateResetPasswordTokenWorkflow
+      x-events:
+      - name: auth.password_reset
+        payload: "```ts\n{\n  entity_id, // The identifier of the user or customer. For example, an email address.\n  actor_type, // The type of actor. For example, \"customer\", \"user\", or custom.\n  token, // The generated token.\n  metadata, // Optional custom metadata passed from the request.\n}\n```"
+        description: 'Emitted when a reset password token is generated. You can listen to this event
+
+          to send a reset password email to the user or customer, for example.'
+        deprecated: false
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/user/{auth_provider}/update:
+    post:
+      operationId: PostActor_typeAuth_providerUpdate
+      summary: Reset an Admin User's Password
+      x-sidebar-summary: Reset Password
+      description: Reset an admin user's password using a reset-password token generated with the [Generate Reset Password Token API route](https://docs.medusajs.com/api/admin#auth_postactor_typeauth_providerresetpassword). You pass the token as a bearer token in the request's Authorization header.
+      externalDocs:
+        url: https://docs.medusajs.com/resources/commerce-modules/auth/authentication-route#reset-password-route
+        description: Learn more about this API route.
+      x-authenticated: true
+      parameters:
+      - name: auth_provider
+        in: path
+        description: The provider used for authentication.
+        required: true
+        schema:
+          type: string
+          example: emailpass
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              title: input
+              description: The input data necessary for authentication. For example, for email-pass authentication, pass `email` and `password` properties.
+              example:
+                email: admin@medusa-test.com
+                password: supersecret
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.auth.updateProvider(\n  \"user\",\n  \"emailpass\",\n  {\n    password: \"supersecret\"\n  },\n  token\n)\n.then(() => {\n  // password updated\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/auth/user/emailpass/update' \\\n-H 'Content-Type: application/json' \\\n-H 'Authorization: Bearer {token}' \\\n--data-raw '{\n  \"email\": \"admin@medusa-test.com\",\n  \"password\": \"supersecret\"\n}'"
+      security:
+      - reset_password: []
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - success
+                description: Details on the reset password's status.
+                properties:
+                  success:
+                    type: boolean
+                    title: success
+                    description: Whether the password was reset successfully.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/customer/emailpass/verification/confirm:
+    post:
+      operationId: PostActor_typeAuth_providerVerificationConfirm
+      summary: Verify the Customer's Email
+      description: Verifies the customer's email using a token that is typically sent to their email address. This is used to confirm the customer's email during registration or authentication when [email verification is required](https://docs.medusajs.com/resources/commerce-modules/auth/auth-providers/emailpass). You can listen to the `auth.verification_requested` event in a subscriber and send an email to the customer with the verification token.
+      x-authenticated: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The details required to verify the customer's email.
+              required:
+              - token
+              properties:
+                token:
+                  type: string
+                  title: token
+                  description: The verification token sent to the customer's email address.
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/auth/customer/emailpass/verification/confirm' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"token\": \"{value}\"\n}'"
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/customer/providers:
+    get:
+      operationId: GetCustomerProviders
+      x-sidebar-summary: List Providers
+      summary: List Auth Providers for Customers
+      description: Retrieve a list of auth providers for the customer actor type. This is useful to show the authentication option for the available providers.
+      x-authenticated: false
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nconst { providers } = await sdk.auth.listProviders(\"customer\")"
+      - lang: Shell
+        label: cURL
+        source: curl '{backend_url}/auth/customer/providers'
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthProvidersListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/customer/{auth_provider}:
+    post:
+      operationId: PostActor_typeAuth_provider
+      summary: Authenticate Customer
+      description: 'Authenticate a customer and receive the JWT token to be used in the header of subsequent requests.
+
+
+        When used with a third-party provider, such as Google, the request returns a `location` property. You redirect to the specified URL in your storefront to continue authentication with the third-party service.
+
+        '
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/customers/login#1-using-a-jwt-token
+        description: 'Storefront development: How to login as a customer'
+      x-authenticated: false
+      parameters:
+      - name: auth_provider
+        in: path
+        description: The provider used for authentication.
+        required: true
+        schema:
+          type: string
+          example: emailpass
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              title: input
+              description: "The input data necessary for authentication. \nFor example, for email-pass authentication, pass `email` and `password` properties. \nFor the Google and GitHub authentication providers, you can pass `callback_url` to indicate the URL in the frontend that the customer should be redirected to after completing their authentication. This will override the provider's `callbackUrl` configurations in `medusa-config.ts`.\n"
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nlet MEDUSA_BACKEND_URL = \"http://localhost:9000\"\n\nif (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {\n  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL\n}\n\nexport const sdk = new Medusa({\n  baseUrl: MEDUSA_BACKEND_URL,\n  debug: process.env.NODE_ENV === \"development\",\n  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,\n})\n\nconst result = await sdk.auth.login(\n  \"customer\",\n  \"emailpass\",\n  {\n    email: \"customer@gmail.com\",\n    password: \"supersecret\"\n  }\n)\n\nif (typeof result !== \"string\") {\n  alert(\"Authentication requires additional steps\")\n  // replace with the redirect logic of your application\n  window.location.href = result.location\n  return\n}\n\n// customer is now authenticated\n// all subsequent requests will use the token in the header\nconst { customer } = await sdk.store.customer.retrieve()"
+      - lang: Bash
+        label: Google Provider
+        source: curl -X POST '{backend_url}/auth/customer/google'
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/AuthResponse'
+                - $ref: '#/components/schemas/AuthCallbackResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/customer/{auth_provider}/callback:
+    post:
+      operationId: PostActor_typeAuth_providerCallback
+      summary: Validate Authentication Callback
+      description: 'This API route is used by your storefront or frontend application when a third-party provider redirects to it after authentication. It validates the authentication with the third-party provider and, if successful, returns an authentication token. All query parameters received from the third-party provider, such as `code`, `state`, and `error`, must be passed as query parameters to this route.
+
+        You can decode the JWT token using libraries like [react-jwt](https://www.npmjs.com/package/react-jwt) in the storefront. If the decoded data doesn''t  have an `actor_id` property, then you must register the customer using the Create Customer API route passing the token in the request''s Authorization header.
+
+        '
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/customers/third-party-login
+        description: 'Storefront development: Implement third-party (social) login.'
+      x-authenticated: false
+      parameters:
+      - name: auth_provider
+        in: path
+        description: The provider used for authentication.
+        required: true
+        schema:
+          type: string
+          example: google
+      x-codeSamples:
+      - lang: JavaScript
+        label: Google Provider
+        source: "import Medusa from \"@medusajs/js-sdk\"\nimport { decodeToken } from \"react-jwt\"\n\nlet MEDUSA_BACKEND_URL = \"http://localhost:9000\"\n\nif (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {\n  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL\n}\n\nexport const sdk = new Medusa({\n  baseUrl: MEDUSA_BACKEND_URL,\n  debug: process.env.NODE_ENV === \"development\",\n  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,\n})\n\nconst token = await sdk.auth.callback(\n  \"customer\",\n  \"google\",\n  {\n    code: \"123\",\n    state: \"456\"\n  }\n)\n// all subsequent requests will use the token in the header\n\nconst decodedToken = decodeToken(token) as { actor_id: string, user_metadata: Record<string, unknown> }\n\nconst shouldCreateCustomer = decodedToken.actor_id === \"\"\n\nif (shouldCreateCustomer) {\n  const { customer } = await sdk.store.customer.create({\n    email: decodedToken.user_metadata.email as string,\n  })\n\n  // refresh auth token\n  await sdk.auth.refresh()\n  // all subsequent requests will use the new token in the header\n} else {\n  // Customer already exists and is authenticated\n}"
+      - lang: TypeScript
+        label: GitHub Provider
+        source: "import Medusa from \"@medusajs/js-sdk\"\nimport { decodeToken } from \"react-jwt\"\n\nlet MEDUSA_BACKEND_URL = \"http://localhost:9000\"\n\nif (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {\n  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL\n}\n\nexport const sdk = new Medusa({\n  baseUrl: MEDUSA_BACKEND_URL,\n  debug: process.env.NODE_ENV === \"development\",\n  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,\n})\n\nconst token = await sdk.auth.callback(\n  \"customer\",\n  \"github\",\n  {\n    code: \"123\",\n    state: \"456\"\n  }\n)\n// all subsequent requests will use the token in the header\n\nconst decodedToken = decodeToken(token) as { actor_id: string, user_metadata: Record<string, unknown> }\n\nconst shouldCreateCustomer = decodedToken.actor_id === \"\"\n\nif (shouldCreateCustomer) {\n  const { customer } = await sdk.store.customer.create({\n    email: decodedToken.user_metadata.email as string,\n  })\n\n  // refresh auth token\n  await sdk.auth.refresh()\n  // all subsequent requests will use the new token in the header\n} else {\n  // Customer already exists and is authenticated\n}"
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/customer/{auth_provider}/register:
+    post:
+      operationId: PostActor_typeAuth_provider_register
+      summary: Retrieve Registration JWT Token
+      description: This API route retrieves a registration JWT token of a customer that hasn't been registered yet. The token is used in the header of requests that create a customer.
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/customers/register
+        description: 'Storefront development: How to register a customer'
+      x-authenticated: false
+      parameters:
+      - name: auth_provider
+        in: path
+        description: The provider used for authentication.
+        required: true
+        schema:
+          type: string
+          example: emailpass
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              title: input
+              description: The input data necessary for authentication. For example, for email-pass authentication, pass `email` and `password` properties.
+              example:
+                email: customer@gmail.com
+                password: supersecret
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nlet MEDUSA_BACKEND_URL = \"http://localhost:9000\"\n\nif (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {\n  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL\n}\n\nexport const sdk = new Medusa({\n  baseUrl: MEDUSA_BACKEND_URL,\n  debug: process.env.NODE_ENV === \"development\",\n  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,\n})\n\nawait sdk.auth.register(\n  \"customer\",\n  \"emailpass\",\n  {\n    email: \"customer@gmail.com\",\n    password: \"supersecret\"\n  }\n)\n\n// all subsequent requests will use the token in the header\nconst { customer } = await sdk.store.customer.create({\n  email: \"customer@gmail.com\",\n  password: \"supersecret\"\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/auth/customer/emailpass/register' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"email\": \"customer@gmail.com\",\n  \"password\": \"supersecret\"\n}'"
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/customer/{auth_provider}/reset-password:
+    post:
+      operationId: PostActor_typeAuth_providerResetPassword
+      summary: Generate Reset Password Token for Customer
+      x-sidebar-summary: Generate Reset Password Token
+      description: "Generate a reset password token for a customer. This API route doesn't reset the customer password or send them the reset instructions in a notification.\n\nInstead, This API route emits the `auth.password_reset` event, passing it the token as a payload. You can listen to that event in a subscriber as explained in [this guide](https://docs.medusajs.com/resources/commerce-modules/auth/reset-password), then send the customer a notification. The notification is sent using a [Notification Module Provider](https://docs.medusajs.com/resources/infrastructure-modules/notification), and it should have a URL that accepts a `token` query parameter, allowing the customer to reset their password from the storefront.\n\n\n Use the generated token to update the customer's password using the [Reset Password API route](https://docs.medusajs.com/api/store#auth_postactor_typeauth_providerupdate).\n"
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/customers/reset-password#1-request-reset-password-page
+        description: 'Storefront development: How to create the request reset password page.'
+      x-authenticated: false
+      parameters:
+      - name: auth_provider
+        in: path
+        description: The provider used for authentication.
+        required: true
+        schema:
+          type: string
+          example: emailpass
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The input data necessary to generate a reset password token.
+              required:
+              - identifier
+              properties:
+                identifier:
+                  type: string
+                  description: The customer's identifier for the selected auth provider. For example, for the `emailpass` auth provider, the value is the customer's email.
+                  example: customer@gmail.com
+                metadata:
+                  type: object
+                  description: Optional metadata to include with the reset password token generation request.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nlet MEDUSA_BACKEND_URL = \"http://localhost:9000\"\n\nif (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {\n  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL\n}\n\nexport const sdk = new Medusa({\n  baseUrl: MEDUSA_BACKEND_URL,\n  debug: process.env.NODE_ENV === \"development\",\n  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,\n})\n\nsdk.auth.resetPassword(\n  \"customer\",\n  \"emailpass\",\n  {\n    identifier: \"customer@gmail.com\"\n  }\n)\n.then(() => {\n  // user receives token\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/auth/customer/emailpass/reset-password' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"identifier\": \"customer@gmail.com\"\n}'"
+      tags:
+      - Auth
+      responses:
+        '201':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                title: message
+                description: The 201 status code's message.
+                example: Created
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: generateResetPasswordTokenWorkflow
+      x-events:
+      - name: auth.password_reset
+        payload: "```ts\n{\n  entity_id, // The identifier of the user or customer. For example, an email address.\n  actor_type, // The type of actor. For example, \"customer\", \"user\", or custom.\n  token, // The generated token.\n  metadata, // Optional custom metadata passed from the request.\n}\n```"
+        description: 'Emitted when a reset password token is generated. You can listen to this event
+
+          to send a reset password email to the user or customer, for example.'
+        deprecated: false
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/customer/{auth_provider}/update:
+    post:
+      operationId: PostActor_typeAuth_providerUpdate
+      summary: Reset a Customer's Password
+      x-sidebar-summary: Reset Password
+      description: Reset a customer's password using a reset-password token generated with the [Generate Reset Password Token API route](https://docs.medusajs.com/api/store#auth_postactor_typeauth_providerresetpassword). You pass the token as a bearer token in the request's Authorization header.
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/customers/reset-password#2-reset-password-page
+        description: 'Storefront development: How to create the reset password page.'
+      x-authenticated: true
+      parameters:
+      - name: auth_provider
+        in: path
+        description: The provider used for authentication.
+        required: true
+        schema:
+          type: string
+          example: emailpass
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              title: input
+              description: The input data necessary for authentication with the specified auth provider. For example, for email-pass authentication, pass `email` and `password` properties.
+              example:
+                email: customer@gmail.com
+                password: supersecret
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nlet MEDUSA_BACKEND_URL = \"http://localhost:9000\"\n\nif (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {\n  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL\n}\n\nexport const sdk = new Medusa({\n  baseUrl: MEDUSA_BACKEND_URL,\n  debug: process.env.NODE_ENV === \"development\",\n  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,\n})\n\nsdk.auth.updateProvider(\n  \"customer\",\n  \"emailpass\",\n  {\n    password: \"supersecret\"\n  },\n  token\n)\n.then(() => {\n  // password updated\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/auth/customer/emailpass/update' \\\n-H 'Content-Type: application/json' \\\n-H 'Authorization: Bearer {token}' \\\n--data-raw '{\n  \"email\": \"customer@gmail.com\",\n  \"password\": \"supersecret\"\n}'"
+      security:
+      - reset_password: []
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - success
+                description: Details on the reset password's status.
+                properties:
+                  success:
+                    type: boolean
+                    title: success
+                    description: Whether the password was reset successfully.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/verification/confirm:
+    post:
+      operationId: PostVerificationConfirm
+      summary: Confirm Customer Verification
+      x-sidebar-summary: Confirm Verification
+      description: Confirm a verification token of the customer. This API route is used as the last step part of the email verification flow. It can also be used for custom flows, such as phone number verification. Once successfully verified, a customer can complete their registration and log into their account.
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/customers/verify-account
+        description: 'Storefront guide: Register Customer with Email Verification.'
+      x-authenticated: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The verification details
+              required:
+              - code
+              properties:
+                code:
+                  type: string
+                  title: code
+                  description: The token, OTP, or any other code that was sent to the customer for verification.
+                code_provider:
+                  type: string
+                  title: code_provider
+                  description: The provider to use for verification. This is optional. When not provided, the default `token` provider is used.
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/auth/verification/confirm' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"code\": \"{value}\"\n}'"
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.16.0
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /auth/verification/request:
+    post:
+      operationId: PostVerificationRequest
+      summary: Request Customer Verification
+      x-sidebar-summary: Request Verification
+      description: Create a verification request for a customer. This API route is used when a customer logs in, but their email requires verification. It can also be used for custom flows, such as phone number verification. Once successfully requested, a verification code will be generated and an `auth.verification_requested` event will be emitted. You can listen to this event and decide how to deliver the code to the customer.
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/customers/verify-account
+        description: 'Storefront guide: Register Customer with Email Verification.'
+      x-authenticated: false
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The verification request details
+              required:
+              - entity_id
+              - entity_type
+              - code_provider
+              properties:
+                entity_id:
+                  type: string
+                  title: entity_id
+                  description: The identifier of the user or customer. For example, an email address.
+                entity_type:
+                  type: string
+                  title: entity_type
+                  description: The type of identity being verified. For example, "email" or "phone_number".
+                code_provider:
+                  type: string
+                  title: code_provider
+                  description: The provider to use to create the verification token or code. By default, Medusa provides a `token` provider that generates a random token. You can also implement your own provider to generate a code or OTP.
+                metadata:
+                  type: object
+                  description: Custom key-value pairs that can be passed to the verification request. This is optional and can be used to store additional information related to the verification request.
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/auth/verification/request' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"entity_id\": \"customer@example.com\",\n  \"entity_type\": \"email\",\n  \"code_provider\": \"token\"\n}'"
+      tags:
+      - Auth
+      responses:
+        '201':
+          description: OK
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: requestVerificationWorkflow
+      x-events:
+      - name: auth.verification_requested
+        payload: "```ts\n{\n  entity_id, // The identifier of the entity being verified. For example, an email address.\n  entity_type, // The kind of entity being verified. For example, \"email\".\n  code_provider, // The verification provider that generated the code. For example, \"token\".\n  auth_identity_id, // The ID of the auth identity being verified.\n  code, // The generated verification code.\n  expires_at, // (Date) The code expiry date.\n  metadata, // (object) Optional custom metadata passed from the request.\n}\n```"
+        description: 'Emitted when a verification code is generated. You can listen to
+
+          this event and decide how to deliver the code to the user or customer.
+
+          The payload changed in v2.17.0:
+
+          `actor_type` and `provider_identity_id` were removed,
+
+          `provider` was renamed to `code_provider`, and `entity_type` was added.
+
+          Subscribers written before v2.17.0 must be updated to use the payload below.'
+        deprecated: false
+        since: 2.15.5
+      x-since: 2.16.0
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+components:
+  schemas:
+    AuthProvider:
+      type: object
+      description: 'The public information of a registered auth provider instance. This is safe
+
+        to expose to unauthenticated clients and never contains provider options or
+
+        secrets.'
+      x-schemaName: AuthProvider
+      required:
+      - id
+      - identifier
+      - display_name
+      - flow
+      properties:
+        id:
+          type: string
+          title: id
+          description: 'The registered instance ID of the provider, used in authentication routes
+
+            (for example, `okta` in `POST /auth/user/okta`).'
+        identifier:
+          type: string
+          title: identifier
+          description: The provider's static identifier (for example, `oidc` or `emailpass`).
+        display_name:
+          type: string
+          title: display_name
+          description: The name to display for the provider in a frontend application.
+        flow:
+          type: string
+          description: 'The authentication flow the provider uses:
+
+
+            - `credentials`: the client submits credentials (for example, email and
+
+            password) directly to the authentication route.
+
+            - `redirect`: the client is redirected to the provider (for example, an
+
+            OIDC identity provider) and returns through a callback.
+
+
+            A frontend can use this to decide whether to render a credentials form or a
+
+            "Continue with ..." redirect button.'
+          enum:
+          - credentials
+          - redirect
+    AdminUser:
+      type: object
+      description: The user's details.
+      x-schemaName: AdminUser
+      required:
+      - id
+      - email
+      - first_name
+      - last_name
+      - avatar_url
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The user's ID.
+        email:
+          type: string
+          title: email
+          description: The user's email.
+          format: email
+        first_name:
+          type: string
+          title: first_name
+          description: The user's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The user's last name.
+        avatar_url:
+          type: string
+          title: avatar_url
+          description: The URL of the user's avatar.
+        metadata:
+          type: object
+          description: The user's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the user was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the user was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the user was deleted.
+    AuthResponse:
+      type: object
+      description: The authentication's details.
+      x-schemaName: AuthResponse
+      required:
+      - token
+      properties:
+        token:
+          type: string
+          title: token
+          description: The JWT token used for registration or authentication.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AuthProvidersListResponse:
+      type: object
+      description: The response of listing the auth providers available.
+      x-schemaName: AuthProvidersListResponse
+      required:
+      - providers
+      properties:
+        providers:
+          type: array
+          description: The list of auth providers.
+          items:
+            $ref: '#/components/schemas/AuthProvider'
+    AuthCallbackResponse:
+      type: object
+      description: The authentication's details.
+      x-schemaName: AuthCallbackResponse
+      required:
+      - location
+      properties:
+        location:
+          type: string
+          title: location
+          description: The location to redirect the user to for further authentication with the third-party provider.
+    AuthAdminSessionResponse:
+      type: object
+      description: The authenticated user's details.
+      x-schemaName: AuthAdminSessionResponse
+      required:
+      - user
+      properties:
+        user:
+          title: user
+          description: The logged-in user.
+          $ref: '#/components/schemas/AdminUser'
+    StoreCustomer:
+      type: object
+      description: The customer's details.
+      x-schemaName: StoreCustomer
+      required:
+      - addresses
+      - id
+      - email
+      - company_name
+      - first_name
+      - last_name
+      - default_billing_address_id
+      - default_shipping_address_id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The customer's ID.
+        email:
+          type: string
+          title: email
+          description: The customer's email.
+          format: email
+        default_billing_address_id:
+          type: string
+          title: default_billing_address_id
+          description: The ID of the address used for billing by default.
+        default_shipping_address_id:
+          type: string
+          title: default_shipping_address_id
+          description: The ID of the address used for shipping by default.
+        company_name:
+          type: string
+          title: company_name
+          description: The customer's company name.
+        first_name:
+          type: string
+          title: first_name
+          description: The customer's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The customer's last name.
+        addresses:
+          type: array
+          description: The customer's addresses.
+          items:
+            $ref: '#/components/schemas/StoreCustomerAddress'
+        phone:
+          type: string
+          title: phone
+          description: The customer's phone.
+        metadata:
+          type: object
+          description: The customer's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the customer was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the customer was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the customer was deleted.
+    StoreCustomerAddress:
+      type: object
+      description: The customer address's details
+      x-schemaName: StoreCustomerAddress
+      required:
+      - id
+      - address_name
+      - is_default_shipping
+      - is_default_billing
+      - customer_id
+      - company
+      - first_name
+      - last_name
+      - address_1
+      - address_2
+      - city
+      - country_code
+      - province
+      - postal_code
+      - phone
+      - metadata
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The address's ID.
+        address_name:
+          type: string
+          title: address_name
+          description: The address's name.
+        is_default_shipping:
+          type: boolean
+          title: is_default_shipping
+          description: Whether the address is used for shipping by default.
+        is_default_billing:
+          type: boolean
+          title: is_default_billing
+          description: Whether the address is used for billing by default.
+        customer_id:
+          type: string
+          title: customer_id
+          description: The ID of the customer the address belongs to.
+        company:
+          type: string
+          title: company
+          description: The address's company.
+        first_name:
+          type: string
+          title: first_name
+          description: The address's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The address's last name.
+        address_1:
+          type: string
+          title: address_1
+          description: The address's first line.
+        address_2:
+          type: string
+          title: address_2
+          description: The address's second line.
+        city:
+          type: string
+          title: city
+          description: The address's city.
+        country_code:
+          type: string
+          title: country_code
+          description: The address's country code.
+          example: usd
+        province:
+          type: string
+          title: province
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
+        postal_code:
+          type: string
+          title: postal_code
+          description: The address's postal code.
+        phone:
+          type: string
+          title: phone
+          description: The address's phone.
+        metadata:
+          type: object
+          description: The address's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the address was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the address was updated.
+    AuthStoreSessionResponse:
+      type: object
+      description: The authenticated customer's details.
+      x-schemaName: AuthStoreSessionResponse
+      required:
+      - user
+      properties:
+        user:
+          title: user
+          description: The logged-in customer.
+          $ref: '#/components/schemas/StoreCustomer'
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false
+x-refined-from:
+- medusa-admin-openapi.yaml
+- medusa-store-openapi.yaml

@@ -1,0 +1,1959 @@
+openapi: 3.2.0
+info:
+  title: Medusa Product Tags API
+  version: 2.19.0
+  description: 'Operations tagged Product Tags across 2 of this provider''s published API definitions: medusa-admin-openapi.yaml, medusa-store-openapi.yaml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Product Tags
+  description: 'A tag is another way of organizing a product. Each tag has a name and a value.
+
+
+    Products are organized into the same tag if they have the same value.
+
+
+    These API routes allow admin users to manage product tags.
+
+    '
+  externalDocs:
+    description: Learn more about the Product Module
+    url: https://docs.medusajs.com/resources/commerce-modules/product
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminProductTag'
+paths:
+  /admin/product-tags:
+    get:
+      operationId: GetProductTags
+      summary: List Product Tags
+      description: Retrieve a list of product tags. The product tags can be filtered by fields such as `id`. The product tags can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: q
+        in: query
+        description: Search term to filter the product tag's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search term to filter the product tag's searchable properties.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a product tag's ID.
+          - type: array
+            description: Filter by product tag IDs.
+            items:
+              type: string
+              title: id
+              description: A product tag's ID.
+      - name: value
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: value
+            description: Filter by a product tag's value.
+          - type: array
+            description: Filter by product tag values.
+            items:
+              type: string
+              title: value
+              description: A tag value.
+      - name: created_at
+        in: query
+        description: Filter by the tag's creation date.
+        required: false
+        schema:
+          type: object
+          description: Filter by the tag's creation date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: created_at
+      - name: updated_at
+        in: query
+        description: Filter by the tag's update date.
+        required: false
+        schema:
+          type: object
+          description: Filter by the tag's update date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: updated_at
+      - name: deleted_at
+        in: query
+        description: Filter by the tag's deletion date.
+        required: false
+        schema:
+          type: object
+          description: Filter by the tag's deletion date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: deleted_at
+      - name: $and
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: external_id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: external_id
+            description: Filter by an external ID.
+          - type: array
+            description: Filter by multiple external IDs.
+            items:
+              type: string
+              title: external_id
+              description: An external ID.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.productTag.list()\n.then(({ product_tags, count, limit, offset }) => {\n  console.log(product_tags)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/product-tags'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Product Tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProductTagListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostProductTags
+      summary: Create Product Tag
+      description: Create a product tag.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateProductTag'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.productTag.create({\n  value: \"shirt\"\n})\n.then(({ product_tag }) => {\n  console.log(product_tag)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/product-tags' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"value\": \"{value}\",\n  \"metadata\": {}\n}'"
+      tags:
+      - Product Tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProductTagResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createProductTagsWorkflow
+      x-events:
+      - name: product-tag.created
+        payload: "```ts\n{\n  id, // The ID of the product tag\n}\n```"
+        description: Emitted when product tags are created.
+        deprecated: false
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /admin/product-tags/{id}:
+    get:
+      operationId: GetProductTagsId
+      summary: Get a Product Tag
+      description: Retrieve a product tag by its ID. You can expand the product tag's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The product tag's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.productTag.retrieve(\"ptag_123\")\n.then(({ product_tag }) => {\n  console.log(product_tag)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/product-tags/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Product Tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProductTagResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostProductTagsId
+      summary: Update a Product Tag
+      description: Update a product tag's details.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The product tag's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateProductTag'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.productTag.update(\"ptag_123\", {\n  value: \"shirt\"\n})\n.then(({ product_tag }) => {\n  console.log(product_tag)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/product-tags/{id}' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"metadata\": {}\n}'"
+      tags:
+      - Product Tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProductTagResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updateProductTagsWorkflow
+      x-events:
+      - name: product-tag.updated
+        payload: "```ts\n{\n  id, // The ID of the product tag\n}\n```"
+        description: Emitted when product tags are updated.
+        deprecated: false
+    delete:
+      operationId: DeleteProductTagsId
+      summary: Delete a Product Tag
+      description: Delete a product tag. This doesn't delete products using the tag.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The product tag's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.productTag.delete(\"ptag_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/product-tags/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Product Tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProductTagDeleteResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deleteProductTagsWorkflow
+      x-events:
+      - name: product-tag.deleted
+        payload: "```ts\n{\n  id, // The ID of the product tag\n}\n```"
+        description: Emitted when product tags are deleted.
+        deprecated: false
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /store/product-tags:
+    get:
+      operationId: GetProductTags
+      summary: List Product Tags
+      description: Retrieve a list of product tags. The product tags can be filtered by fields such as `id`. The product tags can also be sorted or paginated.
+      x-authenticated: false
+      parameters:
+      - name: x-publishable-api-key
+        in: header
+        description: Publishable API Key created in the Medusa Admin.
+        required: true
+        schema:
+          type: string
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#publishable-api-key
+      - name: x-medusa-locale
+        in: header
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      - name: fields
+        in: query
+        description: 'Comma-separated fields that should be included in the returned data.
+
+          if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields.
+
+          without prefix it will replace the entire default fields.'
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+          externalDocs:
+            url: '#pagination'
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: q
+        in: query
+        description: Query to search product tag's searchable fields.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Query to search product tag's searchable fields.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a product tag's ID.
+          - type: array
+            description: Filter by product tag IDs.
+            items:
+              type: string
+              title: id
+              description: A product tag's ID.
+      - name: value
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: value
+            description: Filter by a product tag's value.
+          - type: array
+            description: Filter by product tag values.
+            items:
+              type: string
+              title: value
+              description: A product tag's value.
+      - name: created_at
+        in: query
+        description: Filter by the tag's creation date.
+        required: false
+        schema:
+          type: object
+          description: Filter by the tag's creation date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by multiple exact matches.
+                items:
+                  type: string
+                  title: $eq
+                  description: An exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: The value to match.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: The value not to match.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+                properties:
+                  $and:
+                    type: array
+                    description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+                    items:
+                      type: object
+                    title: $and
+                  $or:
+                    type: array
+                    description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+                    items:
+                      type: object
+                    title: $or
+                  $eq:
+                    oneOf:
+                    - type: string
+                      title: $eq
+                      description: Filter by an exact match.
+                    - type: array
+                      description: Filter by multiple exact matches.
+                      items:
+                        type: string
+                        title: $eq
+                        description: The value to match.
+                  $ne:
+                    type: string
+                    title: $ne
+                    description: Filter by values not matching this parameter.
+                  $in:
+                    type: array
+                    description: Filter by values in this array.
+                    items:
+                      type: string
+                      title: $in
+                      description: The value to match.
+                  $nin:
+                    type: array
+                    description: Filter by values not in this array.
+                    items:
+                      type: string
+                      title: $nin
+                      description: The value to not match
+                  $not:
+                    oneOf:
+                    - type: string
+                      title: $not
+                      description: Filter by values not matching this parameter
+                    - type: object
+                      description: Filter by values not matching the conditions in this parameter.
+                    - type: array
+                      description: Filter by values not matching the values of this parameter.
+                      items:
+                        type: string
+                        title: $not
+                        description: The values to not match.
+                  $gt:
+                    type: string
+                    title: $gt
+                    description: Filter by values greater than this parameter. Useful for numbers and dates only.
+                  $gte:
+                    type: string
+                    title: $gte
+                    description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+                  $lt:
+                    type: string
+                    title: $lt
+                    description: Filter by values less than this parameter. Useful for numbers and dates only.
+                  $lte:
+                    type: string
+                    title: $lte
+                    description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+                  $like:
+                    type: string
+                    title: $like
+                    description: Apply a `like` filter. Useful for strings only.
+                  $re:
+                    type: string
+                    title: $re
+                    description: Apply a regex filter. Useful for strings only.
+                  $ilike:
+                    type: string
+                    title: $ilike
+                    description: Apply a case-insensitive `like` filter. Useful for strings only.
+                  $fulltext:
+                    type: string
+                    title: $fulltext
+                    description: Filter to apply on full-text properties.
+                  $overlap:
+                    type: array
+                    description: Filter arrays that have overlapping values with this parameter.
+                    items:
+                      type: string
+                      title: $overlap
+                      description: The value to match.
+                  $contains:
+                    type: array
+                    description: Filter arrays that contain some of the values of this parameter.
+                    items:
+                      type: string
+                      title: $contains
+                      description: The values to match.
+                  $contained:
+                    type: array
+                    description: Filter arrays that contain all values of this parameter.
+                    items:
+                      type: string
+                      title: $contained
+                      description: The values to match.
+                  $exists:
+                    type: boolean
+                    title: $exists
+                    description: Filter by whether a value for this parameter exists (not `null`).
+              - type: array
+                description: Filter by values not matching those in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: The values to not match.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: The values to match.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: The values to match.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: The values to match.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: created_at
+      - name: updated_at
+        in: query
+        description: Filter by the tag's update date.
+        required: false
+        schema:
+          type: object
+          description: Filter by the tag's update date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by multiple exact matches.
+                items:
+                  type: string
+                  title: $eq
+                  description: An exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: The value to match.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: The value not to match.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+                properties:
+                  $and:
+                    type: array
+                    description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+                    items:
+                      type: object
+                    title: $and
+                  $or:
+                    type: array
+                    description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+                    items:
+                      type: object
+                    title: $or
+                  $eq:
+                    oneOf:
+                    - type: string
+                      title: $eq
+                      description: Filter by an exact match.
+                    - type: array
+                      description: Filter by multiple exact matches.
+                      items:
+                        type: string
+                        title: $eq
+                        description: The value to match.
+                  $ne:
+                    type: string
+                    title: $ne
+                    description: Filter by values not matching this parameter.
+                  $in:
+                    type: array
+                    description: Filter by values in this array.
+                    items:
+                      type: string
+                      title: $in
+                      description: The value to match.
+                  $nin:
+                    type: array
+                    description: Filter by values not in this array.
+                    items:
+                      type: string
+                      title: $nin
+                      description: The value to not match
+                  $not:
+                    oneOf:
+                    - type: string
+                      title: $not
+                      description: Filter by values not matching this parameter
+                    - type: object
+                      description: Filter by values not matching the conditions in this parameter.
+                    - type: array
+                      description: Filter by values not matching the values of this parameter.
+                      items:
+                        type: string
+                        title: $not
+                        description: The values to not match.
+                  $gt:
+                    type: string
+                    title: $gt
+                    description: Filter by values greater than this parameter. Useful for numbers and dates only.
+                  $gte:
+                    type: string
+                    title: $gte
+                    description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+                  $lt:
+                    type: string
+                    title: $lt
+                    description: Filter by values less than this parameter. Useful for numbers and dates only.
+                  $lte:
+                    type: string
+                    title: $lte
+                    description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+                  $like:
+                    type: string
+                    title: $like
+                    description: Apply a `like` filter. Useful for strings only.
+                  $re:
+                    type: string
+                    title: $re
+                    description: Apply a regex filter. Useful for strings only.
+                  $ilike:
+                    type: string
+                    title: $ilike
+                    description: Apply a case-insensitive `like` filter. Useful for strings only.
+                  $fulltext:
+                    type: string
+                    title: $fulltext
+                    description: Filter to apply on full-text properties.
+                  $overlap:
+                    type: array
+                    description: Filter arrays that have overlapping values with this parameter.
+                    items:
+                      type: string
+                      title: $overlap
+                      description: The value to match.
+                  $contains:
+                    type: array
+                    description: Filter arrays that contain some of the values of this parameter.
+                    items:
+                      type: string
+                      title: $contains
+                      description: The values to match.
+                  $contained:
+                    type: array
+                    description: Filter arrays that contain all values of this parameter.
+                    items:
+                      type: string
+                      title: $contained
+                      description: The values to match.
+                  $exists:
+                    type: boolean
+                    title: $exists
+                    description: Filter by whether a value for this parameter exists (not `null`).
+              - type: array
+                description: Filter by values not matching those in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: The values to not match.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: The values to match.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: The values to match.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: The values to match.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: updated_at
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: locale
+        in: query
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      - name: external_id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: external_id
+            description: Filter by a product tag's external ID.
+          - type: array
+            description: Filter by product tag external IDs.
+            items:
+              type: string
+              title: external_id
+              description: A product tag's external ID.
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/store/product-tags'' \
+
+          -H ''x-publishable-api-key: {your_publishable_api_key}'''
+      tags:
+      - Product Tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreProductTagListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /store/product-tags/{id}:
+    get:
+      operationId: GetProductTagsId
+      summary: Get a Product Tag
+      description: Retrieve a product tag by its ID. You can expand the product tag's relations or select the fields that should be returned.
+      x-authenticated: false
+      parameters:
+      - name: id
+        in: path
+        description: The product tag's ID.
+        required: true
+        schema:
+          type: string
+      - name: x-publishable-api-key
+        in: header
+        description: Publishable API Key created in the Medusa Admin.
+        required: true
+        schema:
+          type: string
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#publishable-api-key
+      - name: x-medusa-locale
+        in: header
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      - name: fields
+        in: query
+        description: 'Comma-separated fields that should be included in the returned data.
+
+          if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields.
+
+          without prefix it will replace the entire default fields.'
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: locale
+        in: query
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/store/product-tags/{id}'' \
+
+          -H ''x-publishable-api-key: {your_publishable_api_key}'''
+      tags:
+      - Product Tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreProductTagResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+components:
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  schemas:
+    AdminProductTagResponse:
+      type: object
+      description: The product tag's details.
+      x-schemaName: AdminProductTagResponse
+      required:
+      - product_tag
+      properties:
+        product_tag:
+          $ref: '#/components/schemas/AdminProductTag'
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminCreateProductTag:
+      type: object
+      description: The product tag's details.
+      x-schemaName: AdminCreateProductTag
+      required:
+      - value
+      properties:
+        value:
+          type: string
+          title: value
+          description: The product tag's value.
+        metadata:
+          type: object
+          description: The product tag's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        external_id:
+          type: string
+          title: external_id
+          description: The ID of the product tag in an external or third-party system.
+    AdminProductTag:
+      type: object
+      description: The product tag's details.
+      x-schemaName: AdminProductTag
+      required:
+      - id
+      - value
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The tag's ID.
+        value:
+          type: string
+          title: value
+          description: The tag's value.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the tag was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the tag was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the tag was deleted.
+        metadata:
+          type: object
+          description: The tag's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        translations:
+          type: array
+          description: The tag's translations.
+          items:
+            $ref: '#/components/schemas/AdminTranslation'
+        external_id:
+          type: string
+          title: external_id
+          description: The tag's external ID used for integration with third-party systems.
+    AdminProductTagDeleteResponse:
+      type: object
+      description: The details of the product tag deletion.
+      x-schemaName: AdminProductTagDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The product tag's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: product_tag
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the product tag was deleted.
+    AdminTranslation:
+      type: object
+      description: The translation's details.
+      x-schemaName: AdminTranslation
+      required:
+      - id
+      - reference_id
+      - reference
+      - locale_code
+      - translations
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The translation's ID.
+        reference_id:
+          type: string
+          title: reference_id
+          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
+          example: prod_123
+        reference:
+          type: string
+          title: reference
+          description: The resource that the translation belongs to.
+          example: product
+        locale_code:
+          type: string
+          title: locale_code
+          description: The translation's locale code in BCP 47 format.
+          example: fr-FR
+        translations:
+          type: object
+          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
+          example:
+            title: Chaussures
+            description: Des chaussures élégantes.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date that the translation was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date that the translation was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date that the translation was deleted.
+    AdminUpdateProductTag:
+      type: object
+      description: The properties to update in the product tag.
+      properties:
+        value:
+          type: string
+          title: value
+          description: The product tag's value.
+        metadata:
+          type: object
+          description: The product tag's metadata. Can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        external_id:
+          type: string
+          title: external_id
+          description: The product tag's external ID used to link it with external systems.
+      x-schemaName: AdminUpdateProductTag
+    AdminProductTagListResponse:
+      type: object
+      description: The paginated list of product tags.
+      x-schemaName: AdminProductTagListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - product_tags
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        product_tags:
+          type: array
+          description: The list of product tags.
+          items:
+            $ref: '#/components/schemas/AdminProductTag'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    StoreProductTag:
+      type: object
+      description: The tag's details.
+      x-schemaName: StoreProductTag
+      properties:
+        id:
+          type: string
+          title: id
+          description: The tag's ID.
+        value:
+          type: string
+          title: value
+          description: The tag's value.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the tag was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the tag was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the tag was deleted.
+        metadata:
+          type: object
+          description: The tag's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        external_id:
+          type: string
+          title: external_id
+          description: The tag's external ID used to link it with external systems.
+      required:
+      - id
+      - value
+      - created_at
+      - updated_at
+    StoreProductTagListResponse:
+      type: object
+      description: The paginated list of product tags.
+      x-schemaName: StoreProductTagListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - product_tags
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items to skip before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items available.
+        product_tags:
+          type: array
+          description: The list of product tags.
+          items:
+            $ref: '#/components/schemas/StoreProductTag'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    StoreProductTagResponse:
+      type: object
+      description: The product tag's details.
+      x-schemaName: StoreProductTagResponse
+      required:
+      - product_tag
+      properties:
+        product_tag:
+          $ref: '#/components/schemas/StoreProductTag'
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false
+x-refined-from:
+- medusa-admin-openapi.yaml
+- medusa-store-openapi.yaml

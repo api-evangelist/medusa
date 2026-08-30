@@ -1,0 +1,555 @@
+openapi: 3.2.0
+info:
+  title: Medusa Locales API
+  version: 2.19.0
+  description: 'Operations tagged Locales across 2 of this provider''s published API definitions: medusa-admin-openapi.yaml, medusa-store-openapi.yaml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Locales
+  description: 'A locale is a language that content is translated into for customers to view in a storefront.
+
+    Medusa installs locales by default. These API routes allow admin users to retrieve and view locales.
+
+    '
+  externalDocs:
+    description: Learn more about locales and translations.
+    url: https://docs.medusajs.com/resources/commerce-modules/translation/concepts
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminLocale'
+paths:
+  /admin/locales:
+    get:
+      operationId: GetLocales
+      summary: List Locales
+      description: Retrieve a list of locales. The locales can be filtered by fields such as `code`. The locales can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: q
+        in: query
+        description: Search query to filter locales by code or other fields.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search query to filter locales by code or other fields.
+      - name: code
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: code
+            description: Filter locales by a code.
+          - type: array
+            description: Filter locales by multiple codes.
+            items:
+              type: string
+              title: code
+              description: A locale code.
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+          externalDocs:
+            url: '#pagination'
+      - name: with_deleted
+        in: query
+        description: The locale's with deleted.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: The locale's with deleted.
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.locale.list()\n.then(({ locales, count, limit, offset }) => {\n  console.log(locales)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/locales'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Locales
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminLocaleListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.12.3
+      x-featureFlag: translation
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /admin/locales/{code}:
+    get:
+      operationId: GetLocalesCode
+      summary: Get a Locale
+      x-sidebar-summary: Get Locale
+      description: Retrieve a locale by its code. You can expand the locale's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: code
+        in: path
+        description: The locale's code in [BCP 47 format](https://gist.github.com/typpo/b2b828a35e683b9bf8db91b5404f1bd1).
+        example: fr-FR
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.locale.retrieve(\"en-US\")\n.then(({ locale }) => {\n  console.log(locale)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/locales/fr-FR'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Locales
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminLocaleResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.12.3
+      x-featureFlag: translation
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /store/locales:
+    get:
+      operationId: GetLocales
+      summary: List Locales
+      description: Retrieve the list of supported locales. You can use this list to allow customers to select their preferred locale in your storefront.
+      externalDocs:
+        url: https://docs.medusajs.com/resources/storefront-development/localization
+        description: Learn how to serve localized content in your storefront.
+      x-authenticated: false
+      parameters:
+      - name: x-publishable-api-key
+        in: header
+        description: Publishable API Key created in the Medusa Admin.
+        required: true
+        schema:
+          type: string
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#publishable-api-key
+      - name: x-medusa-locale
+        in: header
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      - name: locale
+        in: query
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nlet MEDUSA_BACKEND_URL = \"http://localhost:9000\"\n\nif (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {\n  MEDUSA_BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL\n}\n\nexport const sdk = new Medusa({\n  baseUrl: MEDUSA_BACKEND_URL,\n  debug: process.env.NODE_ENV === \"development\",\n  publishableKey: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,\n})\n\nsdk.store.locale.list()\n.then(({ locales }) => {\n  console.log(locales)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/store/locales'' \
+
+          -H ''x-publishable-api-key: {your_publishable_api_key}'''
+      tags:
+      - Locales
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreLocaleListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.12.3
+      x-featureFlag: translation
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+components:
+  examples:
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+  schemas:
+    AdminLocaleResponse:
+      type: object
+      description: The locale's details.
+      x-schemaName: AdminLocaleResponse
+      required:
+      - locale
+      properties:
+        locale:
+          $ref: '#/components/schemas/AdminLocale'
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminLocale:
+      type: object
+      description: The locale's details.
+      x-schemaName: AdminLocale
+      required:
+      - code
+      - name
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        code:
+          type: string
+          title: code
+          description: The locale's code in BCP 47 format.
+          example: fr-FR
+        name:
+          type: string
+          title: name
+          description: The locale's display name.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date and time at which the locale was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date and time at which the locale was last updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date and time at which the locale was deleted.
+    AdminLocaleListResponse:
+      type: object
+      description: The list of locales with pagination details.
+      x-schemaName: AdminLocaleListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - locales
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of locales returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of locales skipped before retrieving the returned locales.
+        count:
+          type: number
+          title: count
+          description: The total number of locales matching the query.
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+        locales:
+          type: array
+          description: The list of locales.
+          items:
+            $ref: '#/components/schemas/AdminLocale'
+    StoreLocale:
+      type: object
+      description: The store locale's details.
+      x-schemaName: StoreLocale
+      required:
+      - name
+      - code
+      properties:
+        code:
+          type: string
+          title: code
+          description: The locale's code in [BCP 47 format](https://gist.github.com/typpo/b2b828a35e683b9bf8db91b5404f1bd1).
+          example: en-US
+        name:
+          type: string
+          title: name
+          description: The locale's display name.
+          example: English (United States)
+    StoreLocaleListResponse:
+      type: object
+      description: The list of supported locales in the store.
+      x-schemaName: StoreLocaleListResponse
+      required:
+      - locales
+      properties:
+        locales:
+          type: array
+          description: The list of supported locales in the store.
+          items:
+            $ref: '#/components/schemas/StoreLocale'
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false
+x-refined-from:
+- medusa-admin-openapi.yaml
+- medusa-store-openapi.yaml

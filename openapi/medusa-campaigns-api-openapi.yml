@@ -1,0 +1,994 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Campaigns API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'A campaign is a group of promotions that have the same conditions, such as start and end dates.
+
+
+    These API routes allow admin users to manage campaigns, their conditions, and promotions that belong to them.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Campaigns
+  description: 'A campaign is a group of promotions that have the same conditions, such as start and end dates.
+
+
+    These API routes allow admin users to manage campaigns, their conditions, and promotions that belong to them.
+
+    '
+  externalDocs:
+    description: Learn more about campaigns.
+    url: https://docs.medusajs.com/resources/commerce-modules/promotion/campaign
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminCampaign'
+paths:
+  /admin/campaigns:
+    get:
+      operationId: GetCampaigns
+      summary: List Campaigns
+      description: Retrieve a list of campaigns. The campaigns can be filtered by fields such as `id`. The campaigns can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: q
+        in: query
+        description: Apply a search query to the campaign's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Apply a search query to the campaign's searchable properties.
+      - name: campaign_identifier
+        in: query
+        description: Filter by a campaign identifier.
+        required: false
+        schema:
+          type: string
+          title: campaign_identifier
+          description: Filter by a campaign identifier.
+      - name: budget
+        in: query
+        description: Filter by the campaign's budget.
+        required: false
+        schema:
+          type: object
+          description: Filter by the campaign's budget.
+          properties:
+            currency_code:
+              type: string
+              title: currency_code
+              description: The budget's currency code.
+              example: usd
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.campaign.list()\n.then(({ campaigns, count, limit, offset }) => {\n  console.log(campaigns)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/campaigns'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The paginated list of campaigns.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of items retrieved.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of its skipped before the returned items.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of items.
+                - type: object
+                  description: The list of campaigns
+                  required:
+                  - campaigns
+                  properties:
+                    campaigns:
+                      type: array
+                      description: The list of campaigns.
+                      items:
+                        $ref: '#/components/schemas/CampaignResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostCampaigns
+      summary: Create Campaign
+      description: Create a campaign.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - type: object
+                description: The campaign's details.
+                required:
+                - name
+                - campaign_identifier
+                - description
+                - budget
+                - starts_at
+                - ends_at
+                properties:
+                  name:
+                    type: string
+                    title: name
+                    description: The campaign's name.
+                  campaign_identifier:
+                    type: string
+                    title: campaign_identifier
+                    description: The campaign's identifier.
+                  description:
+                    type: string
+                    title: description
+                    description: The campaign's description.
+                  budget:
+                    type: object
+                    description: The campaign's budget which, when crossed, ends the campaign.
+                    required:
+                    - type
+                    - limit
+                    - currency_code
+                    properties:
+                      type:
+                        type: string
+                        title: type
+                        description: 'The budget''s type. This can''t be edited later. Use `spend` to set a limit on the total amount discounted by the campaign''s promotions. Use `usage` to set a limit on the total number of times the campaign''s promotions can be used.
+
+                          '
+                        enum:
+                        - spend
+                        - usage
+                      limit:
+                        type: number
+                        title: limit
+                        description: The campaign budget's limit.
+                      currency_code:
+                        type: string
+                        title: currency_code
+                        description: The campaign budget's currency code. This can't be edited later.
+                  starts_at:
+                    type: string
+                    title: starts_at
+                    description: The campaign's start date.
+                    format: date-time
+                  ends_at:
+                    type: string
+                    title: ends_at
+                    description: The campaign's end date.
+                    format: date-time
+                  promotions:
+                    type: array
+                    description: The campaign's promotions.
+                    items:
+                      type: object
+                      description: The promotions to add to the campaign.
+                      required:
+                      - id
+                      properties:
+                        id:
+                          type: string
+                          title: id
+                          description: A promotion's ID.
+              - type: object
+                description: The campaign's details.
+                properties:
+                  additional_data:
+                    type: object
+                    description: Pass additional custom data to the API route. This data is passed to the underlying workflow under the `additional_data` parameter.
+              description: The campaign's details.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.campaign.create({\n  name: \"Summer Campaign\"\n})\n.then(({ campaign }) => {\n  console.log(campaign)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/campaigns' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"name\": \"Gunner\",\n  \"campaign_identifier\": \"{value}\",\n  \"description\": \"{value}\",\n  \"starts_at\": \"2024-08-24T00:19:14.144Z\",\n  \"ends_at\": \"2024-10-01T06:47:50.133Z\"\n}'"
+      tags:
+      - Campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCampaignResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createCampaignsWorkflow
+      x-events: []
+  /admin/campaigns/{id}:
+    get:
+      operationId: GetCampaignsId
+      summary: Get a Campaign
+      description: Retrieve a campaign by its ID. You can expand the campaign's relations or select the fields that should be returned using the query parameters.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The campaign's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.campaign.retrieve(\"procamp_123\")\n.then(({ campaign }) => {\n  console.log(campaign)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/campaigns/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCampaignResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostCampaignsId
+      summary: Update a Campaign
+      description: Update a campaign's details.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The campaign's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - type: object
+                description: The campaign's details.
+                required:
+                - description
+                - starts_at
+                - ends_at
+                properties:
+                  name:
+                    type: string
+                    title: name
+                    description: The campaign's name.
+                  campaign_identifier:
+                    type: string
+                    title: campaign_identifier
+                    description: The campaign's identifier.
+                  description:
+                    type: string
+                    title: description
+                    description: The campaign's description.
+                  budget:
+                    type: object
+                    description: The campaign's budget.
+                    required:
+                    - limit
+                    properties:
+                      limit:
+                        type: number
+                        title: limit
+                        description: The campaign budget's limit.
+                  starts_at:
+                    type: string
+                    title: starts_at
+                    description: The campaign's start date.
+                    format: date-time
+                  ends_at:
+                    type: string
+                    title: ends_at
+                    description: The campaign's end date.
+                    format: date-time
+                  promotions:
+                    type: array
+                    description: The campaign's promotions.
+                    items:
+                      type: object
+                      description: The promotions to add to the campaign.
+                      required:
+                      - id
+                      properties:
+                        id:
+                          type: string
+                          title: id
+                          description: A promotion's ID.
+              - type: object
+                description: The campaign's details.
+                properties:
+                  additional_data:
+                    type: object
+                    description: Pass additional custom data to the API route. This data is passed to the underlying workflow under the `additional_data` parameter.
+              description: The campaign's details.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.campaign.update(\"procamp_123\", {\n  name: \"Summer Campaign\"\n})\n.then(({ campaign }) => {\n  console.log(campaign)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/campaigns/{id}' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"description\": \"{value}\",\n  \"starts_at\": \"2024-08-10T14:44:10.530Z\",\n  \"ends_at\": \"2024-07-13T17:45:37.462Z\"\n}'"
+      tags:
+      - Campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCampaignResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updateCampaignsWorkflow
+      x-events: []
+    delete:
+      operationId: DeleteCampaignsId
+      summary: Delete a Campaign
+      description: 'Delete a campaign by its ID. This doesn''t delete promotions that belong to this campaign.
+
+        '
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The campaign's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.campaign.delete(\"procamp_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/campaigns/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The deletion's details.
+                required:
+                - id
+                - object
+                - deleted
+                properties:
+                  id:
+                    type: string
+                    title: id
+                    description: The campaign's ID.
+                  object:
+                    type: string
+                    title: object
+                    description: The name of the object that was deleted.
+                    default: campaign
+                  deleted:
+                    type: boolean
+                    title: deleted
+                    description: Whether the campaign was deleted.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deleteCampaignsWorkflow
+      x-events: []
+  /admin/campaigns/{id}/promotions:
+    post:
+      operationId: PostCampaignsIdPromotions
+      summary: Manage the Promotions of a Campaign
+      x-sidebar-summary: Manage Promotions
+      description: Manage the promotions of a campaign, either by adding them or removing them from the campaign.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The campaign's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminBatchLink'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.campaign.batchPromotions(\"procamp_123\", {\n  add: [\"prom_123\", \"prom_456\"],\n  remove: [\"prom_789\"]\n})\n.then(({ campaign }) => {\n  console.log(campaign)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/campaigns/{id}/promotions'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCampaignResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: addOrRemoveCampaignPromotionsWorkflow
+      x-events: []
+components:
+  examples:
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+  schemas:
+    AdminCampaign:
+      type: object
+      description: The campaign's details.
+      x-schemaName: AdminCampaign
+      required:
+      - id
+      - name
+      - description
+      - currency
+      - campaign_identifier
+      - starts_at
+      - ends_at
+      - budget
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The campaign's ID.
+        name:
+          type: string
+          title: name
+          description: The campaign's name.
+        description:
+          type: string
+          title: description
+          description: The campaign's description.
+        currency:
+          type: string
+          title: currency
+          description: The campaign's currency.
+        campaign_identifier:
+          type: string
+          title: campaign_identifier
+          description: The campaign's identifier.
+        starts_at:
+          type: string
+          title: starts_at
+          description: The date and time that the campaign starts.
+        ends_at:
+          type: string
+          title: ends_at
+          description: The date and time that the campaign ends.
+        budget:
+          type: object
+          description: The campaign's budget.
+          required:
+          - id
+          - type
+          - currency_code
+          - limit
+          - used
+          - attribute
+          properties:
+            id:
+              type: string
+              title: id
+              description: The budget's ID.
+            type:
+              type: string
+              description: 'The budget''s type. `spend` means the limit is set on the total amount discounted by the campaign''s promotions; `usage` means the limit is set on the total number of times the campaign''s promotions can be used.
+
+                '
+              enum:
+              - spend
+              - usage
+            currency_code:
+              type: string
+              title: currency_code
+              description: The budget's currency code.
+            limit:
+              type: number
+              title: limit
+              description: The budget's limit.
+            used:
+              type: number
+              title: used
+              description: 'How much of the budget has been used. If the limit is `spend`, this property holds the total amount discounted so far. If the limit is `usage`, it holds the number of times the campaign''s promotions have been used so far.
+
+                '
+            attribute:
+              type: string
+              title: attribute
+              description: The cart attribute to limit the budget by.
+              externalDocs:
+                url: https://docs.medusajs.com/resources/commerce-modules/promotion/campaign#attribute-based-budgets
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the campaign was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the campaign was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the campaign was deleted.
+    AdminBatchLink:
+      type: object
+      description: A batch operation to manage the associations between two entities.
+      properties:
+        add:
+          type: array
+          description: The IDs of an entity to add to the other.
+          items:
+            type: string
+            title: add
+            description: The entity's ID.
+        remove:
+          type: array
+          description: The IDs of an entity to remove from the other.
+          items:
+            type: string
+            title: remove
+            description: The entity's ID.
+      x-schemaName: AdminBatchLink
+    CampaignResponse:
+      type: object
+      description: The campaign's details.
+      x-schemaName: CampaignResponse
+      required:
+      - id
+      - name
+      - description
+      - currency
+      - campaign_identifier
+      - starts_at
+      - ends_at
+      - budget
+      properties:
+        id:
+          type: string
+          title: id
+          description: The campaign's ID.
+        name:
+          type: string
+          title: name
+          description: The campaign's name.
+        description:
+          type: string
+          title: description
+          description: The campaign's description.
+        currency:
+          type: string
+          title: currency
+          description: The campaign's currency.
+        campaign_identifier:
+          type: string
+          title: campaign_identifier
+          description: The campaign's campaign identifier.
+        starts_at:
+          type: string
+          title: starts_at
+          description: The campaign's starts at.
+        ends_at:
+          type: string
+          title: ends_at
+          description: The campaign's ends at.
+        budget:
+          type: object
+          description: The campaign's budget.
+          required:
+          - id
+          - type
+          - currency_code
+          - limit
+          - used
+          properties:
+            id:
+              type: string
+              title: id
+              description: The budget's ID.
+            type:
+              type: string
+              enum:
+              - spend
+              - usage
+            currency_code:
+              type: string
+              title: currency_code
+              description: The budget's currency code.
+            limit:
+              type: number
+              title: limit
+              description: The budget's limit.
+            used:
+              type: number
+              title: used
+              description: The budget's used.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminCampaignResponse:
+      type: object
+      description: The campaign's details.
+      x-schemaName: AdminCampaignResponse
+      required:
+      - campaign
+      properties:
+        campaign:
+          $ref: '#/components/schemas/AdminCampaign'
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

@@ -1,0 +1,2767 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Promotions API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'A promotion discounts an amount or percentage off a cart''s items, shipping methods, or the entire order.
+
+
+    Promotions have different types, such as a `standard` promotion that just discounts an amount, or a `buyget` promotion to enforce a "buy X get Y" promotion.
+
+
+    A promotion has rules to restrict how and when they''re applied.
+
+
+    Promotions belong to a campaign, which sets conditions on the promotion such as when it starts and ends.
+
+
+    These API routes allow admin users to manage promotions.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Promotions
+  description: 'A promotion discounts an amount or percentage off a cart''s items, shipping methods, or the entire order.
+
+
+    Promotions have different types, such as a `standard` promotion that just discounts an amount, or a `buyget` promotion to enforce a "buy X get Y" promotion.
+
+
+    A promotion has rules to restrict how and when they''re applied.
+
+
+    Promotions belong to a campaign, which sets conditions on the promotion such as when it starts and ends.
+
+
+    These API routes allow admin users to manage promotions.
+
+    '
+  externalDocs:
+    description: Learn more about promotions.
+    url: https://docs.medusajs.com/resources/commerce-modules/promotion/concepts
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminPromotion'
+paths:
+  /admin/promotions:
+    get:
+      operationId: GetPromotions
+      summary: List Promotions
+      description: Retrieve a list of promotions. The promotions can be filtered by fields such as `id`. The promotions can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: q
+        in: query
+        description: Search term to filter the promotion's searchable attributes.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search term to filter the promotion's searchable attributes.
+      - name: code
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: code
+            description: Filter by a promotion code.
+          - type: array
+            description: Filter by promotion codes.
+            items:
+              type: string
+              title: code
+              description: A promotion code.
+      - name: campaign_id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: campaign_id
+            description: Filter by a campaign's ID to retrieve its associated promotions.
+          - type: array
+            description: Filter by campaign IDs to retrieve their associated promotions.
+            items:
+              type: string
+              title: campaign_id
+              description: A campaign's ID.
+      - name: application_method
+        in: query
+        description: Apply filters on the application methods to retrieve the promotions of the matching application methods.
+        required: false
+        schema:
+          type: object
+          description: Apply filters on the application methods to retrieve the promotions of the matching application methods.
+          properties:
+            currency_code:
+              oneOf:
+              - type: string
+                title: currency_code
+                description: Filter by a currency code.
+              - type: array
+                description: Filter by currency codes.
+                items:
+                  type: string
+                  title: currency_code
+                  description: A currency code.
+      - name: created_at
+        in: query
+        description: Filter by a promotion's creation date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a promotion's creation date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: created_at
+      - name: updated_at
+        in: query
+        description: Filter by a promotion's update date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a promotion's update date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: updated_at
+      - name: deleted_at
+        in: query
+        description: Filter by a promotion's deletion date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a promotion's deletion date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: deleted_at
+      - name: $and
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: id
+        in: query
+        required: false
+        description: Filter by a promotion's ID.
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a promotion's ID.
+          - type: array
+            description: Filter by promotion IDs.
+            items:
+              type: string
+              title: id
+              description: The promotion's ID.
+          - type: object
+            description: Filter by a promotion's ID.
+            properties:
+              $and:
+                type: array
+                description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+                items:
+                  type: object
+                title: $and
+              $or:
+                type: array
+                description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+                items:
+                  type: object
+                title: $or
+              $eq:
+                oneOf:
+                - type: string
+                  title: $eq
+                  description: Filter by an exact match.
+                - type: array
+                  description: Filter by an exact match.
+                  items:
+                    type: string
+                    title: $eq
+                    description: Filter by an exact match.
+              $ne:
+                type: string
+                title: $ne
+                description: Filter by values not equal to this parameter.
+              $in:
+                type: array
+                description: Filter by values in this array.
+                items:
+                  type: string
+                  title: $in
+                  description: Filter by values in this array.
+              $nin:
+                type: array
+                description: Filter by values not in this array.
+                items:
+                  type: string
+                  title: $nin
+                  description: Filter by values not in this array.
+              $not:
+                oneOf:
+                - type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+                - type: object
+                  description: Filter by values not matching the conditions in this parameter.
+                - type: array
+                  description: Filter by values not matching the conditions in this parameter.
+                  items:
+                    type: string
+                    title: $not
+                    description: Filter by values not matching the conditions in this parameter.
+              $gt:
+                type: string
+                title: $gt
+                description: Filter by values greater than this parameter. Useful for numbers and dates only.
+              $gte:
+                type: string
+                title: $gte
+                description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+              $lt:
+                type: string
+                title: $lt
+                description: Filter by values less than this parameter. Useful for numbers and dates only.
+              $lte:
+                type: string
+                title: $lte
+                description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+              $like:
+                type: string
+                title: $like
+                description: Apply a `like` filter. Useful for strings only.
+              $re:
+                type: string
+                title: $re
+                description: Apply a regex filter. Useful for strings only.
+              $ilike:
+                type: string
+                title: $ilike
+                description: Apply a case-insensitive `like` filter. Useful for strings only.
+              $fulltext:
+                type: string
+                title: $fulltext
+                description: Filter to apply on full-text properties.
+              $overlap:
+                type: array
+                description: Filter arrays that have overlapping values with this parameter.
+                items:
+                  type: string
+                  title: $overlap
+                  description: Filter arrays that have overlapping values with this parameter.
+              $contains:
+                type: array
+                description: Filter arrays that contain some of the values of this parameter.
+                items:
+                  type: string
+                  title: $contains
+                  description: Filter arrays that contain some of the values of this parameter.
+              $contained:
+                type: array
+                description: Filter arrays that contain all values of this parameter.
+                items:
+                  type: string
+                  title: $contained
+                  description: Filter arrays that contain all values of this parameter.
+              $exists:
+                type: boolean
+                title: $exists
+                description: Filter by whether a value for this parameter exists (not `null`).
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.promotion.list()\n.then(({ promotions, count, limit, offset }) => {\n  console.log(promotions)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/promotions'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The paginated list of promotions.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of items returned.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of items skipped before retrieving the returned items.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of items.
+                - type: object
+                  description: The paginated list of promotions.
+                  required:
+                  - promotions
+                  properties:
+                    promotions:
+                      type: array
+                      description: The list of promotions.
+                      items:
+                        $ref: '#/components/schemas/AdminPromotion'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostPromotions
+      summary: Create Promotion
+      description: Create a promotion.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - type: object
+                description: The promotion's details.
+                required:
+                - code
+                - type
+                - campaign_id
+                - application_method
+                properties:
+                  code:
+                    type: string
+                    title: code
+                    description: The promotion's code.
+                  is_automatic:
+                    type: boolean
+                    title: is_automatic
+                    description: Whether the promotion is applied automatically.
+                  type:
+                    type: string
+                    description: The promotion's type.
+                    externalDocs:
+                      url: https://docs.medusajs.com/resources/commerce-modules/promotion/concepts#what-is-a-promotion
+                    enum:
+                    - standard
+                    - buyget
+                  campaign_id:
+                    type: string
+                    title: campaign_id
+                    description: The ID of the campaign that the promotion belongs to.
+                  campaign:
+                    type: object
+                    description: The details of a campaign to create and add the promotion to it.
+                    required:
+                    - name
+                    - campaign_identifier
+                    - description
+                    - budget
+                    - starts_at
+                    - ends_at
+                    properties:
+                      name:
+                        type: string
+                        title: name
+                        description: The campaign's name.
+                      campaign_identifier:
+                        type: string
+                        title: campaign_identifier
+                        description: The campaign's identifier.
+                      description:
+                        type: string
+                        title: description
+                        description: The campaign's description.
+                      budget:
+                        type: object
+                        description: The campaign's budget which, when crossed, ends the campaign.
+                        required:
+                        - type
+                        - limit
+                        - currency_code
+                        properties:
+                          type:
+                            type: string
+                            description: 'The budget''s type. This can''t be edited later. Use `spend` to set a limit on the total amount discounted by the campaign''s promotions. Use `usage` to set a limit on the total number of times the campaign''s promotions can be used.
+
+                              '
+                            enum:
+                            - spend
+                            - usage
+                          limit:
+                            type: number
+                            title: limit
+                            description: The budget's limit.
+                          currency_code:
+                            type: string
+                            title: currency_code
+                            description: The campaign budget's currency code. This can't be edited later.
+                      starts_at:
+                        type: string
+                        title: starts_at
+                        description: The campaign's start date.
+                        format: date-time
+                      ends_at:
+                        type: string
+                        title: ends_at
+                        description: The campaign's end date.
+                        format: date-time
+                  application_method:
+                    type: object
+                    description: The promotion's application method.
+                    required:
+                    - description
+                    - value
+                    - currency_code
+                    - max_quantity
+                    - type
+                    - target_type
+                    - apply_to_quantity
+                    - buy_rules_min_quantity
+                    properties:
+                      description:
+                        type: string
+                        title: description
+                        description: The application method's description.
+                      value:
+                        type: number
+                        title: value
+                        description: The discounted amount applied by the associated promotion based on the `type`.
+                      currency_code:
+                        type: string
+                        title: currency_code
+                        description: The application method's currency code.
+                      max_quantity:
+                        type: number
+                        title: max_quantity
+                        description: The max quantity allowed in the cart for the associated promotion to be applied.
+                      type:
+                        type: string
+                        description: The type of the application method indicating how the associated promotion is applied.
+                        enum:
+                        - fixed
+                        - percentage
+                      target_type:
+                        type: string
+                        description: The target type of the application method indicating whether the associated promotion is applied to the cart's items, shipping methods, or the whole order.
+                        enum:
+                        - order
+                        - shipping_methods
+                        - items
+                      allocation:
+                        type: string
+                        description: The allocation value that indicates whether the associated promotion is applied on each item in a cart or split between the items in the cart.
+                        enum:
+                        - each
+                        - across
+                      target_rules:
+                        type: array
+                        description: The application method's target rules.
+                        items:
+                          type: object
+                          description: A target rule's details.
+                          required:
+                          - operator
+                          - description
+                          - attribute
+                          - values
+                          properties:
+                            operator:
+                              type: string
+                              description: The operator used to check whether the target rule applies on a cart. For example, `eq` means that the cart's value for the specified attribute must match the specified value.
+                              enum:
+                              - gte
+                              - lte
+                              - gt
+                              - lt
+                              - eq
+                              - ne
+                              - in
+                            description:
+                              type: string
+                              title: description
+                              description: The target rule's description.
+                            attribute:
+                              type: string
+                              title: attribute
+                              description: The attribute to compare against when checking whether a promotion can be applied on a cart.
+                              example: items.product.id
+                            values:
+                              oneOf:
+                              - type: string
+                                title: values
+                                description: The attribute's value.
+                                example: prod_123
+                              - type: array
+                                description: The allowed attribute values.
+                                items:
+                                  type: string
+                                  title: values
+                                  description: An attribute value.
+                                  example: prod_123
+                      buy_rules:
+                        type: array
+                        description: The application method's buy rules.
+                        items:
+                          type: object
+                          description: A buy rule's details.
+                          required:
+                          - operator
+                          - description
+                          - attribute
+                          - values
+                          properties:
+                            operator:
+                              type: string
+                              description: The operator used to check whether the buy rule applies on a cart. For example, `eq` means that the cart's value for the specified attribute must match the specified value.
+                              enum:
+                              - gte
+                              - lte
+                              - gt
+                              - lt
+                              - eq
+                              - ne
+                              - in
+                            description:
+                              type: string
+                              title: description
+                              description: The buy rule's description.
+                            attribute:
+                              type: string
+                              title: attribute
+                              description: The attribute to compare against when checking whether a promotion can be applied on a cart.
+                              example: items.product.id
+                            values:
+                              oneOf:
+                              - type: string
+                                title: values
+                                description: The attribute's value.
+                                example: prod_123
+                              - type: array
+                                description: The allowed attribute values.
+                                items:
+                                  type: string
+                                  title: values
+                                  description: An attribute value.
+                                  example: prod_123
+                      apply_to_quantity:
+                        type: number
+                        title: apply_to_quantity
+                        description: The quantity that results from matching the `buyget` promotion's condition. For example, if the promotion is a "Buy 2 shirts get 1 free", the value f this attribute is `1`.
+                      buy_rules_min_quantity:
+                        type: number
+                        title: buy_rules_min_quantity
+                        description: The minimum quantity required for a `buyget` promotion to be applied. For example, if the promotion is a "Buy 2 shirts get 1 free", the value of this attribute is `2`.
+                  rules:
+                    type: array
+                    description: The promotion's rules.
+                    items:
+                      type: object
+                      description: A rule's details.
+                      required:
+                      - operator
+                      - description
+                      - attribute
+                      - values
+                      properties:
+                        operator:
+                          type: string
+                          description: The operator used to check whether the buy rule applies on a cart. For example, `eq` means that the cart's value for the specified attribute must match the specified value.
+                          enum:
+                          - gte
+                          - lte
+                          - gt
+                          - lt
+                          - eq
+                          - ne
+                          - in
+                        description:
+                          type: string
+                          title: description
+                          description: The rule's description.
+                        attribute:
+                          type: string
+                          title: attribute
+                          description: The attribute to compare against when checking whether a promotion can be applied on a cart.
+                          example: items.product.id
+                        values:
+                          oneOf:
+                          - type: string
+                            title: values
+                            description: The attribute's value.
+                            example: prod_123
+                          - type: array
+                            description: The allowed attribute values.
+                            items:
+                              type: string
+                              title: values
+                              description: An attribute value.
+                              example: prod_123
+              - type: object
+                description: The promotion's details.
+                properties:
+                  additional_data:
+                    type: object
+                    description: Pass additional custom data to the API route. This data is passed to the underlying workflow under the `additional_data` parameter.
+              description: The promotion's details.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.promotion.create({\n  name: \"My Promotion\",\n  description: \"This is a test promotion\",\n  code: \"PROMO123\",\n  starts_at: \"2021-01-01\",\n  ends_at: \"2021-01-01\",\n})\n.then(({ promotion }) => {\n  console.log(promotion)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/promotions' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"code\": \"{value}\",\n  \"type\": \"{value}\",\n  \"campaign_id\": \"{value}\",\n  \"application_method\": {\n    \"description\": \"{value}\",\n    \"value\": 1841223411171328,\n    \"currency_code\": \"{value}\",\n    \"max_quantity\": 2960098049654784,\n    \"type\": \"{value}\",\n    \"target_type\": \"{value}\",\n    \"allocation\": \"{value}\",\n    \"target_rules\": [],\n    \"buy_rules\": [],\n    \"apply_to_quantity\": 708643867590656,\n    \"buy_rules_min_quantity\": 3167972149428224\n  }\n}'"
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPromotionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createPromotionsWorkflow
+      x-events: []
+  /admin/promotions/rule-attribute-options/{rule_type}:
+    get:
+      operationId: GetPromotionsRuleAttributeOptionsRule_type
+      summary: List Rule Attribute Options of a Rule Type
+      x-sidebar-summary: List Potential Rule Attributes
+      description: 'Retrieve a list of potential rule attributes for the promotion and application method types specified in the query parameters.
+
+        Only the attributes of the rule type specified in the path parameter are retrieved:
+
+        - If `rule_type` is `rules`, the attributes of the promotion''s type are retrieved.
+
+
+        - If `rule_type` is `target-rules`, the target rules'' attributes of the application method''s type are retrieved.
+
+
+        - If `rule_type` is `buy-rules`, the buy rules'' attributes of the application method''s type are retrieved.
+
+        '
+      x-authenticated: true
+      parameters:
+      - name: rule_type
+        in: path
+        description: The rule type.
+        required: true
+        schema:
+          type: string
+          enum:
+          - rules
+          - target-rules
+          - buy-rules
+      - name: promotion_type
+        in: query
+        description: The promotion type to retrieve rules for.
+        required: false
+        schema:
+          type: string
+          description: The promotion type to retrieve rules for.
+          enum:
+          - standard
+          - buyget
+      - name: application_method_type
+        in: query
+        description: The application method type to retrieve rules for.
+        required: false
+        schema:
+          type: string
+          description: The application method type to retrieve rules for.
+          enum:
+          - fixed
+          - percentage
+      - name: application_method_target_type
+        in: query
+        description: The application method target type to retrieve rules for.
+        required: false
+        schema:
+          type: string
+          description: The application method target type to retrieve rules for.
+          enum:
+          - items
+          - shipping_methods
+          - order
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.promotion.listRuleAttributes(\"rules\", \"standard\")\n.then(({ attributes }) => {\n  console.log(attributes)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/promotions/rule-attribute-options/{rule_type}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The list of attributes.
+                required:
+                - attributes
+                properties:
+                  attributes:
+                    type: array
+                    description: The list of attributes.
+                    items:
+                      $ref: '#/components/schemas/AdminRuleAttributeOption'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/promotions/rule-value-options/{rule_type}/{rule_attribute_id}:
+    get:
+      operationId: GetPromotionsRuleValueOptionsRule_typeRule_attribute_id
+      summary: List Rule Values Given a Rule Attribute
+      x-sidebar-summary: List Rule Values
+      description: 'Retrieve all potential values for promotion rules and target and buy rules based on the specified rule attribute and type.
+
+        For example, if you provide the ID of the `currency_code` rule attribute, and set `rule_type` to `rules`, a list of currencies are retrieved in label-value pairs.
+
+        '
+      x-authenticated: true
+      parameters:
+      - name: rule_type
+        in: path
+        description: The rule type.
+        required: true
+        schema:
+          type: string
+          enum:
+          - rules
+          - target-rules
+          - buy-rules
+      - name: rule_attribute_id
+        in: path
+        description: The rule attribute's ID.
+        required: true
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: application_method_target_type
+        in: query
+        description: The application method target type to retrieve rules for.
+        required: false
+        schema:
+          type: string
+          description: The application method target type to retrieve rules for.
+      - name: q
+        in: query
+        description: Apply a search query on the rule values' searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Apply a search query on the rule values' searchable properties.
+      - name: value
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: value
+            description: Filter by a specific rule value.
+          - type: array
+            description: Filter by multiple rule values.
+            items:
+              type: string
+              title: value
+              description: A rule value.
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.promotion.listRuleValues(\"rules\", \"attr_123\")\n.then(({ values }) => {\n  console.log(values)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/promotions/rule-value-options/{rule_type}/{rule_attribute_id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The pagination fields.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of items returned.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of items skipped before retrieving the returned items.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of items.
+                - type: object
+                  description: The list of rule values.
+                  required:
+                  - values
+                  properties:
+                    values:
+                      type: array
+                      description: The list of rule values.
+                      items:
+                        $ref: '#/components/schemas/AdminRuleValueOption'
+                description: The paginated list of rule values.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/promotions/{id}:
+    get:
+      operationId: GetPromotionsId
+      summary: Get a Promotion
+      description: Retrieve a promotion by its ID. You can expand the promotion's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The promotion's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.promotion.retrieve(\"promo_123\")\n.then(({ promotion }) => {\n  console.log(promotion)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/promotions/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPromotionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostPromotionsId
+      summary: Update a Promotion
+      description: Update a promotion's details.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The promotion's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - type: object
+                description: The properties to update in a promotion.
+                required:
+                - campaign_id
+                properties:
+                  code:
+                    type: string
+                    title: code
+                    description: The promotion's code.
+                  is_automatic:
+                    type: boolean
+                    title: is_automatic
+                    description: Whether the promotion is applied automatically.
+                  type:
+                    type: string
+                    description: The promotion's type.
+                    externalDocs:
+                      url: https://docs.medusajs.com/resources/commerce-modules/promotion/concepts#what-is-a-promotion
+                    enum:
+                    - standard
+                    - buyget
+                  campaign_id:
+                    type: string
+                    title: campaign_id
+                    description: The ID of the campaign that the promotion belongs to.
+                  application_method:
+                    type: object
+                    description: The properties to update in the application method.
+                    required:
+                    - id
+                    - description
+                    - max_quantity
+                    - currency_code
+                    - apply_to_quantity
+                    - buy_rules_min_quantity
+                    properties:
+                      id:
+                        type: string
+                        title: id
+                        description: The application method's ID.
+                      description:
+                        type: string
+                        title: description
+                        description: The application method's description.
+                      value:
+                        type: number
+                        title: value
+                        description: The discounted amount applied by the associated promotion based on the `type`.
+                      max_quantity:
+                        type: number
+                        title: max_quantity
+                        description: The max quantity allowed in the cart for the associated promotion to be applied.
+                      currency_code:
+                        type: string
+                        title: currency_code
+                        description: The application method's currency code.
+                      type:
+                        type: string
+                        description: The type of the application method indicating how the associated promotion is applied.
+                        enum:
+                        - fixed
+                        - percentage
+                      target_type:
+                        type: string
+                        description: The target type of the application method indicating whether the associated promotion is applied to the cart's items, shipping methods, or the whole order.
+                        enum:
+                        - order
+                        - shipping_methods
+                        - items
+                      allocation:
+                        type: string
+                        description: The allocation value that indicates whether the associated promotion is applied on each item in a cart or split between the items in the cart.
+                        enum:
+                        - each
+                        - across
+                      apply_to_quantity:
+                        type: number
+                        title: apply_to_quantity
+                        description: The quantity that results from matching the `buyget` promotion's condition. For example, if the promotion is a "Buy 2 shirts get 1 free", the value f this attribute is `1`.
+                      buy_rules_min_quantity:
+                        type: number
+                        title: buy_rules_min_quantity
+                        description: The minimum quantity required for a `buyget` promotion to be applied. For example, if the promotion is a "Buy 2 shirts get 1 free", the value of this attribute is `2`.
+              - type: object
+                description: The properties to update in a promotion.
+                properties:
+                  additional_data:
+                    type: object
+                    description: Pass additional custom data to the API route. This data is passed to the underlying workflow under the `additional_data` parameter.
+              description: The properties to update in a promotion.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.promotion.update(\"promo_123\", {\n  code: \"PROMO123\",\n})\n.then(({ promotion }) => {\n  console.log(promotion)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/promotions/{id}' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"campaign_id\": \"{value}\"\n}'"
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPromotionResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updatePromotionsWorkflow
+      x-events: []
+    delete:
+      operationId: DeletePromotionsId
+      summary: Delete a Promotion
+      description: Delete a promotion.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The promotion's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.promotion.delete(\"promo_123\")\n.then(({ promotion }) => {\n  console.log(promotion)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/promotions/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The deletion's details.
+                required:
+                - id
+                - object
+                - deleted
+                properties:
+                  id:
+                    type: string
+                    title: id
+                    description: The promotion's ID.
+                  object:
+                    type: string
+                    title: object
+                    description: The name of the deleted object.
+                    default: promotion
+                  deleted:
+                    type: boolean
+                    title: deleted
+                    description: Whether the promotion was deleted.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deletePromotionsWorkflow
+      x-events: []
+  /admin/promotions/{id}/buy-rules/batch:
+    post:
+      operationId: PostPromotionsIdBuyRulesBatch
+      summary: Manage the Buy Rules of a Promotion
+      x-sidebar-summary: Manage Buy Rules
+      description: Manage the buy rules of a `buyget` promotion to create, update, or delete them.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The promotion's ID.
+        required: true
+        schema:
+          type: string
+      - name: promotion_type
+        in: query
+        description: The promotion's type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's type.
+          enum:
+          - standard
+          - buyget
+      - name: application_method_type
+        in: query
+        description: The promotion's application method type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's application method type.
+          enum:
+          - fixed
+          - percentage
+      - name: application_method_target_type
+        in: query
+        description: The promotion's application method target type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's application method target type.
+          enum:
+          - items
+          - shipping_methods
+          - order
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The buy rules to create, update, or delete.
+              properties:
+                create:
+                  type: array
+                  description: The buy rules to create.
+                  items:
+                    $ref: '#/components/schemas/AdminCreatePromotionRule'
+                update:
+                  type: array
+                  description: The buy rules to update.
+                  items:
+                    $ref: '#/components/schemas/AdminUpdatePromotionRule'
+                delete:
+                  type: array
+                  description: The buy rules to delete.
+                  items:
+                    type: string
+                    title: delete
+                    description: A buy rule's ID.
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/promotions/{id}/buy-rules/batch'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The result of the batch operations.
+                required:
+                - created
+                - updated
+                - deleted
+                properties:
+                  created:
+                    type: array
+                    description: The created buy rules.
+                    items:
+                      $ref: '#/components/schemas/AdminPromotionRule'
+                  updated:
+                    type: array
+                    description: The updated buy rules.
+                    items:
+                      $ref: '#/components/schemas/AdminPromotionRule'
+                  deleted:
+                    type: object
+                    description: The details of the deleted buy rules.
+                    required:
+                    - ids
+                    - object
+                    - deleted
+                    properties:
+                      ids:
+                        type: array
+                        description: The IDs of the buy rules that were deleted.
+                        items:
+                          type: string
+                          title: ids
+                          description: A buy rule's ID.
+                      object:
+                        type: string
+                        title: object
+                        description: The name of the object that was deleted.
+                        default: promotion-rule
+                      deleted:
+                        type: boolean
+                        title: deleted
+                        description: Whether the buy rules were deleted.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: batchPromotionRulesWorkflow
+      x-events: []
+  /admin/promotions/{id}/rules/batch:
+    post:
+      operationId: PostPromotionsIdRulesBatch
+      summary: Manage a Promotion's Rules
+      x-sidebar-summary: Manage Rules
+      description: Manage the rules of a promotion to create, update, or delete them.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The promotion's ID.
+        required: true
+        schema:
+          type: string
+      - name: promotion_type
+        in: query
+        description: The promotion's type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's type.
+          enum:
+          - standard
+          - buyget
+      - name: application_method_type
+        in: query
+        description: The promotion's application method type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's application method type.
+          enum:
+          - fixed
+          - percentage
+      - name: application_method_target_type
+        in: query
+        description: The promotion's application method target type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's application method target type.
+          enum:
+          - items
+          - shipping_methods
+          - order
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The rules to create, update, or delete.
+              properties:
+                create:
+                  type: array
+                  description: The rules to create.
+                  items:
+                    $ref: '#/components/schemas/AdminCreatePromotionRule'
+                update:
+                  type: array
+                  description: The rules to update.
+                  items:
+                    $ref: '#/components/schemas/AdminUpdatePromotionRule'
+                delete:
+                  type: array
+                  description: The rules to delete.
+                  items:
+                    type: string
+                    title: delete
+                    description: A rule's ID.
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/promotions/{id}/rules/batch'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The result of the batch operations.
+                required:
+                - created
+                - updated
+                - deleted
+                properties:
+                  created:
+                    type: array
+                    description: The created rules.
+                    items:
+                      $ref: '#/components/schemas/AdminPromotionRule'
+                  updated:
+                    type: array
+                    description: The updated rules.
+                    items:
+                      $ref: '#/components/schemas/AdminPromotionRule'
+                  deleted:
+                    type: object
+                    description: The details of the deleted buy rules.
+                    required:
+                    - ids
+                    - object
+                    - deleted
+                    properties:
+                      ids:
+                        type: array
+                        description: The IDs of the deleted rules.
+                        items:
+                          type: string
+                          title: ids
+                          description: A rule's ID.
+                      object:
+                        type: string
+                        title: object
+                        description: The name of the object that was deleted.
+                        default: promotion-rule
+                      deleted:
+                        type: boolean
+                        title: deleted
+                        description: Whether the rules were deleted.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: batchPromotionRulesWorkflow
+      x-events: []
+  /admin/promotions/{id}/target-rules/batch:
+    post:
+      operationId: PostPromotionsIdTargetRulesBatch
+      summary: Manage Target Rules of a Promotion
+      x-sidebar-summary: Manage Target Rules
+      description: Manage the target rules of a promotion to create, update, or delete them.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The promotion's ID.
+        required: true
+        schema:
+          type: string
+      - name: promotion_type
+        in: query
+        description: The promotion's type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's type.
+          enum:
+          - standard
+          - buyget
+      - name: application_method_type
+        in: query
+        description: The promotion's application method type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's application method type.
+          enum:
+          - fixed
+          - percentage
+      - name: application_method_target_type
+        in: query
+        description: The promotion's application method target type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's application method target type.
+          enum:
+          - items
+          - shipping_methods
+          - order
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The target rules to create, update, or delete.
+              properties:
+                create:
+                  type: array
+                  description: The target rules to create.
+                  items:
+                    $ref: '#/components/schemas/AdminCreatePromotionRule'
+                update:
+                  type: array
+                  description: The target rules to update.
+                  items:
+                    $ref: '#/components/schemas/AdminUpdatePromotionRule'
+                delete:
+                  type: array
+                  description: The target rules to delete.
+                  items:
+                    type: string
+                    title: delete
+                    description: A target rule's ID.
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/promotions/{id}/target-rules/batch'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The result of the batch operations.
+                required:
+                - created
+                - updated
+                - deleted
+                properties:
+                  created:
+                    type: array
+                    description: The created target rules.
+                    items:
+                      $ref: '#/components/schemas/AdminPromotionRule'
+                  updated:
+                    type: array
+                    description: The updated target rules.
+                    items:
+                      $ref: '#/components/schemas/AdminPromotionRule'
+                  deleted:
+                    type: object
+                    description: The details of the deleted target rules.
+                    required:
+                    - ids
+                    - object
+                    - deleted
+                    properties:
+                      ids:
+                        type: array
+                        description: The IDs of deleted target rules.
+                        items:
+                          type: string
+                          title: ids
+                          description: A target rule's ID.
+                      object:
+                        type: string
+                        title: object
+                        description: The name of the object that was deleted.
+                        default: promotion-rule
+                      deleted:
+                        type: boolean
+                        title: deleted
+                        description: Whether the target rules were deleted.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: batchPromotionRulesWorkflow
+      x-events: []
+  /admin/promotions/{id}/{rule_type}:
+    get:
+      operationId: GetPromotionsIdRule_type
+      summary: List Rules of a Promotion
+      x-sidebar-summary: List Rules
+      description: 'Retrieve a list of rules in a promotion. The type of rules retrieved depend on the value of the `rule_type` path parameter:
+
+        - If `rule_type` is `rules`, the promotion''s rules are retrivied. - If `rule_type` is `target-rules`, the target rules of the promotion''s application method are retrieved.
+
+
+        - If `rule_type` is `buy-rules`, the buy rules of the promotion''s application method are retrieved.
+
+        '
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The promotion's ID.
+        required: true
+        schema:
+          type: string
+      - name: rule_type
+        in: path
+        description: The type of rules to retrieve.
+        required: true
+        schema:
+          type: string
+          enum:
+          - rules
+          - target-rules
+          - buy-rules
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: promotion_type
+        in: query
+        description: The type
+        required: false
+        schema:
+          type: string
+          description: The promotion's type.
+          enum:
+          - standard
+          - buyget
+      - name: application_method_type
+        in: query
+        description: The promotion's application method type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's application method type.
+          enum:
+          - fixed
+          - percentage
+      - name: application_method_target_type
+        in: query
+        description: The promotion's application method target type.
+        required: false
+        schema:
+          type: string
+          description: The promotion's application method target type.
+          enum:
+          - items
+          - shipping_methods
+          - order
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.promotion.listRules(\"promo_123\", \"rules\")\n.then(({ rules }) => {\n  console.log(rules)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/promotions/{id}/{rule_type}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Promotions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The list of promotion rules.
+                required:
+                - rules
+                properties:
+                  rules:
+                    type: array
+                    description: The list of promotion rules.
+                    items:
+                      $ref: '#/components/schemas/AdminPromotionRule'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+components:
+  schemas:
+    AdminPromotion:
+      type: object
+      description: The promotion's details.
+      x-schemaName: AdminPromotion
+      required:
+      - id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        application_method:
+          $ref: '#/components/schemas/AdminApplicationMethod'
+        rules:
+          type: array
+          description: The promotion's rules.
+          items:
+            $ref: '#/components/schemas/AdminPromotionRule'
+        id:
+          type: string
+          title: id
+          description: The promotion's ID.
+        code:
+          type: string
+          title: code
+          description: The promotion's code.
+          example: OFF50
+        type:
+          type: string
+          description: The promotion's type.
+          enum:
+          - standard
+          - buyget
+        is_automatic:
+          type: boolean
+          title: is_automatic
+          description: Whether the promotion is applied on a cart automatically if it matches the promotion's rules.
+        campaign_id:
+          type: string
+          title: campaign_id
+          description: The ID of the campaign this promotion belongs to.
+        campaign:
+          $ref: '#/components/schemas/AdminCampaign'
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the promotion was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the promotion was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the promotion was deleted.
+        status:
+          type: string
+          description: The promotion's status.
+          enum:
+          - draft
+          - active
+          - inactive
+        is_tax_inclusive:
+          type: boolean
+          title: is_tax_inclusive
+          description: Whether the promotion is tax inclusive. If enabled, the promotion is applied after tax is calculated.
+        limit:
+          type: number
+          title: limit
+          description: The limit of times the promotion can be used.
+        used:
+          type: number
+          title: used
+          description: The number of times the promotion has been used.
+    AdminApplicationMethod:
+      type: object
+      description: The application method's details.
+      x-schemaName: AdminApplicationMethod
+      required:
+      - id
+      properties:
+        promotion:
+          type: object
+        target_rules:
+          type: array
+          description: The application method's target rules.
+          items:
+            $ref: '#/components/schemas/AdminPromotionRule'
+        buy_rules:
+          type: array
+          description: The application method's buy rules.
+          items:
+            $ref: '#/components/schemas/AdminPromotionRule'
+        id:
+          type: string
+          title: id
+          description: The application method's ID.
+        type:
+          type: string
+          description: The application method's type. If it's `fixed`, the promotion discounts a fixed amount. If it's `percentage`, the promotion discounts a percentage.
+          enum:
+          - fixed
+          - percentage
+        target_type:
+          type: string
+          description: Which item does the promotion apply to. `items` mean the promotion applies to the cart's items; `shipping_methods` means the promotion applies to the cart's shipping methods; `order` means the promotion applies on the entire order.
+          enum:
+          - items
+          - shipping_methods
+          - order
+        allocation:
+          type: string
+          description: How is the promotion amount discounted. `each` means the discounted amount is applied on each applicable item; `across` means the discounted amount is split accross the applicable items.
+          enum:
+          - each
+          - across
+        value:
+          type: number
+          title: value
+          description: The amount to be discounted.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The application method's currency code.
+          example: usd
+        max_quantity:
+          type: number
+          title: max_quantity
+          description: The max quantity allowed in the cart for the associated promotion to be applied.
+        buy_rules_min_quantity:
+          type: number
+          title: buy_rules_min_quantity
+          description: The minimum quantity required for a `buyget` promotion to be applied. For example, if the promotion is a "Buy 2 shirts get 1 free", the value of this attribute is `2`.
+        apply_to_quantity:
+          type: number
+          title: apply_to_quantity
+          description: The quantity that results from matching the `buyget` promotion's condition. For example, if the promotion is a "Buy 2 shirts get 1 free", the value of this attribute is `1`.
+    AdminPromotionResponse:
+      type: object
+      description: The promotion's details.
+      x-schemaName: AdminPromotionResponse
+      required:
+      - promotion
+      properties:
+        promotion:
+          $ref: '#/components/schemas/AdminPromotion'
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminUpdatePromotionRule:
+      type: object
+      description: The properties to update in a buy rule.
+      required:
+      - id
+      - values
+      properties:
+        id:
+          type: string
+          title: id
+          description: The buy rule's ID.
+        operator:
+          type: string
+          description: The operator used to check whether the buy rule applies on a cart. For example, `eq` means that the cart's value for the specified attribute must match the specified value.
+          enum:
+          - gte
+          - lte
+          - gt
+          - lt
+          - eq
+          - ne
+          - in
+        description:
+          type: string
+          title: description
+          description: The buy rule's description.
+        attribute:
+          type: string
+          title: attribute
+          description: The attribute to compare against when checking whether a promotion can be applied on a cart.
+          example: items.product.id
+        values:
+          oneOf:
+          - type: string
+            title: values
+            description: The attribute's value.
+            example: prod_123
+          - type: array
+            description: The allowed attribute values.
+            items:
+              type: string
+              title: values
+              description: An attribute value.
+              example: prod_123
+      x-schemaName: AdminUpdatePromotionRule
+    AdminCampaign:
+      type: object
+      description: The campaign's details.
+      x-schemaName: AdminCampaign
+      required:
+      - id
+      - name
+      - description
+      - currency
+      - campaign_identifier
+      - starts_at
+      - ends_at
+      - budget
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The campaign's ID.
+        name:
+          type: string
+          title: name
+          description: The campaign's name.
+        description:
+          type: string
+          title: description
+          description: The campaign's description.
+        currency:
+          type: string
+          title: currency
+          description: The campaign's currency.
+        campaign_identifier:
+          type: string
+          title: campaign_identifier
+          description: The campaign's identifier.
+        starts_at:
+          type: string
+          title: starts_at
+          description: The date and time that the campaign starts.
+        ends_at:
+          type: string
+          title: ends_at
+          description: The date and time that the campaign ends.
+        budget:
+          type: object
+          description: The campaign's budget.
+          required:
+          - id
+          - type
+          - currency_code
+          - limit
+          - used
+          - attribute
+          properties:
+            id:
+              type: string
+              title: id
+              description: The budget's ID.
+            type:
+              type: string
+              description: 'The budget''s type. `spend` means the limit is set on the total amount discounted by the campaign''s promotions; `usage` means the limit is set on the total number of times the campaign''s promotions can be used.
+
+                '
+              enum:
+              - spend
+              - usage
+            currency_code:
+              type: string
+              title: currency_code
+              description: The budget's currency code.
+            limit:
+              type: number
+              title: limit
+              description: The budget's limit.
+            used:
+              type: number
+              title: used
+              description: 'How much of the budget has been used. If the limit is `spend`, this property holds the total amount discounted so far. If the limit is `usage`, it holds the number of times the campaign''s promotions have been used so far.
+
+                '
+            attribute:
+              type: string
+              title: attribute
+              description: The cart attribute to limit the budget by.
+              externalDocs:
+                url: https://docs.medusajs.com/resources/commerce-modules/promotion/campaign#attribute-based-budgets
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the campaign was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the campaign was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the campaign was deleted.
+    AdminRuleAttributeOption:
+      type: object
+      description: The details of a potential rule attribute.
+      x-schemaName: AdminRuleAttributeOption
+      required:
+      - id
+      - value
+      - label
+      - operators
+      properties:
+        id:
+          type: string
+          title: id
+          description: The rule attribute's ID, which is a rule's `attribute` it refers to.
+          example: customer_group
+        value:
+          type: string
+          title: value
+          description: The rule attribute's value.
+          example: customer.groups.id
+        label:
+          type: string
+          title: label
+          description: The rule attribute option's label.
+          example: Customer Group
+        operators:
+          type: array
+          description: The attribute's operators.
+          items:
+            $ref: '#/components/schemas/BaseRuleOperatorOptions'
+    BasePromotionRuleValue:
+      type: object
+      description: The rule value's details.
+      x-schemaName: BasePromotionRuleValue
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The value's ID.
+        value:
+          type: string
+          title: value
+          description: The value.
+    BaseRuleOperatorOptions:
+      type: object
+      description: The operator's details.
+      x-schemaName: BaseRuleOperatorOptions
+      required:
+      - id
+      - value
+      - label
+      properties:
+        id:
+          type: string
+          title: id
+          description: The operator's ID.
+          example: in
+        value:
+          type: string
+          title: value
+          description: The operator's value.
+          example: in
+        label:
+          type: string
+          title: label
+          description: The operator's label.
+          example: In
+    AdminCreatePromotionRule:
+      type: object
+      description: The promotion rule's details.
+      x-schemaName: AdminCreatePromotionRule
+      required:
+      - operator
+      - attribute
+      - values
+      properties:
+        operator:
+          type: string
+          description: The operator used to check whether the buy rule applies on a cart. For example, `eq` means that the cart's value for the specified attribute must match the specified value.
+          enum:
+          - gte
+          - lte
+          - gt
+          - lt
+          - eq
+          - ne
+          - in
+        description:
+          type: string
+          title: description
+          description: The rule's description.
+        attribute:
+          type: string
+          title: attribute
+          description: The attribute to compare against when checking whether a promotion can be applied on a cart.
+          example: items.product.id
+        values:
+          oneOf:
+          - type: string
+            title: values
+            description: The attribute's value.
+            example: prod_123
+          - type: array
+            description: The allowed attribute values.
+            items:
+              type: string
+              title: values
+              description: An attribute value.
+              example: prod_123
+    AdminRuleValueOption:
+      type: object
+      description: The details of a potential rule value.
+      x-schemaName: AdminRuleValueOption
+      required:
+      - value
+      - label
+      properties:
+        value:
+          type: string
+          title: value
+          description: The rule value's value.
+          example: reg_123
+        label:
+          type: string
+          title: label
+          description: The rule value's label.
+          example: Europe Region
+    AdminPromotionRule:
+      type: object
+      description: The promotion rule's details.
+      x-schemaName: AdminPromotionRule
+      required:
+      - id
+      - values
+      properties:
+        id:
+          type: string
+          title: id
+          description: The promotion rule's ID.
+        description:
+          type: string
+          title: description
+          description: The promotion rule's description.
+        attribute:
+          type: string
+          title: attribute
+          description: The promotion rule's attribute.
+          example: customer_group_id
+        operator:
+          type: string
+          description: The rule's operator.
+          enum:
+          - gt
+          - lt
+          - eq
+          - ne
+          - in
+          - lte
+          - gte
+        values:
+          type: array
+          description: The rule's values.
+          example:
+          - cusgroup_123
+          items:
+            $ref: '#/components/schemas/BasePromotionRuleValue'
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

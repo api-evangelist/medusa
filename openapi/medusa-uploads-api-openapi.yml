@@ -1,0 +1,537 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Uploads API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'Use these API routes to upload files to your Medusa application using the installed file module provider.
+
+
+    You can upload public files, such as product images, or private files, such as CSV files used to import products.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Uploads
+  description: 'Use these API routes to upload files to your Medusa application using the installed file module provider.
+
+
+    You can upload public files, such as product images, or private files, such as CSV files used to import products.
+
+    '
+  externalDocs:
+    description: Check out available file module providers.
+    url: https://docs.medusajs.com/resources/infrastructure-modules/file
+paths:
+  /admin/uploads:
+    post:
+      operationId: PostUploads
+      summary: Upload Files
+      description: Upload files to the configured File Module Provider.
+      x-authenticated: true
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - type: object
+                description: The files to upload
+                required:
+                - files
+                properties:
+                  files:
+                    type: array
+                    description: The upload's files.
+                    items:
+                      oneOf:
+                      - type: object
+                        description: The file's files.
+                        required:
+                        - name
+                        - content
+                        properties:
+                          name:
+                            type: string
+                            title: name
+                            description: The file's name.
+                          content:
+                            type: string
+                            title: content
+                            description: The file's content.
+                      - type: object
+                        description: A File to upload.
+                        externalDocs:
+                          url: https://developer.mozilla.org/en-US/docs/Web/API/File
+                          description: Learn more about the File API
+                        title: files
+              - type: array
+                description: list of files to upload.
+                items:
+                  type: object
+                  description: A File to upload.
+                  externalDocs:
+                    url: https://developer.mozilla.org/en-US/docs/Web/API/File
+                    description: Learn more about the File API
+                title: FileList
+              description: The files to upload.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.upload.create(\n  {\n    files: [\n       // file uploaded as a binary string\n      {\n        name: \"test.txt\",\n        content: \"test\", // Should be the binary string of the file\n      },\n      // file uploaded as a File object\n      new File([\"test\"], \"test.txt\", { type: \"text/plain\" })\n    ],\n  }\n)\n.then(({ files }) => {\n  console.log(files)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/uploads'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Uploads
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminFileListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: uploadFilesWorkflow
+      x-events: []
+  /admin/uploads/presigned-urls:
+    post:
+      operationId: PostUploadsPresignedUrls
+      summary: Get Presigned Upload URL
+      description: Get a presigned URL for uploading a file to the configured File Module Provider. The presigned URL can be used to upload files directly to the third-party provider. This only works if your configured provider supports presigned URLs, such as the S3 provider.
+      x-authenticated: true
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUploadPreSignedUrl'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.upload.presignedUrl({\n  name: \"test.txt\",\n  size: 1000,\n  type: \"text/plain\",\n}))"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/uploads/presigned-urls' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"originalname\": \"{value}\",\n  \"size\": 43,\n  \"mime_type\": \"{value}\"\n}'"
+      tags:
+      - Uploads
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUploadPreSignedUrlResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/uploads/{id}:
+    get:
+      operationId: GetUploadsId
+      summary: Get a File
+      description: Retrieve an uploaded file by its ID. You can expand the file's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The upload's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.upload.retrieve(\"test.txt\")\n.then(({ file }) => {\n  console.log(file)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/uploads/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Uploads
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminFileResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    delete:
+      operationId: DeleteUploadsId
+      summary: Delete a File
+      description: Delete a file. Uses the installed file module provider to delete the file.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The file's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.upload.delete(\"test.txt\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/uploads/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Uploads
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The deletion's details.
+                required:
+                - id
+                - object
+                - deleted
+                properties:
+                  id:
+                    type: string
+                    title: id
+                    description: The file's ID.
+                  object:
+                    type: string
+                    title: object
+                    description: The name of the deleted object.
+                    default: file
+                  deleted:
+                    type: boolean
+                    title: deleted
+                    description: Whether the file was deleted.
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deleteFilesWorkflow
+      x-events: []
+components:
+  examples:
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+  schemas:
+    AdminFileResponse:
+      type: object
+      description: A file's details.
+      x-schemaName: AdminFileResponse
+      required:
+      - file
+      properties:
+        file:
+          $ref: '#/components/schemas/AdminFile'
+    AdminFile:
+      type: object
+      description: A file's details.
+      x-schemaName: AdminFile
+      required:
+      - id
+      - url
+      properties:
+        id:
+          type: string
+          title: id
+          description: The file's ID.
+        url:
+          type: string
+          title: url
+          description: The file's URL.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminUploadPreSignedUrlResponse:
+      type: object
+      description: The result of the pre-signed URL upload request.
+      x-schemaName: AdminUploadPreSignedUrlResponse
+      required:
+      - url
+      - filename
+      - originalname
+      - mime_type
+      - extension
+      - size
+      properties:
+        url:
+          type: string
+          title: url
+          description: The file's pre-signed upload URL.
+        filename:
+          type: string
+          title: filename
+          description: The file's filename.
+        originalname:
+          type: string
+          title: originalname
+          description: The file's orignal name.
+        mime_type:
+          type: string
+          title: mime_type
+          description: The file's mime type.
+          example: text/csv
+        extension:
+          type: string
+          title: extension
+          description: The file's extension.
+          example: csv
+        size:
+          type: number
+          title: size
+          description: The file's size in bytes.
+    AdminFileListResponse:
+      type: object
+      description: The list of uploaded files.
+      x-schemaName: AdminFileListResponse
+      required:
+      - files
+      properties:
+        files:
+          type: array
+          description: The list of uploaded files.
+          items:
+            $ref: '#/components/schemas/AdminFile'
+    AdminUploadPreSignedUrl:
+      type: object
+      description: The details of the file to upload.
+      x-schemaName: AdminUploadPreSignedUrl
+      required:
+      - originalname
+      - mime_type
+      - size
+      properties:
+        originalname:
+          type: string
+          title: originalname
+          description: The file's original name.
+        size:
+          type: number
+          title: size
+          description: The file's size in bytes.
+        mime_type:
+          type: string
+          title: mime_type
+          description: The file's mime type.
+          example: text/csv
+        access:
+          type: string
+          description: The access level of the file. If `private`, the file will not be publicly accessible. The default value depends on the configured File Module Provider.
+          enum:
+          - public
+          - private
+  responses:
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

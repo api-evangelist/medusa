@@ -1,0 +1,801 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Stores API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'A store holds the main configuration and information of your commerce store, such as supported currencies or default sales channel.
+
+
+    By default, the Medusa application has one default store. There are no API routes to create more stores. Instead, you''d have  to handle that customization manually.
+
+
+    These API routes allow admin users to manage their store.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Stores
+  description: 'A store holds the main configuration and information of your commerce store, such as supported currencies or default sales channel.
+
+
+    By default, the Medusa application has one default store. There are no API routes to create more stores. Instead, you''d have  to handle that customization manually.
+
+
+    These API routes allow admin users to manage their store.
+
+    '
+  externalDocs:
+    description: Learn more about the Store Module.
+    url: https://docs.medusajs.com/resources/commerce-modules/store
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminStore'
+paths:
+  /admin/stores:
+    get:
+      operationId: GetStores
+      summary: List Stores
+      description: Retrieve a list of stores. The stores can be filtered by fields such as `id`. The stores can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: q
+        in: query
+        description: Search term to filter the store's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search term to filter the store's searchable properties.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a store ID.
+          - type: array
+            description: Filter by store IDs.
+            items:
+              type: string
+              title: id
+              description: A store ID.
+      - name: name
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: name
+            description: Filter by a store name.
+          - type: array
+            description: Filter by store names.
+            items:
+              type: string
+              title: name
+              description: A store name.
+      - name: $and
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.store.list()\n.then(({ stores, count, limit, offset }) => {\n  console.log(stores)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/stores'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Stores
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStoreListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+  /admin/stores/{id}:
+    get:
+      operationId: GetStoresId
+      summary: Get a Store
+      description: Retrieve a store by its ID. You can expand the store's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The store's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.store.retrieve(\"store_123\")\n.then(({ store }) => {\n  console.log(store)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/stores/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Stores
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStoreResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostStoresId
+      summary: Update a Store
+      description: Update a store's details.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The store's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateStore'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.store.update(\"store_123\", {\n  name: \"My Store\",\n})\n.then(({ store }) => {\n  console.log(store)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/stores/{id}' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"name\": \"Melvina\",\n  \"default_sales_channel_id\": \"{value}\",\n  \"default_region_id\": \"{value}\",\n  \"default_location_id\": \"{value}\",\n  \"metadata\": {}\n}'"
+      tags:
+      - Stores
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStoreResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updateStoresWorkflow
+      x-events: []
+components:
+  schemas:
+    AdminUpdateStoreSupportedCurrency:
+      type: object
+      description: The details to update in a supported currency of the store.
+      required:
+      - currency_code
+      properties:
+        currency_code:
+          type: string
+          title: currency_code
+          description: The currency's code.
+          example: usd
+        is_default:
+          type: boolean
+          title: is_default
+          description: Whether the currency is the default in the store.
+        is_tax_inclusive:
+          type: boolean
+          title: is_tax_inclusive
+          description: Whether prices using this currency are tax inclusive.
+      x-schemaName: AdminUpdateStoreSupportedCurrency
+    AdminStoreLocale:
+      type: object
+      description: The details of a store's locale.
+      x-schemaName: AdminStoreLocale
+      required:
+      - id
+      - locale_code
+      - store_id
+      - locale
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The locale's ID.
+        locale_code:
+          type: string
+          title: locale_code
+          description: The locale's code in BCP 47 format.
+        store_id:
+          type: string
+          title: store_id
+          description: The ID of the store to which the locale belongs.
+        locale:
+          $ref: '#/components/schemas/AdminLocale'
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the locale was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the locale was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the locale was deleted.
+    AdminLocale:
+      type: object
+      description: The locale's details.
+      x-schemaName: AdminLocale
+      required:
+      - code
+      - name
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        code:
+          type: string
+          title: code
+          description: The locale's code in BCP 47 format.
+          example: fr-FR
+        name:
+          type: string
+          title: name
+          description: The locale's display name.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date and time at which the locale was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date and time at which the locale was last updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date and time at which the locale was deleted.
+    AdminStoreListResponse:
+      type: object
+      description: The paginated list of stores.
+      x-schemaName: AdminStoreListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - stores
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        stores:
+          type: array
+          description: The list of stores.
+          items:
+            $ref: '#/components/schemas/AdminStore'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminUpdateStoreSupportedLocale:
+      type: object
+      description: The payload to update a store's supported locale.
+      x-schemaName: AdminUpdateStoreSupportedLocale
+      required:
+      - locale_code
+      properties:
+        locale_code:
+          type: string
+          title: locale_code
+          description: The locale's code in [BCP 47 format](https://gist.github.com/typpo/b2b828a35e683b9bf8db91b5404f1bd1).
+          example: fr-FR
+    AdminStoreCurrency:
+      type: object
+      description: The details of a store's currency.
+      x-schemaName: AdminStoreCurrency
+      required:
+      - id
+      - currency_code
+      - store_id
+      - is_default
+      - currency
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The currency's ID.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The currency's code.
+          example: usd
+        store_id:
+          type: string
+          title: store_id
+          description: The ID of the store this currency belongs to.
+        is_default:
+          type: boolean
+          title: is_default
+          description: Whether this currency is the default in the store.
+        currency:
+          $ref: '#/components/schemas/AdminCurrency'
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the currency was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the currency was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the currency was deleted.
+    AdminUpdateStore:
+      type: object
+      description: The properties to update in a store.
+      x-schemaName: AdminUpdateStore
+      properties:
+        name:
+          type: string
+          title: name
+          description: The store's name.
+        supported_currencies:
+          type: array
+          description: The store's supported currencies.
+          items:
+            $ref: '#/components/schemas/AdminUpdateStoreSupportedCurrency'
+        default_sales_channel_id:
+          type: string
+          title: default_sales_channel_id
+          description: The ID of the default sales channel in the store.
+        default_region_id:
+          type: string
+          title: default_region_id
+          description: The ID of the default region in the store.
+        default_location_id:
+          type: string
+          title: default_location_id
+          description: The ID of the default stock location in the store.
+        metadata:
+          type: object
+          description: The store's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        supported_locales:
+          type: array
+          description: The store's supported locales.
+          items:
+            $ref: '#/components/schemas/AdminUpdateStoreSupportedLocale'
+    AdminStore:
+      type: object
+      description: The store's details.
+      x-schemaName: AdminStore
+      required:
+      - id
+      - name
+      - supported_currencies
+      - supported_locales
+      - default_sales_channel_id
+      - default_region_id
+      - default_location_id
+      - metadata
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The store's ID.
+        name:
+          type: string
+          title: name
+          description: The store's name.
+        supported_currencies:
+          type: array
+          description: The store's supported currencies.
+          items:
+            $ref: '#/components/schemas/AdminStoreCurrency'
+        default_sales_channel_id:
+          type: string
+          title: default_sales_channel_id
+          description: The ID of the sales channel used by default in the store.
+        default_region_id:
+          type: string
+          title: default_region_id
+          description: The ID of the region used by default in the store.
+        default_location_id:
+          type: string
+          title: default_location_id
+          description: The ID of the stock location used by default in the store.
+        metadata:
+          type: object
+          description: The store's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the store was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the store was updated.
+        supported_locales:
+          type: array
+          description: The store's supported locales.
+          items:
+            $ref: '#/components/schemas/AdminStoreLocale'
+    AdminCurrency:
+      type: object
+      description: The currency's currencies.
+      x-schemaName: AdminCurrency
+      required:
+      - code
+      - symbol
+      - symbol_native
+      - name
+      - decimal_digits
+      - rounding
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        code:
+          type: string
+          title: code
+          description: The currency's code.
+          example: usd
+        symbol:
+          type: string
+          title: symbol
+          description: The currency's symbol.
+          example: $
+        symbol_native:
+          type: string
+          title: symbol_native
+          description: The currency's native symbol, if different than the symbol.
+          example: $
+        name:
+          type: string
+          title: name
+          description: The currency's name.
+        decimal_digits:
+          type: number
+          title: decimal_digits
+          description: The number of digits after the decimal for prices in this currency.
+        rounding:
+          type: number
+          title: rounding
+          description: The rounding percision applied on prices in this currency.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The currency's creation date.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The currency's update date.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The currency's deletion date.
+    AdminStoreResponse:
+      type: object
+      description: The store's details.
+      x-schemaName: AdminStoreResponse
+      required:
+      - store
+      properties:
+        store:
+          $ref: '#/components/schemas/AdminStore'
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

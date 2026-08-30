@@ -1,0 +1,1192 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Translations API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'A translation is a localized version of content in a specific locale. For example, a product description in French.
+
+    These API routes allow admin users to manage translations for different locales and resources.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Translations
+  description: 'A translation is a localized version of content in a specific locale. For example, a product description in French.
+
+    These API routes allow admin users to manage translations for different locales and resources.
+
+    '
+  externalDocs:
+    description: Learn more about the Translation Module.
+    url: https://docs.medusajs.com/resources/commerce-modules/translation
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminTranslation'
+paths:
+  /admin/translations:
+    get:
+      operationId: GetTranslations
+      summary: List Translations
+      description: Retrieve a list of translations. The translations can be filtered by fields such as `reference_id` (For example, the ID of a product). The translations can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: q
+        in: query
+        description: Search query to filter translations by their fields.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search query to filter translations by their fields.
+      - name: reference_id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: reference_id
+            description: Filter translations by a reference ID. For example, the ID of a product.
+            example: prod_123
+          - type: array
+            description: Filter translations by multiple reference IDs. For example, the IDs of products.
+            items:
+              type: string
+              title: reference_id
+              description: The reference ID's details. For example, the ID of a product.
+              example: prod_123
+      - name: reference
+        in: query
+        description: Filter translations by the resource they belong to. For example, `product` or `product_variant`.
+        required: false
+        schema:
+          type: string
+          title: reference
+          description: Filter translations by the resource they belong to. For example, `product` or `product_variant`.
+      - name: locale_code
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: locale_code
+            description: Filter translations by a locale code in BCP 47 format.
+            example: fr-FR
+          - type: array
+            description: Filter translations by multiple locale codes in BCP 47 format.
+            items:
+              type: string
+              title: locale_code
+              description: A locale code in BCP 47 format.
+              example: fr-FR
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+          externalDocs:
+            url: '#pagination'
+      - name: with_deleted
+        in: query
+        description: The translation's with deleted.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: The translation's with deleted.
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.translation.list()\n.then(({ translations, count, limit, offset }) => {\n  console.log(translations)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/translations'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Translations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The list of translations with pagination.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of translations returned.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of translations skipped before retrieving the returned translations.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of translations matching the query.
+                    estimate_count:
+                      type: number
+                      title: estimate_count
+                      description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+                      x-featureFlag: index_engine
+                - type: object
+                  description: SUMMARY
+                  required:
+                  - translations
+                  properties:
+                    translations:
+                      type: array
+                      description: The list of translations.
+                      items:
+                        $ref: '#/components/schemas/AdminTranslation'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.12.3
+      x-featureFlag: translation
+  /admin/translations/batch:
+    post:
+      operationId: PostTranslationsBatch
+      summary: Manage Translations
+      description: Manage translations in bulk by creating, updating, or deleting multiple translations in a single request. You can manage translations for various resources such as products, product variants, categories, and more.
+      x-authenticated: true
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The translations to be created, updated, or deleted in bulk.
+              properties:
+                create:
+                  type: array
+                  description: The translations to create.
+                  items:
+                    $ref: '#/components/schemas/AdminCreateTranslation'
+                update:
+                  type: array
+                  description: The translations to update.
+                  items:
+                    $ref: '#/components/schemas/AdminUpdateTranslation'
+                delete:
+                  type: array
+                  description: The translations to delete.
+                  items:
+                    type: string
+                    title: delete
+                    description: The ID of a translation to delete.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.translation.batch({\n  create: [\n    {\n      reference_id: \"prod_123\",\n      reference: \"product\",\n      locale_code: \"en-US\",\n      translations: { title: \"Shirt\" }\n    }\n  ],\n  update: [\n    {\n      id: \"trans_123\",\n      translations: { title: \"Pants\" }\n    }\n  ],\n  delete: [\"trans_321\"]\n})\n.then(({ created, updated, deleted }) => {\n  console.log(created, updated, deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/translations/batch' \\\n-H 'Authorization: Bearer {access_token}' \\\n-H 'Content-Type: application/json' \\\n-d '{\n  \"create\": [\n    {\n      \"reference\": \"product\",\n      \"reference_id\": \"prod_123\",\n      \"locale_code\": \"fr-FR\",\n      \"translations\": {\n        \"title\": \"Chaussures\",\n        \"description\": \"Des chaussures élégantes.\"\n      }\n    }\n  ]\n}'"
+      tags:
+      - Translations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminTranslationsBatchResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: batchTranslationsWorkflow
+      x-events:
+      - name: translation.created
+        payload: "```ts\n{\n  id, // The ID of the translation\n}\n```"
+        description: Emitted when translations are created.
+        deprecated: false
+        since: 2.12.3
+      - name: translation.updated
+        payload: "```ts\n{\n  id, // The ID of the translation\n}\n```"
+        description: Emitted when translations are updated.
+        deprecated: false
+        since: 2.12.3
+      - name: translation.deleted
+        payload: "```ts\n{\n  id, // The ID of the translation\n}\n```"
+        description: Emitted when translations are deleted.
+        deprecated: false
+        since: 2.12.3
+      x-since: 2.12.3
+      x-featureFlag: translation
+  /admin/translations/entities:
+    get:
+      operationId: GetTranslationsEntities
+      summary: List Translatable Entities
+      description: Retrieve a list of translatable entities. The entities can be filtered by fields such as `id`. The entities can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: type
+        in: query
+        description: Filter by a translatable entity type.
+        required: true
+        schema:
+          type: string
+          title: type
+          description: Filter by a translatable entity type.
+          example: product
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by an entity's ID.
+          - type: array
+            description: Filter by entity IDs.
+            items:
+              type: string
+              title: id
+              description: An entity's ID.
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+          externalDocs:
+            url: '#pagination'
+      - name: with_deleted
+        in: query
+        description: The translation's with deleted.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: The translation's with deleted.
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.translation.entities({\n  type: \"product\"\n})\n.then(({ data, count, offset, limit }) => {\n  console.log(data)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/translations/entities'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Translations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminTranslationEntitiesResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.12.4
+      x-featureFlag: translation
+  /admin/translations/settings:
+    get:
+      operationId: GetTranslationsSettings
+      summary: List Translation Settings
+      x-sidebar-summary: List Settings
+      description: Retrieve the list of translatable fields for all entities, such as products and collections. You can also filter the results by entity type or active entities.
+      x-authenticated: true
+      parameters:
+      - name: entity_type
+        in: query
+        description: The entity to retrieve translation settings for.
+        required: false
+        schema:
+          type: string
+          title: entity_type
+          description: The entity to retrieve translation settings for.
+          example: product
+      - name: is_active
+        in: query
+        description: Filter resources by whether translations is activated for them or not. If not provided, all resources are returned.
+        required: false
+        schema:
+          type: boolean
+          title: is_active
+          description: Filter resources by whether translations is activated for them or not. If not provided, all resources are returned.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.translation.settings({\n  entity_type: \"product\"\n})\n.then(({ translation_settings }) => {\n  console.log(translation_settings)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/translations/settings'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Translations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminTranslationSettingsResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.12.3
+      x-featureFlag: translation
+  /admin/translations/settings/batch:
+    post:
+      operationId: PostTranslationsSettingsBatch
+      summary: Manage Translation Settings
+      description: Create, update, or delete multiple translation settings.
+      x-authenticated: true
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminBatchTranslationSettings'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.translation.batchSettings({\n  create: [\n    {\n      entity_type: \"product\",\n      fields: [\"title\", \"description\"],\n      is_active: true\n    }\n  ],\n  update: [\n    {\n      id: \"trset_123\",\n      fields: [\"title\", \"description\", \"subtitle\"],\n      is_active: true\n    }\n  ],\n  delete: [\"trset_456\"]\n})\n.then(({ created, updated, deleted }) => {\n  console.log(created, updated, deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/translations/settings/batch'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Translations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminBatchTranslationSettingsResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: batchTranslationSettingsWorkflow
+      x-events: []
+      x-since: 2.13.0
+      x-featureFlag: translation
+  /admin/translations/statistics:
+    get:
+      operationId: GetTranslationsStatistics
+      summary: Retrieve Translation Statistics
+      x-sidebar-summary: Get Statistics
+      description: Get statistics on translations for specified locales and entity types. This includes overall translation progress for each entity type, and statistics for each locale within those entity types.
+      x-authenticated: true
+      parameters:
+      - name: locales
+        in: query
+        description: The locale codes to retrieve translation statistics for. Locale codes are in [BCP 47](https://gist.github.com/typpo/b2b828a35e683b9bf8db91b5404f1bd1) format.
+        required: true
+        schema:
+          oneOf:
+          - type: string
+            title: locales
+            description: A locale code to retrieve translation statistics for. Locale codes are in [BCP 47](https://gist.github.com/typpo/b2b828a35e683b9bf8db91b5404f1bd1) format.
+          - type: array
+            description: Locale codes to retrieve translation statistics for.
+            items:
+              type: string
+              title: locales
+              description: A locale code in [BCP 47](https://gist.github.com/typpo/b2b828a35e683b9bf8db91b5404f1bd1) format.
+      - name: entity_types
+        in: query
+        description: The table names of entities to retrieve translation statistics for.
+        required: true
+        schema:
+          oneOf:
+          - type: string
+            title: entity_types
+            description: The table name of an entity type to retrieve translation statistics for.
+          - type: array
+            description: The table names of entity types to retrieve translation statistics for.
+            items:
+              type: string
+              title: entity_types
+              description: A table name.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.translation.statistics({\n  entity_type: \"product\"\n})\n.then(({ statistics }) => {\n  console.log(statistics)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/translations/statistics'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Translations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminTranslationStatisticsResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.12.3
+      x-featureFlag: translation
+components:
+  schemas:
+    AdminTranslationSettingsResponse:
+      type: object
+      description: The translation settings' details.
+      x-schemaName: AdminTranslationSettingsResponse
+      required:
+      - translation_settings
+      properties:
+        translation_settings:
+          type: object
+          description: The translation settings details.
+    AdminUpdateTranslationSettings:
+      type: object
+      description: The translation settings to update.
+      x-schemaName: AdminUpdateTranslationSettings
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The ID of the translation settings to update.
+        entity_type:
+          type: string
+          title: entity_type
+          description: The entity type to update the translation settings for.
+        fields:
+          type: array
+          description: The fields to update translations for.
+          items:
+            type: string
+            title: fields
+            description: A field to update translations for.
+        is_active:
+          type: boolean
+          title: is_active
+          description: Whether translations are active for the given entity type.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminTranslationStatisticsResponse:
+      type: object
+      description: The translation statistics details.
+      x-schemaName: AdminTranslationStatisticsResponse
+      required:
+      - statistics
+      properties:
+        statistics:
+          type: object
+          description: The translation statistics for different entity types. The key is the entity type, and the value is an object containing the statistics for that entity type.
+          example:
+            product:
+              expected: 150
+              translated: 120
+              missing: 30
+              by_locale:
+                fr-FR:
+                  expected: 150
+                  translated: 120
+                  missing: 30
+          required:
+          - by_locale
+          - expected
+          - translated
+          - missing
+          additionalProperties:
+            type: object
+            properties:
+              by_locale:
+                type: object
+                description: The translation statistics of an entity type broken down by locale. The key is the locale code in BCP 47 format, and the value is an object containing the statistics for that locale.
+                example:
+                  fr-FR:
+                    expected: 150
+                    translated: 120
+                    missing: 30
+                required:
+                - expected
+                - translated
+                - missing
+                additionalProperties:
+                  type: object
+                  properties:
+                    expected:
+                      type: number
+                      title: expected
+                      description: The total number of translatable fields.
+                    translated:
+                      type: number
+                      title: translated
+                      description: The number of translated fields.
+                    missing:
+                      type: number
+                      title: missing
+                      description: The number of fields that are yet to be translated.
+              expected:
+                type: number
+                title: expected
+                description: The total number of translatable fields across specified locales.
+              translated:
+                type: number
+                title: translated
+                description: The number of translated fields across specified locales.
+              missing:
+                type: number
+                title: missing
+                description: The number of fields that are yet to be translated across specified locales.
+    AdminCreateTranslation:
+      type: object
+      description: The translation's details.
+      required:
+      - reference_id
+      - reference
+      - locale_code
+      - translations
+      properties:
+        reference:
+          type: string
+          title: reference
+          description: The resource that the translation belongs to.
+          example: product
+        reference_id:
+          type: string
+          title: reference_id
+          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
+          example: prod_123
+        locale_code:
+          type: string
+          title: locale_code
+          description: The translation's locale code in BCP 47 format.
+          example: fr-FR
+        translations:
+          type: object
+          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
+          example:
+            title: Chaussures
+            description: Des chaussures élégantes.
+      x-schemaName: AdminCreateTranslation
+    AdminTranslationsBatchResponse:
+      type: object
+      description: The batch response for managing translations.
+      x-schemaName: AdminTranslationsBatchResponse
+      required:
+      - created
+      - updated
+      - deleted
+      properties:
+        created:
+          type: array
+          description: The created translations.
+          items:
+            $ref: '#/components/schemas/AdminTranslation'
+        updated:
+          type: array
+          description: The updated translations.
+          items:
+            $ref: '#/components/schemas/AdminTranslation'
+        deleted:
+          type: object
+          description: Summary of the deleted translations.
+          required:
+          - ids
+          - object
+          - deleted
+          properties:
+            ids:
+              type: array
+              description: The IDs of the deleted translations.
+              items:
+                type: string
+                title: ids
+                description: A translation ID.
+            object:
+              type: string
+              title: object
+              description: The type of object deleted.
+              default: translation
+            deleted:
+              type: boolean
+              title: deleted
+              description: Whether the translations were successfully deleted.
+    AdminTranslationEntitiesResponse:
+      type: object
+      description: The list of translatable entities.
+      x-schemaName: AdminTranslationEntitiesResponse
+      required:
+      - data
+      - count
+      - offset
+      - limit
+      properties:
+        data:
+          type: array
+          description: The list of translatable entities.
+          items:
+            type: object
+            required:
+            - id
+            - translations
+            properties:
+              id:
+                type: string
+                title: id
+                description: The entity's ID.
+              translations:
+                type: array
+                description: The entity's translations.
+                items:
+                  $ref: '#/components/schemas/AdminTranslation'
+        count:
+          type: number
+          title: count
+          description: The total number of translatable entities.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned in the response.
+    AdminBatchTranslationSettings:
+      type: object
+      description: The translation settings to create, update, or delete in batch.
+      x-schemaName: AdminBatchTranslationSettings
+      properties:
+        create:
+          type: array
+          description: The translation settings to create.
+          items:
+            $ref: '#/components/schemas/AdminCreateTranslationSettings'
+        update:
+          type: array
+          description: The translation settings to update.
+          items:
+            $ref: '#/components/schemas/AdminUpdateTranslationSettings'
+        delete:
+          type: array
+          description: The translation settings to delete.
+          items:
+            type: string
+            title: delete
+            description: The IDs of the translation settings to delete.
+    AdminBatchTranslationSettingsResponse:
+      type: object
+      description: The result of managing the translation settings in batch.
+      x-schemaName: AdminBatchTranslationSettingsResponse
+      required:
+      - created
+      - updated
+      - deleted
+      properties:
+        created:
+          type: array
+          description: The created translation settings.
+          items:
+            $ref: '#/components/schemas/AdminTranslationSettings'
+        updated:
+          type: array
+          description: The updated translation settings.
+          items:
+            $ref: '#/components/schemas/AdminTranslationSettings'
+        deleted:
+          type: object
+          description: The deletion result.
+          required:
+          - ids
+          - object
+          - deleted
+          properties:
+            ids:
+              type: array
+              description: The IDs of the deleted translation settings.
+              items:
+                type: string
+                title: ids
+                description: The ID of a deleted translation settings.
+            object:
+              type: string
+              title: object
+              description: The type of object deleted.
+            deleted:
+              type: boolean
+              title: deleted
+              description: Whether the deletion was successful.
+    AdminUpdateTranslation:
+      type: object
+      description: The data for updating a translation.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The ID of the translation to update.
+        reference:
+          type: string
+          title: reference
+          description: The resource that the translation belongs to.
+          example: product
+        reference_id:
+          type: string
+          title: reference_id
+          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
+          example: prod_123
+        locale_code:
+          type: string
+          title: locale_code
+          description: The translation's locale code in BCP 47 format.
+          example: fr-FR
+        translations:
+          type: object
+          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
+          example:
+            title: Chaussures Modifiées
+            description: Des chaussures élégantes et modifiées.
+      x-schemaName: AdminUpdateTranslation
+    AdminTranslation:
+      type: object
+      description: The translation's details.
+      x-schemaName: AdminTranslation
+      required:
+      - id
+      - reference_id
+      - reference
+      - locale_code
+      - translations
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The translation's ID.
+        reference_id:
+          type: string
+          title: reference_id
+          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
+          example: prod_123
+        reference:
+          type: string
+          title: reference
+          description: The resource that the translation belongs to.
+          example: product
+        locale_code:
+          type: string
+          title: locale_code
+          description: The translation's locale code in BCP 47 format.
+          example: fr-FR
+        translations:
+          type: object
+          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
+          example:
+            title: Chaussures
+            description: Des chaussures élégantes.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date that the translation was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date that the translation was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date that the translation was deleted.
+    AdminTranslationSettings:
+      type: object
+      description: The translation settings details.
+      x-schemaName: AdminTranslationSettings
+      required:
+      - id
+      - created_at
+      - updated_at
+      - deleted_at
+      - entity_type
+      - fields
+      - is_active
+      properties:
+        id:
+          type: string
+          title: id
+          description: The ID of the translation settings.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the translation settings was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the translation settings was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the translation settings was deleted.
+        entity_type:
+          type: string
+          title: entity_type
+          description: The entity type the translation settings are for.
+          example: product
+        fields:
+          type: array
+          description: The fields supported for translations.
+          items:
+            type: string
+            title: fields
+            description: A field supported for translations.
+        is_active:
+          type: boolean
+          title: is_active
+          description: Whether translations are active for the given entity type.
+    AdminCreateTranslationSettings:
+      type: object
+      description: The translation settings to create.
+      x-schemaName: AdminCreateTranslationSettings
+      required:
+      - entity_type
+      - fields
+      properties:
+        entity_type:
+          type: string
+          title: entity_type
+          description: The entity type to create the translation settings for.
+          example: product
+        fields:
+          type: array
+          description: The fields to support translations for.
+          items:
+            type: string
+            title: fields
+            description: A field to support translations for.
+            example: title
+        is_active:
+          type: boolean
+          title: is_active
+          description: Whether translations are active for the given entity type.
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

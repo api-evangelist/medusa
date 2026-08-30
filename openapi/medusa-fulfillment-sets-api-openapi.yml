@@ -1,0 +1,1588 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Fulfillment Sets API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'A fulfillment set is a general form or way of fulfillment, such as "shipping" or "pick up".
+
+
+    All fulfillment-related configurations in a store are related to a fulfillment set.
+
+
+    These API routes allow admin users to manage fulfillment sets.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Fulfillment Sets
+  description: 'A fulfillment set is a general form or way of fulfillment, such as "shipping" or "pick up".
+
+
+    All fulfillment-related configurations in a store are related to a fulfillment set.
+
+
+    These API routes allow admin users to manage fulfillment sets.
+
+    '
+  externalDocs:
+    description: Learn more about fulfillment sets.
+    url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/concepts
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminFulfillmentSet'
+paths:
+  /admin/fulfillment-sets/{id}:
+    delete:
+      operationId: DeleteFulfillmentSetsId
+      summary: Delete Fulfillment Set
+      description: Delete a fulfillment set.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The fulfillment set's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.fulfillmentSet.delete(\"fset_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/fulfillment-sets/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Fulfillment Sets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminFulfillmentSetDeleteResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deleteFulfillmentSetsWorkflow
+      x-events: []
+  /admin/fulfillment-sets/{id}/service-zones:
+    post:
+      operationId: PostFulfillmentSetsIdServiceZones
+      summary: Add a Service Zone to a Fulfillment Set
+      x-sidebar-summary: Add Service Zone
+      description: Add a service zone to a fulfillment set.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The fulfillment set's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreateFulfillmentSetServiceZone'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.fulfillmentSet.createServiceZone(\"fset_123\", {\n  name: \"Europe Service Zone\",\n  geo_zones: [{\n    type: \"country\",\n    country_code: \"us\"\n  }]\n})\n.then(({ fulfillment_set }) => {\n  console.log(fulfillment_set)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/fulfillment-sets/{id}/service-zones' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"name\": \"Layla\"\n}'"
+      tags:
+      - Fulfillment Sets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminFulfillmentSetResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createServiceZonesWorkflow
+      x-events: []
+  /admin/fulfillment-sets/{id}/service-zones/{zone_id}:
+    get:
+      operationId: GetFulfillmentSetsIdServiceZonesZone_id
+      summary: Get a Service Zone in a Fulfillment Set
+      x-sidebar-summary: Get a Service Zone
+      description: Retrieve a service zone that belongs to a fulfillment set. be paginated.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The fulfillment set's ID.
+        required: true
+        schema:
+          type: string
+      - name: zone_id
+        in: path
+        description: The service zone's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.fulfillmentSet.retrieveServiceZone(\n  \"fset_123\",\n  \"serzo_123\"\n)\n.then(({ service_zone }) => {\n  console.log(service_zone)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/fulfillment-sets/{id}/service-zones/{zone_id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Fulfillment Sets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminServiceZoneResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostFulfillmentSetsIdServiceZonesZone_id
+      summary: Update the Service Zone of a Fulfillment Set
+      x-sidebar-summary: Update Service Zone
+      description: Update the details of a service zone in a fulfillment set.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The fulfillment set's ID.
+        required: true
+        schema:
+          type: string
+      - name: zone_id
+        in: path
+        description: The service zone's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateFulfillmentSetServiceZone'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.fulfillmentSet.updateServiceZone(\n  \"fset_123\", \n  \"serzo_123\",\n  {\n    name: \"Europe Service Zone\",\n  }\n)\n.then(({ fulfillment_set }) => {\n  console.log(fulfillment_set)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/fulfillment-sets/{id}/service-zones/{zone_id}' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"name\": \"Elvis\"\n}'"
+      tags:
+      - Fulfillment Sets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminFulfillmentSetResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updateServiceZonesWorkflow
+      x-events: []
+    delete:
+      operationId: DeleteFulfillmentSetsIdServiceZonesZone_id
+      summary: Remove a Service Zone from Fulfillment Set
+      x-sidebar-summary: Remove Service Zone
+      description: Remove a service zone that belongs to a fulfillment set.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The fulfillment set's ID.
+        required: true
+        schema:
+          type: string
+      - name: zone_id
+        in: path
+        description: The service zone's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.fulfillmentSet.deleteServiceZone(\n  \"fset_123\", \n  \"serzo_123\",\n)\n.then(({ deleted, parent: fulfillmentSet }) => {\n  console.log(deleted, fulfillmentSet)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/fulfillment-sets/{id}/service-zones/{zone_id}'' \ -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Fulfillment Sets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminServiceZoneDeleteResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deleteServiceZonesWorkflow
+      x-events: []
+components:
+  schemas:
+    AdminShippingOptionPrice:
+      type: object
+      description: The details of the shipping option's price.
+      x-schemaName: AdminShippingOptionPrice
+      required:
+      - price_rules
+      - rules_count
+      - id
+      - title
+      - currency_code
+      - amount
+      - raw_amount
+      - min_quantity
+      - max_quantity
+      - price_set_id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        price_rules:
+          type: array
+          description: The price's rules.
+          items:
+            $ref: '#/components/schemas/AdminShippingOptionPriceRule'
+        rules_count:
+          type: number
+          title: rules_count
+          description: The number of rules the price has.
+        id:
+          type: string
+          title: id
+          description: The price's ID.
+        title:
+          type: string
+          title: title
+          description: The price's title.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The price's currency code.
+          example: usd
+        amount:
+          type: number
+          title: amount
+          description: The price's amount.
+        raw_amount:
+          type: object
+          description: The price's raw amount.
+        min_quantity:
+          type: number
+          title: min_quantity
+          description: The minimum quantity required in the cart for this price to apply.
+        max_quantity:
+          type: number
+          title: max_quantity
+          description: The maximum quantity that the cart's items must not surpass for this price to apply.
+        price_set_id:
+          type: string
+          title: price_set_id
+          description: The ID of the price set this price belongs to.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the price was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the price was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the price was deleted.
+    AdminShippingProfile:
+      type: object
+      description: The shipping profile's details..
+      x-schemaName: AdminShippingProfile
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping profile's ID.
+        name:
+          type: string
+          title: name
+          description: The shipping profile's name.
+        type:
+          type: string
+          title: type
+          description: The shipping profile's type.
+        metadata:
+          type: object
+          description: The shipping profile's metadata, holds custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the shipping profile was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the shipping profile was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the shipping profile was deleted.
+      required:
+      - id
+      - name
+      - type
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+    AdminFulfillmentSetDeleteResponse:
+      type: object
+      description: The deletion details.
+      x-schemaName: AdminFulfillmentSetDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The fulfillment set's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: fulfillment_set
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the fulfillment set was deleted.
+    AdminFulfillmentSetResponse:
+      type: object
+      description: The fulfillment set's details.
+      x-schemaName: AdminFulfillmentSetResponse
+      required:
+      - fulfillment_set
+      properties:
+        fulfillment_set:
+          $ref: '#/components/schemas/AdminFulfillmentSet'
+    AdminCreateFulfillmentSetServiceZone:
+      type: object
+      description: Details of the service zone to create for the fulfillment set.
+      required:
+      - name
+      - geo_zones
+      properties:
+        name:
+          type: string
+          title: name
+          description: The service zone's name.
+        geo_zones:
+          type: array
+          description: The service zone's geo zones.
+          items:
+            oneOf:
+            - type: object
+              description: A country geo zone.
+              required:
+              - metadata
+              - country_code
+              - type
+              properties:
+                metadata:
+                  type: object
+                  description: The geo zone's metadata.
+                  externalDocs:
+                    url: https://docs.medusajs.com/api/admin#manage-metadata
+                    description: Learn how to manage metadata
+                country_code:
+                  type: string
+                  title: country_code
+                  description: The geo zone's country code.
+                type:
+                  type: string
+                  title: type
+                  description: The geo zone's type.
+                  default: country
+            - type: object
+              description: A province geo zone.
+              required:
+              - metadata
+              - country_code
+              - type
+              - province_code
+              properties:
+                metadata:
+                  type: object
+                  description: The geo zone's metadata.
+                  externalDocs:
+                    url: https://docs.medusajs.com/api/admin#manage-metadata
+                    description: Learn how to manage metadata
+                country_code:
+                  type: string
+                  title: country_code
+                  description: The geo zone's country code.
+                type:
+                  type: string
+                  title: type
+                  description: The geo zone's type.
+                  default: province
+                province_code:
+                  type: string
+                  title: province_code
+                  description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
+            - type: object
+              description: A city geo zone
+              required:
+              - metadata
+              - country_code
+              - type
+              - province_code
+              - city
+              properties:
+                metadata:
+                  type: object
+                  description: The geo zone's metadata.
+                  externalDocs:
+                    url: https://docs.medusajs.com/api/admin#manage-metadata
+                    description: Learn how to manage metadata
+                country_code:
+                  type: string
+                  title: country_code
+                  description: The geo zone's country code.
+                type:
+                  type: string
+                  title: type
+                  description: The geo zone's type.
+                  default: city
+                province_code:
+                  type: string
+                  title: province_code
+                  description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
+                city:
+                  type: string
+                  title: city
+                  description: The geo zone's city.
+            - type: object
+              description: A ZIP geo zone.
+              required:
+              - metadata
+              - country_code
+              - type
+              - province_code
+              - city
+              - postal_expression
+              properties:
+                metadata:
+                  type: object
+                  description: The geo zone's metadata.
+                  externalDocs:
+                    url: https://docs.medusajs.com/api/admin#manage-metadata
+                    description: Learn how to manage metadata
+                country_code:
+                  type: string
+                  title: country_code
+                  description: The geo zone's country code.
+                type:
+                  type: string
+                  title: type
+                  description: The geo zone's type.
+                  default: zip
+                province_code:
+                  type: string
+                  title: province_code
+                  description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
+                city:
+                  type: string
+                  title: city
+                  description: The geo zone's city.
+                postal_expression:
+                  type: object
+                  description: The geo zone's postal expression or ZIP code.
+      x-schemaName: AdminCreateFulfillmentSetServiceZone
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminShippingOptionPriceRule:
+      type: object
+      description: The details of a shipping option price's rule.
+      x-schemaName: AdminShippingOptionPriceRule
+      required:
+      - id
+      - value
+      - operator
+      - attribute
+      - price_id
+      - priority
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The price rule's ID.
+        value:
+          oneOf:
+          - type: string
+            title: value
+            description: The price rule's value.
+          - type: number
+            title: value
+            description: The price rule's value.
+          description: The price rule's value.
+        operator:
+          type: string
+          description: The price rule's operator.
+          enum:
+          - gt
+          - lt
+          - eq
+          - ne
+          - in
+          - lte
+          - gte
+          - nin
+        attribute:
+          type: string
+          title: attribute
+          description: The price rule's attribute.
+        price_id:
+          type: string
+          title: price_id
+          description: The ID of the price this rule applies to.
+        priority:
+          type: number
+          title: priority
+          description: The price rule's priority.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the price rule was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the price rule was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the price rule was deleted.
+    AdminShippingOptionType:
+      type: object
+      description: The shipping option's details.
+      x-schemaName: AdminShippingOptionType
+      required:
+      - id
+      - label
+      - description
+      - code
+      - shipping_option_id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping option's ID.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the shipping option was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the shipping option was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the shipping option was deleted.
+        label:
+          type: string
+          title: label
+          description: The type's label.
+        description:
+          type: string
+          title: description
+          description: The type's description.
+        code:
+          type: string
+          title: code
+          description: The type's code.
+        shipping_option_id:
+          type: string
+          title: shipping_option_id
+          description: The type's shipping option id.
+    AdminShippingOption:
+      type: object
+      description: The shipping option's details.
+      x-schemaName: AdminShippingOption
+      required:
+      - id
+      - name
+      - price_type
+      - service_zone_id
+      - service_zone
+      - provider_id
+      - provider
+      - shipping_option_type_id
+      - type
+      - shipping_profile_id
+      - shipping_profile
+      - rules
+      - prices
+      - data
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping option's ID.
+        name:
+          type: string
+          title: name
+          description: The shipping option's name.
+        price_type:
+          type: string
+          description: The shipping option's price type. If it's `flat`, the price is fixed and is set in the `prices` property. If it's `calculated`, the price is calculated on checkout by the associated fulfillment provider.
+          enum:
+          - calculated
+          - flat
+        service_zone_id:
+          type: string
+          title: service_zone_id
+          description: The ID of the service zone this option belongs to.
+        service_zone:
+          type: object
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the provider handling fulfillments created from this shipping option.
+        provider:
+          $ref: '#/components/schemas/AdminFulfillmentProvider'
+        shipping_option_type_id:
+          type: string
+          title: shipping_option_type_id
+          description: The ID of the associated shipping option type.
+        type:
+          $ref: '#/components/schemas/AdminShippingOptionType'
+        shipping_profile_id:
+          type: string
+          title: shipping_profile_id
+          description: The ID of the associated shipping profile.
+        shipping_profile:
+          $ref: '#/components/schemas/AdminShippingProfile'
+        rules:
+          type: array
+          description: The shipping option's rules.
+          items:
+            $ref: '#/components/schemas/AdminShippingOptionRule'
+        prices:
+          type: array
+          description: The shipping option's prices. If the `price_type` is `calculated`, this array will be empty since the price is calculated by the fulfillment provider during checkout.
+          items:
+            $ref: '#/components/schemas/AdminShippingOptionPrice'
+        data:
+          type: object
+          description: The shipping option's data, useful for the fulfillment provider handling fulfillments created from this option.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property
+        metadata:
+          type: object
+          description: The shipping option's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the shipping option was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the shipping option was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the shipping option was deleted.
+    AdminUpdateFulfillmentSetServiceZone:
+      type: object
+      description: The service zone's details.
+      properties:
+        name:
+          type: string
+          title: name
+          description: The service zone's name.
+        geo_zones:
+          type: array
+          description: The service zone's associated geo zones.
+          items:
+            oneOf:
+            - type: object
+              description: A country geo zone.
+              required:
+              - type
+              - metadata
+              - country_code
+              properties:
+                type:
+                  type: string
+                  title: type
+                  description: The geo zone's type.
+                  default: country
+                metadata:
+                  type: object
+                  description: The geo zone's metadata.
+                  externalDocs:
+                    url: https://docs.medusajs.com/api/admin#manage-metadata
+                    description: Learn how to manage metadata
+                country_code:
+                  type: string
+                  title: country_code
+                  description: The geo zone's country code.
+                id:
+                  type: string
+                  title: id
+                  description: The ID of an existing geo zone.
+            - type: object
+              description: A province geo zone.
+              required:
+              - type
+              - metadata
+              - country_code
+              - province_code
+              properties:
+                type:
+                  type: string
+                  title: type
+                  description: The geo zone's type.
+                  default: province
+                metadata:
+                  type: object
+                  description: The geo zone's metadata.
+                  externalDocs:
+                    url: https://docs.medusajs.com/api/admin#manage-metadata
+                    description: Learn how to manage metadata
+                country_code:
+                  type: string
+                  title: country_code
+                  description: The geo zone's country code.
+                province_code:
+                  type: string
+                  title: province_code
+                  description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
+                id:
+                  type: string
+                  title: id
+                  description: The ID of an existing geo zone.
+            - type: object
+              description: A city geo zone
+              required:
+              - type
+              - metadata
+              - city
+              - country_code
+              - province_code
+              properties:
+                type:
+                  type: string
+                  title: type
+                  description: The geo zone's type.
+                  default: city
+                metadata:
+                  type: object
+                  description: The geo zone's metadata.
+                  externalDocs:
+                    url: https://docs.medusajs.com/api/admin#manage-metadata
+                    description: Learn how to manage metadata
+                city:
+                  type: string
+                  title: city
+                  description: The geo zone's city.
+                country_code:
+                  type: string
+                  title: country_code
+                  description: The geo zone's country code.
+                province_code:
+                  type: string
+                  title: province_code
+                  description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
+                id:
+                  type: string
+                  title: id
+                  description: The ID of an existing geo zone.
+            - type: object
+              description: A ZIP geo zone.
+              required:
+              - type
+              - metadata
+              - city
+              - country_code
+              - province_code
+              - postal_expression
+              properties:
+                type:
+                  type: string
+                  title: type
+                  description: The geo zone's type.
+                  default: zip
+                metadata:
+                  type: object
+                  description: The geo zone's metadata.
+                  externalDocs:
+                    url: https://docs.medusajs.com/api/admin#manage-metadata
+                    description: Learn how to manage metadata
+                city:
+                  type: string
+                  title: city
+                  description: The geo zone's city.
+                country_code:
+                  type: string
+                  title: country_code
+                  description: The geo zone's country code.
+                province_code:
+                  type: string
+                  title: province_code
+                  description: The geo zone's ISO 3166-2 province code. Must be lower-case.
+                  example: us-ca
+                  externalDocs:
+                    url: https://en.wikipedia.org/wiki/ISO_3166-2
+                    description: Learn more about ISO 3166-2
+                postal_expression:
+                  type: object
+                  description: The geo zone's postal expression or ZIP code.
+                id:
+                  type: string
+                  title: id
+                  description: The ID of an existing geo zone.
+      x-schemaName: AdminUpdateFulfillmentSetServiceZone
+    AdminFulfillmentProvider:
+      type: object
+      description: The fulfillment provider's details.
+      x-schemaName: AdminFulfillmentProvider
+      required:
+      - id
+      - is_enabled
+      properties:
+        id:
+          type: string
+          title: id
+          description: The provider's ID.
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: The provider's is enabled.
+    AdminFulfillmentSet:
+      type: object
+      description: The service zone's fulfillment set.
+      x-schemaName: AdminFulfillmentSet
+      required:
+      - id
+      - name
+      - type
+      - location
+      - service_zones
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The fulfillment set's ID.
+        name:
+          type: string
+          title: name
+          description: The fulfillment set's name.
+        type:
+          type: string
+          title: type
+          description: The fulfillment set's type.
+        location:
+          $ref: '#/components/schemas/AdminStockLocation'
+        service_zones:
+          type: array
+          description: The fulfillment set's service zones.
+          items:
+            $ref: '#/components/schemas/AdminServiceZone'
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The fulfillment set's created at.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The fulfillment set's updated at.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The fulfillment set's deleted at.
+    AdminServiceZoneDeleteResponse:
+      type: object
+      description: The details of the service zone deletion.
+      x-schemaName: AdminServiceZoneDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The service zone's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: service_zone
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the service zone was deleted.
+        parent:
+          $ref: '#/components/schemas/AdminFulfillmentSet'
+    AdminStockLocation:
+      type: object
+      description: The stock location's details.
+      x-schemaName: AdminStockLocation
+      required:
+      - id
+      - name
+      - metadata
+      - address_id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The location's ID.
+        name:
+          type: string
+          title: name
+          description: The location's name.
+        address_id:
+          type: string
+          title: address_id
+          description: The ID of the associated address.
+        address:
+          $ref: '#/components/schemas/AdminStockLocationAddress'
+        sales_channels:
+          type: array
+          description: The sales channels associated with the location.
+          items:
+            $ref: '#/components/schemas/AdminSalesChannel'
+        fulfillment_providers:
+          type: array
+          description: The fulfillment providers associated with the location.
+          items:
+            $ref: '#/components/schemas/AdminFulfillmentProvider'
+        fulfillment_sets:
+          type: array
+          description: The fulfillment sets associated with the location.
+          items:
+            type: object
+        metadata:
+          type: object
+          description: Key-value pairs of custom data.
+    AdminSalesChannel:
+      type: object
+      description: The sales channel's details.
+      x-schemaName: AdminSalesChannel
+      required:
+      - id
+      - name
+      - description
+      - is_disabled
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The sales channel's ID.
+        name:
+          type: string
+          title: name
+          description: The sales channel's name.
+        description:
+          type: string
+          title: description
+          description: The sales channel's description.
+        is_disabled:
+          type: boolean
+          title: is_disabled
+          description: Whether the sales channel is disabled.
+        metadata:
+          type: object
+          description: The sales channel's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the sales channel was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the sales channel was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the sales channel was deleted.
+    AdminServiceZone:
+      type: object
+      description: The shipping option's service zone.
+      x-schemaName: AdminServiceZone
+      required:
+      - id
+      - name
+      - fulfillment_set_id
+      - fulfillment_set
+      - geo_zones
+      - shipping_options
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The service zone's ID.
+        name:
+          type: string
+          title: name
+          description: The service zone's name.
+        fulfillment_set_id:
+          type: string
+          title: fulfillment_set_id
+          description: The service zone's fulfillment set id.
+        fulfillment_set:
+          type: object
+        geo_zones:
+          type: array
+          description: The service zone's geo zones.
+          items:
+            $ref: '#/components/schemas/AdminGeoZone'
+        shipping_options:
+          type: array
+          description: The service zone's shipping options.
+          items:
+            $ref: '#/components/schemas/AdminShippingOption'
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The service zone's created at.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The service zone's updated at.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The service zone's deleted at.
+    AdminStockLocationAddress:
+      type: object
+      description: The details of the stock location address.
+      x-schemaName: AdminStockLocationAddress
+      properties:
+        id:
+          type: string
+          title: id
+          description: The address's ID.
+        address_1:
+          type: string
+          title: address_1
+          description: The address's first line.
+        address_2:
+          type: string
+          title: address_2
+          description: The address's second line.
+        company:
+          type: string
+          title: company
+          description: The address's company.
+        country_code:
+          type: string
+          title: country_code
+          description: The address's country code.
+          example: us
+        city:
+          type: string
+          title: city
+          description: The address's city.
+        phone:
+          type: string
+          title: phone
+          description: The address's phone.
+        postal_code:
+          type: string
+          title: postal_code
+          description: The address's postal code.
+        province:
+          type: string
+          title: province
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
+        metadata:
+          type: object
+          description: The address's metadata.
+      required:
+      - id
+      - address_1
+      - address_2
+      - company
+      - country_code
+      - city
+      - phone
+      - postal_code
+      - province
+      - metadata
+    AdminServiceZoneResponse:
+      type: object
+      description: The service zone's details.
+      x-schemaName: AdminServiceZoneResponse
+      required:
+      - service_zone
+      properties:
+        service_zone:
+          $ref: '#/components/schemas/AdminServiceZone'
+    AdminGeoZone:
+      type: object
+      description: The geo zone's geo zones.
+      x-schemaName: AdminGeoZone
+      required:
+      - id
+      - type
+      - country_code
+      - province_code
+      - city
+      - postal_expression
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The geo zone's ID.
+        type:
+          type: string
+          description: The geo zone's type.
+          enum:
+          - country
+          - province
+          - city
+          - zip
+        country_code:
+          type: string
+          title: country_code
+          description: The geo zone's country code.
+        province_code:
+          type: string
+          title: province_code
+          description: The geo zone's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
+        city:
+          type: string
+          title: city
+          description: The geo zone's city.
+        postal_expression:
+          type: object
+          description: The geo zone's postal expression.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The geo zone's created at.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The geo zone's updated at.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The geo zone's deleted at.
+    AdminShippingOptionRule:
+      type: object
+      description: The shipping option rule's details.
+      x-schemaName: AdminShippingOptionRule
+      required:
+      - id
+      - attribute
+      - operator
+      - value
+      - shipping_option_id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping option rule's ID.
+        attribute:
+          type: string
+          title: attribute
+          description: The shipping option rule's attribute.
+          example: is_return
+        operator:
+          type: string
+          description: The rule's operator.
+          enum:
+          - gt
+          - lt
+          - eq
+          - ne
+          - in
+          - lte
+          - gte
+          - nin
+        value:
+          oneOf:
+          - type: string
+            title: value
+            description: The shipping option rule's value.
+            example: 'true'
+          - type: array
+            description: The shipping option rule's values.
+            items:
+              type: string
+              title: value
+              description: A value of the shipping option rule.
+              example: 'true'
+        shipping_option_id:
+          type: string
+          title: shipping_option_id
+          description: The ID of the shipping option this rule is for.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the shipping option rule was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the shipping option rule was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the shipping option rule was deleted.
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

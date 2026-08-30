@@ -1,0 +1,1909 @@
+openapi: 3.2.0
+info:
+  version: 2.19.0
+  title: Medusa Admin Price Lists API
+  license:
+    name: MIT
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+  description: 'A price list is a group of prices applied if the specified conditions and rules are satisfied.
+
+
+    Price lists are useful for sales or special prices for special conditions, such as applying prices for a set of customers.
+
+
+    These API routes allow admin users to manage price lists.
+
+    '
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Price Lists
+  description: 'A price list is a group of prices applied if the specified conditions and rules are satisfied.
+
+
+    Price lists are useful for sales or special prices for special conditions, such as applying prices for a set of customers.
+
+
+    These API routes allow admin users to manage price lists.
+
+    '
+  externalDocs:
+    description: Learn more about price lists.
+    url: https://docs.medusajs.com/resources/commerce-modules/pricing/concepts#price-list
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminPriceList'
+paths:
+  /admin/price-lists:
+    get:
+      operationId: GetPriceLists
+      summary: List Price Lists
+      description: Retrieve a list of price lists. The price lists can be filtered by fields such as `id`. The price lists can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: q
+        in: query
+        description: Search term to filter the price list's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search term to filter the price list's searchable properties.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a price list ID.
+          - type: array
+            description: Filter by price list IDs.
+            items:
+              type: string
+              title: id
+              description: A price list ID.
+      - name: starts_at
+        in: query
+        description: Filter by a price list's start date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a price list's start date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: starts_at
+      - name: ends_at
+        in: query
+        description: Filter by the price list's end date.
+        required: false
+        schema:
+          type: object
+          description: Filter by the price list's end date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: ends_at
+      - name: status
+        in: query
+        description: Filter by the price list's status.
+        required: false
+        schema:
+          type: array
+          description: Filter by the price list's status.
+          items:
+            type: string
+            description: A price list's status.
+            enum:
+            - active
+            - draft
+      - name: rules_count
+        in: query
+        description: Filter by the price list's rules count.
+        required: false
+        schema:
+          type: array
+          description: Filter by the price list's rules count.
+          items:
+            type: number
+            title: rules_count
+            description: The price list's rule count.
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.priceList.list()\n.then(({ price_lists, count, limit, offset }) => {\n  console.log(price_lists)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/price-lists'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Price Lists
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPriceListListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostPriceLists
+      summary: Create Price List
+      description: Create a price list.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: q
+        in: query
+        description: Apply a search query to the price list's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Apply a search query to the price list's searchable properties.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a specific price list ID.
+          - type: array
+            description: Filter by multiple price list IDs.
+            items:
+              type: string
+              title: id
+              description: A price list ID.
+      - name: starts_at
+        in: query
+        description: Filter by a price list's start date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a price list's start date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: starts_at
+      - name: ends_at
+        in: query
+        description: Filter by a price list's end date.
+        required: false
+        schema:
+          type: object
+          description: Filter by a price list's end date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: ends_at
+      - name: status
+        in: query
+        description: Filter by price list statuses.
+        required: false
+        schema:
+          type: array
+          description: Filter by price list statuses.
+          items:
+            type: string
+            description: A price list status.
+            enum:
+            - draft
+            - active
+      - name: rules_count
+        in: query
+        description: Filter by multiple price list rules count.
+        required: false
+        schema:
+          type: array
+          description: Filter by price list rules count.
+          items:
+            type: number
+            title: rules_count
+            description: A price list's rules count.
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+          externalDocs:
+            url: '#pagination'
+      - name: with_deleted
+        in: query
+        description: The price list's with deleted.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: The price list's with deleted.
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreatePriceList'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.priceList.create({\n  title: \"My Price List\",\n  status: \"active\",\n  type: \"sale\",\n  prices: [\n    {\n      variant_id: \"variant_123\",\n      amount: 10,\n      currency_code: \"usd\",\n      rules: {\n        region_id: \"reg_123\"\n      }\n    }\n  ]\n})\n.then(({ price_list }) => {\n  console.log(price_list)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/price-lists' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"title\": \"{value}\",\n  \"description\": \"{value}\",\n  \"starts_at\": \"{value}\",\n  \"ends_at\": \"{value}\"\n}'"
+      tags:
+      - Price Lists
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPriceListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: createPriceListsWorkflow
+      x-events: []
+  /admin/price-lists/{id}:
+    get:
+      operationId: GetPriceListsId
+      summary: Get a Price List
+      description: Retrieve a price list by its ID. You can expand the price list's relations or select the fields that should be returned.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The price list's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.priceList.retrieve(\"plist_123\")\n.then(({ price_list }) => {\n  console.log(price_list)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/price-lists/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Price Lists
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPriceListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    post:
+      operationId: PostPriceListsId
+      summary: Update a Price List
+      description: Update a price list's details.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The price list's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdatePriceList'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.priceList.update(\"plist_123\", {\n  title: \"My Price List\",\n})\n.then(({ price_list }) => {\n  console.log(price_list)\n})"
+      - lang: Shell
+        label: cURL
+        source: "curl -X POST '{backend_url}/admin/price-lists/{id}' \\\n-H 'Authorization: Bearer {jwt_token}' \\\n-H 'Content-Type: application/json' \\\n--data-raw '{\n  \"description\": \"{value}\",\n  \"starts_at\": \"{value}\",\n  \"ends_at\": \"{value}\"\n}'"
+      tags:
+      - Price Lists
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPriceListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: updatePriceListsWorkflow
+      x-events: []
+    delete:
+      operationId: DeletePriceListsId
+      summary: Delete a Price List
+      description: Delete a price list.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The price list's ID.
+        required: true
+        schema:
+          type: string
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.priceList.delete(\"plist_123\")\n.then(({ deleted }) => {\n  console.log(deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X DELETE ''{backend_url}/admin/price-lists/{id}'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Price Lists
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPriceListDeleteResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: deletePriceListsWorkflow
+      x-events: []
+  /admin/price-lists/{id}/prices:
+    get:
+      operationId: GetPriceListsIdPrices
+      summary: List Prices for a Price List
+      x-sidebar-summary: List Prices
+      description: Retrieve a list of prices in a price list. The prices can be filtered by fields like FILTER FIELDS. The prices can also be paginated.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The price list's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.priceList.prices(\"plist_123\")\n.then(({ prices }) => {\n  console.log(prices)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/price-lists/{id}/prices'' \
+
+          -H ''Authorization: Bearer {access_token}'''
+      tags:
+      - Price Lists
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPriceListPriceListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.12.3
+  /admin/price-lists/{id}/prices/batch:
+    post:
+      operationId: PostPriceListsIdPricesBatch
+      summary: Manage Prices in Price List
+      x-sidebar-summary: Manage Prices
+      description: Manage the prices of a price list to create, update, or delete them.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The price list's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The prices to create, update, or delete.
+              properties:
+                create:
+                  type: array
+                  description: The prices to create.
+                  items:
+                    type: object
+                    description: A price's details.
+                    required:
+                    - currency_code
+                    - amount
+                    - variant_id
+                    properties:
+                      currency_code:
+                        type: string
+                        title: currency_code
+                        description: The price's currency code.
+                      amount:
+                        type: number
+                        title: amount
+                        description: The price's amount.
+                      variant_id:
+                        type: string
+                        title: variant_id
+                        description: The ID of the variant this price is for.
+                      min_quantity:
+                        type: number
+                        title: min_quantity
+                        description: The minimum quantity that must be available of the associated variant in the cart for this price to apply.
+                      max_quantity:
+                        type: number
+                        title: max_quantity
+                        description: The maximum quantity that must be available of the associated variant in the cart for this price list to apply.
+                      rules:
+                        type: object
+                        description: Key-value pair rules to apply on the price.
+                        example:
+                          region_id: 123
+                update:
+                  type: array
+                  description: The prices to update.
+                  items:
+                    type: object
+                    description: The properties to update in a price.
+                    required:
+                    - id
+                    - variant_id
+                    properties:
+                      id:
+                        type: string
+                        title: id
+                        description: The price's ID.
+                      currency_code:
+                        type: string
+                        title: currency_code
+                        description: The price's currency code.
+                      amount:
+                        type: number
+                        title: amount
+                        description: The price's amount.
+                      variant_id:
+                        type: string
+                        title: variant_id
+                        description: The ID of the variant this price is for.
+                      min_quantity:
+                        type: number
+                        title: min_quantity
+                        description: The minimum quantity that must be available of the associated variant in the cart for this price to apply.
+                      max_quantity:
+                        type: number
+                        title: max_quantity
+                        description: The maximum quantity that must be available of the associated variant in the cart for this price list to apply.
+                      rules:
+                        type: object
+                        description: Key-value pair rules to apply on the price.
+                        example:
+                          region_id: 123
+                delete:
+                  type: array
+                  description: The prices to delete.
+                  items:
+                    type: string
+                    title: delete
+                    description: A price's ID.
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.priceList.batchPrices(\"plist_123\", {\n  create: [{\n    variant_id: \"variant_123\",\n    currency_code: \"usd\",\n    amount: 10,\n    rules: {\n      region_id: \"reg_123\"\n    }\n  }],\n  update: [{\n    id: \"price_123\",\n    variant_id: \"variant_123\",\n    amount: 20,\n  }],\n  delete: [\"price_123\"]\n})\n.then(({ created, updated, deleted }) => {\n  console.log(created, updated, deleted)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/price-lists/{id}/prices/batch'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Price Lists
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPriceListBatchResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: batchPriceListPricesWorkflow
+      x-events: []
+  /admin/price-lists/{id}/products:
+    post:
+      operationId: PostPriceListsIdProducts
+      summary: Remove Products from Price List
+      description: Remove products from a price list.
+      x-authenticated: true
+      parameters:
+      - name: id
+        in: path
+        description: The price list's ID.
+        required: true
+        schema:
+          type: string
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminLinkPriceListProducts'
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.priceList.linkProducts(\"plist_123\", {\n  remove: [\"prod_123\"]\n})\n.then(({ price_list }) => {\n  console.log(price_list)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl -X POST ''{backend_url}/admin/price-lists/{id}/products'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Price Lists
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPriceListResponse'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-workflow: batchPriceListPricesWorkflow
+      x-events: []
+components:
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  schemas:
+    AdminCreatePriceList:
+      type: object
+      description: The price list's details.
+      x-schemaName: AdminCreatePriceList
+      required:
+      - title
+      - description
+      properties:
+        title:
+          type: string
+          title: title
+          description: The price list's title.
+        description:
+          type: string
+          title: description
+          description: The price list's description.
+        starts_at:
+          type: string
+          title: starts_at
+          description: The date and time the price list starts at.
+          format: date-time
+        ends_at:
+          type: string
+          title: ends_at
+          description: The date and time the price list ends at.
+          format: date-time
+        status:
+          type: string
+          description: The price list's status.
+          enum:
+          - active
+          - draft
+        type:
+          type: string
+          description: The price list's type.
+          enum:
+          - sale
+          - override
+        rules:
+          type: object
+          description: The price list's rules.
+          example:
+            product_category_id: pcat_123
+        prices:
+          type: array
+          description: The price list's prices.
+          items:
+            $ref: '#/components/schemas/AdminCreatePriceListPrice'
+        metadata:
+          type: object
+          description: Key-value pairs of custom data.
+    AdminPriceListListResponse:
+      type: object
+      description: The paginated list of price lists.
+      x-schemaName: AdminPriceListListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - price_lists
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        price_lists:
+          type: array
+          description: The list of price lists.
+          items:
+            $ref: '#/components/schemas/AdminPriceList'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    AdminUpdatePriceList:
+      type: object
+      description: the details to update in a price list.
+      x-schemaName: AdminUpdatePriceList
+      properties:
+        title:
+          type: string
+          title: title
+          description: The price list's title.
+        description:
+          type: string
+          title: description
+          description: The price list's description.
+        starts_at:
+          type: string
+          title: starts_at
+          description: The date the price list starts.
+        ends_at:
+          type: string
+          title: ends_at
+          description: The date the price list ends.
+        status:
+          type: string
+          description: The price list's status.
+          enum:
+          - active
+          - draft
+        type:
+          type: string
+          description: The price list's type.
+          enum:
+          - sale
+          - override
+        rules:
+          type: object
+          description: The price list's rules.
+          example:
+            customer_group_id:
+            - cusgrp_123
+        metadata:
+          type: object
+          description: Key-value pairs of custom data.
+    AdminPriceList:
+      type: object
+      description: The price list's details.
+      x-schemaName: AdminPriceList
+      required:
+      - id
+      - title
+      - description
+      - rules
+      - starts_at
+      - ends_at
+      - status
+      - type
+      - prices
+      - created_at
+      - updated_at
+      - deleted_at
+      - metadata
+      properties:
+        id:
+          type: string
+          title: id
+          description: The price list's ID.
+        title:
+          type: string
+          title: title
+          description: The price list's title.
+        description:
+          type: string
+          title: description
+          description: The price list's description.
+        rules:
+          type: object
+          description: The price list's rules.
+        starts_at:
+          type: string
+          title: starts_at
+          description: The date the price list starts.
+        ends_at:
+          type: string
+          title: ends_at
+          description: The date the price list ends.
+        status:
+          type: string
+          description: The price list's status.
+          enum:
+          - draft
+          - active
+        type:
+          type: string
+          description: The price list's type.
+          enum:
+          - sale
+          - override
+        prices:
+          type: array
+          description: The price list's prices.
+          items:
+            $ref: '#/components/schemas/AdminPriceListPrice'
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the price list was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the price list was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the price list was deleted.
+        metadata:
+          type: object
+          description: Key-value pairs of custom data.
+    AdminCreatePriceListPrice:
+      type: object
+      description: The details of a price to be created within a price list.
+      required:
+      - currency_code
+      - amount
+      - variant_id
+      properties:
+        currency_code:
+          type: string
+          title: currency_code
+          description: The price's currency code.
+        amount:
+          type: number
+          title: amount
+          description: The price's amount.
+        variant_id:
+          type: string
+          title: variant_id
+          description: The ID of the product variant this price is for.
+        min_quantity:
+          type: number
+          title: min_quantity
+          description: The minimum quantity required in the cart for this price to be applied.
+        max_quantity:
+          type: number
+          title: max_quantity
+          description: The maximum quantity in the cart that shouldn't be crossed for this price to be applied.
+        rules:
+          type: object
+          description: The price's rules.
+          example:
+            region_id: reg_123
+      x-schemaName: AdminCreatePriceListPrice
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminPrice:
+      type: object
+      description: The price's details.
+      x-schemaName: AdminPrice
+      required:
+      - id
+      - title
+      - currency_code
+      - amount
+      - raw_amount
+      - min_quantity
+      - max_quantity
+      - price_set_id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The price's ID.
+        title:
+          type: string
+          title: title
+          description: The price's title.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The price's currency code.
+          example: usd
+        amount:
+          type: number
+          title: amount
+          description: The price's amount.
+        raw_amount:
+          type: object
+          description: The price's raw amount.
+        min_quantity:
+          type: number
+          title: min_quantity
+          description: The minimum quantity that must be available in the cart for the price to be applied.
+        max_quantity:
+          type: number
+          title: max_quantity
+          description: The maximum quantity allowed to be available in the cart for the price to be applied.
+        price_set_id:
+          type: string
+          title: price_set_id
+          description: The ID of the associated price set.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the price was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the price was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the price was deleted.
+    AdminPriceListDeleteResponse:
+      type: object
+      description: The details of the deleted price list.
+      x-schemaName: AdminPriceListDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The price list's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: price_list
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the price list was deleted.
+    AdminLinkPriceListProducts:
+      type: object
+      description: The products removal details.
+      properties:
+        remove:
+          type: array
+          description: The products to remove from the price list.
+          items:
+            type: string
+            title: remove
+            description: The ID of a product.
+      x-schemaName: AdminLinkPriceListProducts
+    AdminPriceListBatchResponse:
+      type: object
+      description: The details of the created, updated, and deleted prices in a price list.
+      x-schemaName: AdminPriceListBatchResponse
+      required:
+      - created
+      - updated
+      - deleted
+      properties:
+        created:
+          type: array
+          description: The created prices.
+          items:
+            $ref: '#/components/schemas/AdminPrice'
+        updated:
+          type: array
+          description: The updated prices.
+          items:
+            $ref: '#/components/schemas/AdminPrice'
+        deleted:
+          type: object
+          description: The details of the deleted prices.
+          required:
+          - ids
+          - object
+          - deleted
+          properties:
+            ids:
+              type: array
+              description: The IDs of the deleted prices.
+              items:
+                type: string
+                title: ids
+                description: A price's ID.
+            object:
+              type: string
+              title: object
+              description: The name of the deleted object.
+              default: price
+            deleted:
+              type: boolean
+              title: deleted
+              description: Whether the prices were deleted.
+    AdminPriceListPrice:
+      type: object
+      description: The details of a price list's price.
+      x-schemaName: AdminPriceListPrice
+      required:
+      - variant_id
+      - rules
+      - id
+      - title
+      - currency_code
+      - amount
+      - raw_amount
+      - min_quantity
+      - max_quantity
+      - price_set_id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        variant_id:
+          type: string
+          title: variant_id
+          description: The ID of the product variant this price list is for.
+        rules:
+          type: object
+          description: The price's rules.
+        id:
+          type: string
+          title: id
+          description: The price's ID.
+        title:
+          type: string
+          title: title
+          description: The price's title.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The price's currency code.
+          example: usd
+        amount:
+          type: number
+          title: amount
+          description: The price's amount.
+        raw_amount:
+          type: object
+          description: The price's raw amount.
+        min_quantity:
+          type: number
+          title: min_quantity
+          description: The minimum quantity that must be available in the cart for the price to be applied.
+        max_quantity:
+          type: number
+          title: max_quantity
+          description: The maximum quantity allowed to be available in the cart for the price to be applied.
+        price_set_id:
+          type: string
+          title: price_set_id
+          description: The ID of the price set this price belongs to.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the price was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the price was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the price was deleted.
+    AdminPriceListResponse:
+      type: object
+      description: The price list's details.
+      x-schemaName: AdminPriceListResponse
+      required:
+      - price_list
+      properties:
+        price_list:
+          $ref: '#/components/schemas/AdminPriceList'
+    AdminPriceListPriceListResponse:
+      type: object
+      description: The list of prices associated with a price list.
+      x-schemaName: AdminPriceListPriceListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - prices
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of prices to return.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the prices.
+        count:
+          type: number
+          title: count
+          description: The maximum number of prices available.
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+        prices:
+          type: array
+          description: The list of prices associated with the price list.
+          items:
+            $ref: '#/components/schemas/AdminPrice'
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false

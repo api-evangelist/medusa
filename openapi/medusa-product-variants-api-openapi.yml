@@ -1,0 +1,2217 @@
+openapi: 3.2.0
+info:
+  title: Medusa Product Variants API
+  version: 2.19.0
+  description: 'Operations tagged Product Variants across 2 of this provider''s published API definitions: medusa-admin-openapi.yaml, medusa-store-openapi.yaml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: http://localhost:9000
+- url: https://api.medusajs.com
+tags:
+- name: Product Variants
+  description: 'A product variant is a saleable form of the product.
+
+
+    Each variant has different option values. For example, a "Shirt" product may have a  "Blue" variant and a "Green" variant. Customers choose from these variants when they buy the product.
+
+
+    These API routes allow admin users to manage product variants.
+
+    '
+  externalDocs:
+    description: Learn more about the Product Module
+    url: https://docs.medusajs.com/resources/commerce-modules/product
+  x-associatedSchema:
+    $ref: '#/components/schemas/AdminProductVariant'
+paths:
+  /admin/product-variants:
+    get:
+      operationId: GetProductVariants
+      summary: List Product Variants
+      description: Retrieve a list of product variants. The product variants can be filtered by fields such as `id`. The product variants can also be sorted or paginated.
+      x-authenticated: true
+      parameters:
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. if a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+      - name: q
+        in: query
+        description: Search term to filter the product variant's searchable properties.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Search term to filter the product variant's searchable properties.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a variant's ID.
+          - type: array
+            description: Filter by variant IDs.
+            items:
+              type: string
+              title: id
+              description: A variant's ID.
+      - name: manage_inventory
+        in: query
+        description: Filter by whether a variant's `manage_inventory` is enabled.
+        required: false
+        schema:
+          type: boolean
+          title: manage_inventory
+          description: Filter by whether a variant's `manage_inventory` is enabled.
+      - name: allow_backorder
+        in: query
+        description: Filter by whether backorder is allowed for a variant.
+        required: false
+        schema:
+          type: boolean
+          title: allow_backorder
+          description: Filter by whether backorder is allowed for a variant.
+      - name: created_at
+        in: query
+        description: Filter by the product variant's creation date.
+        required: false
+        schema:
+          type: object
+          description: Filter by the product variant's creation date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: created_at
+      - name: updated_at
+        in: query
+        description: Filter by the product variant's update date.
+        required: false
+        schema:
+          type: object
+          description: Filter by the product variant's update date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: updated_at
+      - name: deleted_at
+        in: query
+        description: Filter by the product variant's deletion date.
+        required: false
+        schema:
+          type: object
+          description: Filter by the product variant's deletion date.
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $and
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+              title: $or
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by an exact match.
+              - type: array
+                description: Filter by an exact match.
+                items:
+                  type: string
+                  title: $eq
+                  description: Filter by an exact match.
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by values not equal to this parameter.
+            $in:
+              type: array
+              description: Filter by values in this array.
+              items:
+                type: string
+                title: $in
+                description: Filter by values in this array.
+            $nin:
+              type: array
+              description: Filter by values not in this array.
+              items:
+                type: string
+                title: $nin
+                description: Filter by values not in this array.
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: object
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+                  title: $not
+                  description: Filter by values not matching the conditions in this parameter.
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than this parameter. Useful for numbers and dates only.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to this parameter. Useful for numbers and dates only.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than this parameter. Useful for numbers and dates only.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to this parameter. Useful for numbers and dates only.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              description: Filter arrays that have overlapping values with this parameter.
+              items:
+                type: string
+                title: $overlap
+                description: Filter arrays that have overlapping values with this parameter.
+            $contains:
+              type: array
+              description: Filter arrays that contain some of the values of this parameter.
+              items:
+                type: string
+                title: $contains
+                description: Filter arrays that contain some of the values of this parameter.
+            $contained:
+              type: array
+              description: Filter arrays that contain all values of this parameter.
+              items:
+                type: string
+                title: $contained
+                description: Filter arrays that contain all values of this parameter.
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value for this parameter exists (not `null`).
+          title: deleted_at
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      - name: with_deleted
+        in: query
+        description: Whether to include deleted records in the result.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: Whether to include deleted records in the result.
+      - name: ean
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: ean
+            description: The product variant's ean.
+          - type: array
+            description: The product variant's ean.
+            items:
+              type: string
+              title: ean
+              description: The ean's details.
+      - name: upc
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: upc
+            description: The product variant's upc.
+          - type: array
+            description: The product variant's upc.
+            items:
+              type: string
+              title: upc
+              description: The upc's details.
+      - name: barcode
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: barcode
+            description: The product variant's barcode.
+          - type: array
+            description: The product variant's barcode.
+            items:
+              type: string
+              title: barcode
+              description: The barcode's details.
+      - name: sku
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: sku
+            description: Filter by an SKU.
+          - type: array
+            description: Filter by multiple SKUs.
+            items:
+              type: string
+              title: sku
+              description: An SKU.
+      security:
+      - api_token: []
+      - cookie_auth: []
+      - jwt_token: []
+      x-codeSamples:
+      - lang: JavaScript
+        label: JS SDK
+        source: "import Medusa from \"@medusajs/js-sdk\"\n\nexport const sdk = new Medusa({\n  baseUrl: import.meta.env.VITE_BACKEND_URL || \"/\",\n  debug: import.meta.env.DEV,\n  auth: {\n    type: \"session\",\n  },\n})\n\nsdk.admin.productVariant.list()\n.then(({ variants, count, limit, offset }) => {\n  console.log(variants)\n})"
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/admin/product-variants'' \
+
+          -H ''Authorization: Bearer {jwt_token}'''
+      tags:
+      - Product Variants
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The paginated list of product variants.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of items returned.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of items skipped before retrieving the returned items.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of items.
+                - type: object
+                  description: The paginated list of product variants.
+                  required:
+                  - variants
+                  properties:
+                    variants:
+                      type: array
+                      description: The product variant's variants.
+                      items:
+                        $ref: '#/components/schemas/AdminProductVariant'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+  /store/product-variants:
+    get:
+      operationId: GetProductVariants
+      summary: List Product Variants
+      description: Retrieve a list of product variants. The product variants can be filtered by fields such as `id`. The product variants can also be sorted or paginated.
+      x-authenticated: false
+      parameters:
+      - name: x-publishable-api-key
+        in: header
+        description: Publishable API Key created in the Medusa Admin.
+        required: true
+        schema:
+          type: string
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#publishable-api-key
+      - name: x-medusa-locale
+        in: header
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      - name: locale
+        in: query
+        description: The locale in BCP 47 format to retrieve localized content.
+        required: false
+        schema:
+          type: string
+          example: en-US
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/translation/storefront
+            description: Learn more in the Serve Translations in Storefront guide.
+      - name: sku
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: sku
+            description: Filter by a product variant's sku.
+          - type: array
+            description: Filter by product variant skus.
+            items:
+              type: string
+              title: sku
+              description: The product variant's sku.
+      - name: manage_inventory
+        in: query
+        description: Filter by whether Medusa manages inventory for the product variant.
+        required: false
+        schema:
+          type: boolean
+          title: manage_inventory
+          description: Filter by whether Medusa manages inventory for the product variant.
+      - name: allow_backorder
+        in: query
+        description: Filter by whether backorders are allowed for the product variant.
+        required: false
+        schema:
+          type: boolean
+          title: allow_backorder
+          description: Filter by whether backorders are allowed for the product variant.
+      - name: product_id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: product_id
+            description: Filter by a product ID to retrieve its variants.
+          - type: array
+            description: Filter by product IDs to retrieve their variants.
+            items:
+              type: string
+              title: product_id
+              description: The product's ID.
+      - name: q
+        in: query
+        description: Query to search variants by their searchable fields.
+        required: false
+        schema:
+          type: string
+          title: q
+          description: Query to search variants by their searchable fields.
+      - name: id
+        in: query
+        required: false
+        schema:
+          oneOf:
+          - type: string
+            title: id
+            description: Filter by a product variant's ID.
+          - type: array
+            description: Filter by product variant IDs.
+            items:
+              type: string
+              title: id
+              description: The product variant's ID.
+      - name: options
+        in: query
+        description: Filter by the product variant's options.
+        required: false
+        schema:
+          type: object
+          description: Apply filters on the product variant's options.
+          properties:
+            value:
+              type: string
+              title: value
+              description: The option's value.
+            option_id:
+              type: string
+              title: option_id
+              description: The option's ID.
+      - name: created_at
+        in: query
+        description: Filter by the product variant's creation date.
+        required: false
+        schema:
+          type: object
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by exact value.
+              - type: array
+                title: $eq
+                description: Filter by exact value.
+                items:
+                  type: string
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by not equal to the given value.
+            $in:
+              type: array
+              title: $in
+              description: Filter by values included in the given array.
+              items:
+                type: string
+            $nin:
+              type: array
+              title: $nin
+              description: Filter by values not included in the given array.
+              items:
+                type: string
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by not equal to the given value.
+              - type: object
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than the given value.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to the given value.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than the given value.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to the given value.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              title: $overlap
+              description: Filter to apply on array properties to find overlapping values.
+              items:
+                type: string
+            $contains:
+              type: array
+              title: $contains
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $contained:
+              type: array
+              title: $contained
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value exists or not.
+          title: created_at
+          description: Filter by the product variant's creation date.
+      - name: updated_at
+        in: query
+        description: Filter by the product variant's last update date.
+        required: false
+        schema:
+          type: object
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by exact value.
+              - type: array
+                title: $eq
+                description: Filter by exact value.
+                items:
+                  type: string
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by not equal to the given value.
+            $in:
+              type: array
+              title: $in
+              description: Filter by values included in the given array.
+              items:
+                type: string
+            $nin:
+              type: array
+              title: $nin
+              description: Filter by values not included in the given array.
+              items:
+                type: string
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by not equal to the given value.
+              - type: object
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than the given value.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to the given value.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than the given value.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to the given value.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              title: $overlap
+              description: Filter to apply on array properties to find overlapping values.
+              items:
+                type: string
+            $contains:
+              type: array
+              title: $contains
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $contained:
+              type: array
+              title: $contained
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value exists or not.
+          title: updated_at
+          description: Filter by the product variant's last update date.
+      - name: deleted_at
+        in: query
+        description: Filter by the product variant's deletion date.
+        required: false
+        schema:
+          type: object
+          properties:
+            $and:
+              type: array
+              description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $or:
+              type: array
+              description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+              items:
+                type: object
+            $eq:
+              oneOf:
+              - type: string
+                title: $eq
+                description: Filter by exact value.
+              - type: array
+                title: $eq
+                description: Filter by exact value.
+                items:
+                  type: string
+            $ne:
+              type: string
+              title: $ne
+              description: Filter by not equal to the given value.
+            $in:
+              type: array
+              title: $in
+              description: Filter by values included in the given array.
+              items:
+                type: string
+            $nin:
+              type: array
+              title: $nin
+              description: Filter by values not included in the given array.
+              items:
+                type: string
+            $not:
+              oneOf:
+              - type: string
+                title: $not
+                description: Filter by not equal to the given value.
+              - type: object
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+              - type: array
+                title: $not
+                description: Filter by values not matching the conditions in this parameter.
+                items:
+                  type: string
+            $gt:
+              type: string
+              title: $gt
+              description: Filter by values greater than the given value.
+            $gte:
+              type: string
+              title: $gte
+              description: Filter by values greater than or equal to the given value.
+            $lt:
+              type: string
+              title: $lt
+              description: Filter by values less than the given value.
+            $lte:
+              type: string
+              title: $lte
+              description: Filter by values less than or equal to the given value.
+            $like:
+              type: string
+              title: $like
+              description: Apply a `like` filter. Useful for strings only.
+            $re:
+              type: string
+              title: $re
+              description: Apply a regex filter. Useful for strings only.
+            $ilike:
+              type: string
+              title: $ilike
+              description: Apply a case-insensitive `like` filter. Useful for strings only.
+            $fulltext:
+              type: string
+              title: $fulltext
+              description: Filter to apply on full-text properties.
+            $overlap:
+              type: array
+              title: $overlap
+              description: Filter to apply on array properties to find overlapping values.
+              items:
+                type: string
+            $contains:
+              type: array
+              title: $contains
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $contained:
+              type: array
+              title: $contained
+              description: Filter to apply on array properties to find contained values.
+              items:
+                type: string
+            $exists:
+              type: boolean
+              title: $exists
+              description: Filter by whether a value exists or not.
+          title: deleted_at
+          description: Filter by the product variant's deletion date.
+      - name: limit
+        in: query
+        description: Limit the number of items returned in the list.
+        required: false
+        schema:
+          type: number
+          title: limit
+          description: Limit the number of items returned in the list.
+          externalDocs:
+            url: '#pagination'
+      - name: offset
+        in: query
+        description: The number of items to skip when retrieving a list.
+        required: false
+        schema:
+          type: number
+          title: offset
+          description: The number of items to skip when retrieving a list.
+          externalDocs:
+            url: '#pagination'
+      - name: order
+        in: query
+        description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+        required: false
+        schema:
+          type: string
+          title: order
+          description: The field to sort the data by. By default, the sort order is ascending. To change the order to descending, prefix the field name with `-`.
+          externalDocs:
+            url: '#pagination'
+      - name: with_deleted
+        in: query
+        description: The product variant's with deleted.
+        required: false
+        schema:
+          type: boolean
+          title: with_deleted
+          description: The product variant's with deleted.
+      - name: fields
+        in: query
+        description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+        required: false
+        schema:
+          type: string
+          title: fields
+          description: Comma-separated fields that should be included in the returned data. If a field is prefixed with `+` it will be added to the default fields, using `-` will remove it from the default fields. Without prefix it will replace the entire default fields.
+          externalDocs:
+            url: '#select-fields-and-relations'
+      - name: $and
+        in: query
+        description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an AND condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $and
+      - name: $or
+        in: query
+        description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+        required: false
+        schema:
+          type: array
+          description: Join query parameters with an OR condition. Each object's content is the same type as the expected query parameters.
+          items:
+            type: object
+          title: $or
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: 'curl ''{backend_url}/store/product-variants'' \
+
+          -H ''x-publishable-api-key: {your_publishable_api_key}'''
+      tags:
+      - Product Variants
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: The pagination details.
+                  required:
+                  - limit
+                  - offset
+                  - count
+                  properties:
+                    limit:
+                      type: number
+                      title: limit
+                      description: The maximum number of items returned in the list.
+                    offset:
+                      type: number
+                      title: offset
+                      description: The number of items skipped before the retrieved list.
+                    count:
+                      type: number
+                      title: count
+                      description: The total number of items available.
+                    estimate_count:
+                      type: number
+                      title: estimate_count
+                      description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+                      x-featureFlag: index_engine
+                - type: object
+                  description: The list of product variants.
+                  required:
+                  - variants
+                  properties:
+                    variants:
+                      type: array
+                      description: The list of product variants.
+                      items:
+                        $ref: '#/components/schemas/StoreProductVariant'
+        '400':
+          $ref: '#/components/responses/400_error'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: '#/components/responses/not_found_error'
+        '409':
+          $ref: '#/components/responses/invalid_state_error'
+        '422':
+          $ref: '#/components/responses/invalid_request_error'
+        '500':
+          $ref: '#/components/responses/500_error'
+      x-since: 2.11.2
+    servers:
+    - url: http://localhost:9000
+    - url: https://api.medusajs.com
+components:
+  schemas:
+    AdminProductOptionValue:
+      type: object
+      description: The product option value's details.
+      x-schemaName: AdminProductOptionValue
+      required:
+      - id
+      - value
+      properties:
+        id:
+          type: string
+          title: id
+          description: The value's ID.
+        value:
+          type: string
+          title: value
+          description: The value.
+        option:
+          $ref: '#/components/schemas/AdminProductOption'
+        option_id:
+          type: string
+          title: option_id
+          description: The ID of the option this value belongs to.
+        metadata:
+          type: object
+          description: The value's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the value was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the value was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the value was deleted.
+        rank:
+          type: number
+          title: rank
+          description: The rank of the value among other option values.
+    AdminProductVariantInventoryItemLink:
+      type: object
+      description: An association between a product variant and an inventory item.
+      x-schemaName: AdminProductVariantInventoryItemLink
+      required:
+      - id
+      - variant_id
+      - inventory_item_id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The ID of the association.
+        variant_id:
+          type: string
+          title: variant_id
+          description: The associated product variant's ID.
+        variant:
+          type: object
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The associated inventory item's ID.
+        inventory:
+          $ref: '#/components/schemas/AdminInventoryItem'
+        required_quantity:
+          type: number
+          title: required_quantity
+          description: The inventory item's required quantity.
+    AdminProductVariant:
+      type: object
+      description: The product variant's details.
+      x-schemaName: AdminProductVariant
+      required:
+      - prices
+      - options
+      - id
+      - title
+      - sku
+      - barcode
+      - ean
+      - upc
+      - thumbnail
+      - allow_backorder
+      - manage_inventory
+      - hs_code
+      - origin_country
+      - mid_code
+      - material
+      - weight
+      - length
+      - height
+      - width
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        prices:
+          type: array
+          description: The variant's prices.
+          items:
+            $ref: '#/components/schemas/AdminPrice'
+        id:
+          type: string
+          title: id
+          description: The variant's ID.
+        title:
+          type: string
+          title: title
+          description: The variant's title.
+        sku:
+          type: string
+          title: sku
+          description: The variant's SKU.
+        barcode:
+          type: string
+          title: barcode
+          description: The variant's barcode.
+        ean:
+          type: string
+          title: ean
+          description: The variant's EAN code.
+        upc:
+          type: string
+          title: upc
+          description: The variant's UPC.
+        allow_backorder:
+          type: boolean
+          title: allow_backorder
+          description: Whether the variant can be ordered even if it's out of stock.
+        manage_inventory:
+          type: boolean
+          title: manage_inventory
+          description: Whether the Medusa application manages the variant's inventory quantity and availablility. If disabled, the variant is always considered in stock.
+        inventory_quantity:
+          type: number
+          title: inventory_quantity
+          description: The variant's inventory quantity. This is only included if you pass in the `fields` query parameter a `+variants.inventory_quantity` parameter.
+        hs_code:
+          type: string
+          title: hs_code
+          description: The variant's HS code.
+        origin_country:
+          type: string
+          title: origin_country
+          description: The variant's origin country.
+        mid_code:
+          type: string
+          title: mid_code
+          description: The variant's MID code.
+        material:
+          type: string
+          title: material
+          description: The variant's material.
+        weight:
+          type: number
+          title: weight
+          description: The variant's weight.
+        length:
+          type: number
+          title: length
+          description: The variant's length.
+        height:
+          type: number
+          title: height
+          description: The variant's height.
+        width:
+          type: number
+          title: width
+          description: The variant's width.
+        variant_rank:
+          type: number
+          title: variant_rank
+          description: The variant's rank among its sibling variants.
+        options:
+          type: array
+          description: The variant's option values.
+          items:
+            $ref: '#/components/schemas/AdminProductOptionValue'
+        product:
+          type: object
+        product_id:
+          type: string
+          title: product_id
+          description: The ID of the product that the variant belongs to.
+        calculated_price:
+          $ref: '#/components/schemas/BaseCalculatedPriceSet'
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the variant was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the variant was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the variant was deleted.
+        metadata:
+          type: object
+          description: The variant's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        inventory_items:
+          type: array
+          description: The variant's inventory items.
+          items:
+            $ref: '#/components/schemas/AdminProductVariantInventoryItemLink'
+        images:
+          type: array
+          description: The variant's images.
+          items:
+            $ref: '#/components/schemas/BaseProductImage'
+        thumbnail:
+          type: string
+          title: thumbnail
+          description: The variant's thumbnail.
+        translations:
+          type: array
+          description: The variant's translations.
+          items:
+            $ref: '#/components/schemas/AdminTranslation'
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminProductOption:
+      type: object
+      description: The product option's details.
+      x-schemaName: AdminProductOption
+      required:
+      - id
+      - title
+      - is_exclusive
+      properties:
+        id:
+          type: string
+          title: id
+          description: The product option's ID.
+        title:
+          type: string
+          title: title
+          description: The product option's title.
+        values:
+          type: array
+          description: The product option's values.
+          items:
+            type: object
+        metadata:
+          type: object
+          description: The product option's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the product option was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the product option was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the product option was deleted.
+        products:
+          type: array
+          description: The products that use the option.
+          items:
+            type: object
+        is_exclusive:
+          type: boolean
+          title: is_exclusive
+          description: Whether the option is exclusive to a product.
+    AdminInventoryItem:
+      type: object
+      description: The inventory item's details.
+      x-schemaName: AdminInventoryItem
+      required:
+      - id
+      - requires_shipping
+      - stocked_quantity
+      - reserved_quantity
+      properties:
+        id:
+          type: string
+          title: id
+          description: The inventory item's ID.
+        sku:
+          type: string
+          title: sku
+          description: The inventory item's sku.
+        origin_country:
+          type: string
+          title: origin_country
+          description: The inventory item's origin country.
+        hs_code:
+          type: string
+          title: hs_code
+          description: The inventory item's HS code.
+        requires_shipping:
+          type: boolean
+          title: requires_shipping
+          description: Whether the inventory item requires shipping.
+        mid_code:
+          type: string
+          title: mid_code
+          description: The inventory item's MID code.
+        material:
+          type: string
+          title: material
+          description: The inventory item's material.
+        weight:
+          type: number
+          title: weight
+          description: The inventory item's weight.
+        length:
+          type: number
+          title: length
+          description: The inventory item's length.
+        height:
+          type: number
+          title: height
+          description: The inventory item's height.
+        width:
+          type: number
+          title: width
+          description: The inventory item's width.
+        title:
+          type: string
+          title: title
+          description: The inventory item's title.
+        description:
+          type: string
+          title: description
+          description: The inventory item's description.
+        thumbnail:
+          type: string
+          title: thumbnail
+          description: The thumbnail URL of the inventory item.
+        metadata:
+          type: object
+          description: Custom key-value pairs, used to store additional information about the inventory item.
+        location_levels:
+          type: array
+          description: The inventory item's location levels.
+          items:
+            $ref: '#/components/schemas/AdminInventoryLevel'
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory item's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The inventory item's reserved quantity.
+    BaseCalculatedPriceSet:
+      type: object
+      description: The calculated price's details.
+      x-schemaName: BaseCalculatedPriceSet
+      required:
+      - id
+      - calculated_amount
+      - original_amount
+      - original_amount_with_tax
+      - original_amount_without_tax
+      - currency_code
+      properties:
+        id:
+          type: string
+          title: id
+          description: The calculated price's ID.
+        is_calculated_price_price_list:
+          type: boolean
+          title: is_calculated_price_price_list
+          description: Whether the calculated price belongs to a price list.
+        is_calculated_price_tax_inclusive:
+          type: boolean
+          title: is_calculated_price_tax_inclusive
+          description: Whether the calculated price is tax inclusive.
+        calculated_amount:
+          type: number
+          title: calculated_amount
+          description: The amount of the calculated price, or `null` if there isn't a calculated price. This is the amount shown to the customer.
+        calculated_amount_with_tax:
+          type: number
+          title: calculated_amount_with_tax
+          description: The calculated price's amount with taxes applied.
+        calculated_amount_without_tax:
+          type: number
+          title: calculated_amount_without_tax
+          description: The calculated price's amount without taxes applied.
+        is_original_price_price_list:
+          type: boolean
+          title: is_original_price_price_list
+          description: Whether the original price belongs to a price list.
+        is_original_price_tax_inclusive:
+          type: boolean
+          title: is_original_price_tax_inclusive
+          description: Whether the original price is tax inclusive.
+        original_amount:
+          type: number
+          title: original_amount
+          description: The amount of the original price, or `null` if there isn't an original price. This amount is useful to compare with the `calculated_amount`, such as to check for discounted value.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The calculated price's currency code.
+          example: usd
+        calculated_price:
+          type: object
+          description: The calculated price's details.
+        original_price:
+          type: object
+          description: The original price's details.
+        original_amount_with_tax:
+          type: number
+          title: original_amount_with_tax
+          description: The amount of the original price with taxes applied.
+        original_amount_without_tax:
+          type: number
+          title: original_amount_without_tax
+          description: The amount of the original price without taxes.
+    BaseProductImage:
+      type: object
+      description: The image's details.
+      x-schemaName: BaseProductImage
+      properties:
+        id:
+          type: string
+          title: id
+          description: The image's ID.
+        url:
+          type: string
+          title: url
+          description: The image's URL.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the image was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the image was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the image was deleted.
+        metadata:
+          type: object
+          description: The image's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        rank:
+          type: number
+          title: rank
+          description: The image's rank among its sibling images.
+      required:
+      - id
+      - url
+      - rank
+    AdminPrice:
+      type: object
+      description: The price's details.
+      x-schemaName: AdminPrice
+      required:
+      - id
+      - title
+      - currency_code
+      - amount
+      - raw_amount
+      - min_quantity
+      - max_quantity
+      - price_set_id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The price's ID.
+        title:
+          type: string
+          title: title
+          description: The price's title.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The price's currency code.
+          example: usd
+        amount:
+          type: number
+          title: amount
+          description: The price's amount.
+        raw_amount:
+          type: object
+          description: The price's raw amount.
+        min_quantity:
+          type: number
+          title: min_quantity
+          description: The minimum quantity that must be available in the cart for the price to be applied.
+        max_quantity:
+          type: number
+          title: max_quantity
+          description: The maximum quantity allowed to be available in the cart for the price to be applied.
+        price_set_id:
+          type: string
+          title: price_set_id
+          description: The ID of the associated price set.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the price was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the price was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the price was deleted.
+    AdminInventoryLevel:
+      type: object
+      description: The location level's location levels.
+      x-schemaName: AdminInventoryLevel
+      required:
+      - id
+      - created_at
+      - updated_at
+      - deleted_at
+      - inventory_item_id
+      - location_id
+      - stocked_quantity
+      - reserved_quantity
+      - incoming_quantity
+      - metadata
+      - available_quantity
+      properties:
+        id:
+          type: string
+          title: id
+          description: The location level's ID.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The location level's created at.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The location level's updated at.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The location level's deleted at.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The location level's inventory item id.
+        location_id:
+          type: string
+          title: location_id
+          description: The location level's location id.
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The location level's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The location level's reserved quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The location level's incoming quantity.
+        metadata:
+          type: object
+          description: The location level's metadata.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        inventory_item:
+          type: object
+        available_quantity:
+          type: number
+          title: available_quantity
+          description: The location level's available quantity.
+    AdminTranslation:
+      type: object
+      description: The translation's details.
+      x-schemaName: AdminTranslation
+      required:
+      - id
+      - reference_id
+      - reference
+      - locale_code
+      - translations
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The translation's ID.
+        reference_id:
+          type: string
+          title: reference_id
+          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
+          example: prod_123
+        reference:
+          type: string
+          title: reference
+          description: The resource that the translation belongs to.
+          example: product
+        locale_code:
+          type: string
+          title: locale_code
+          description: The translation's locale code in BCP 47 format.
+          example: fr-FR
+        translations:
+          type: object
+          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
+          example:
+            title: Chaussures
+            description: Des chaussures élégantes.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date that the translation was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date that the translation was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date that the translation was deleted.
+    StoreProductOptionValue:
+      type: object
+      description: The product option value's details.
+      x-schemaName: StoreProductOptionValue
+      required:
+      - id
+      - value
+      properties:
+        id:
+          type: string
+          title: id
+          description: The value's ID.
+        value:
+          type: string
+          title: value
+          description: The value.
+        option:
+          type: object
+        option_id:
+          type: string
+          title: option_id
+          description: The ID of the option this value belongs to.
+        metadata:
+          type: object
+          description: The value's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the value was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the value was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the value was deleted.
+        rank:
+          type: number
+          title: rank
+          description: The rank of the value among other option values.
+    StoreProductVariant:
+      type: object
+      description: The variant's details.
+      x-schemaName: StoreProductVariant
+      properties:
+        options:
+          type: array
+          description: The variant's options.
+          items:
+            $ref: '#/components/schemas/StoreProductOptionValue'
+        product:
+          type: object
+        length:
+          type: number
+          title: length
+          description: The variant's length.
+        title:
+          type: string
+          title: title
+          description: The variant's title.
+        metadata:
+          type: object
+          description: The variant's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        id:
+          type: string
+          title: id
+          description: The variant's ID.
+        width:
+          type: number
+          title: width
+          description: The variant's width.
+        weight:
+          type: number
+          title: weight
+          description: The variant's weight.
+        height:
+          type: number
+          title: height
+          description: The variant's height.
+        origin_country:
+          type: string
+          title: origin_country
+          description: The variant's origin country.
+        hs_code:
+          type: string
+          title: hs_code
+          description: The variant's HS code.
+        mid_code:
+          type: string
+          title: mid_code
+          description: The variant's MID code.
+        material:
+          type: string
+          title: material
+          description: The variant's material.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the variant was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the variant was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the variant was deleted.
+        product_id:
+          type: string
+          title: product_id
+          description: The ID of the product this variant belongs to.
+        sku:
+          type: string
+          title: sku
+          description: The variant's SKU.
+        barcode:
+          type: string
+          title: barcode
+          description: The variant's barcode.
+        ean:
+          type: string
+          title: ean
+          description: The variant's EAN.
+        upc:
+          type: string
+          title: upc
+          description: The variant's UPC.
+        allow_backorder:
+          type: boolean
+          title: allow_backorder
+          description: Whether the variant can be ordered even if it's not in stock.
+        manage_inventory:
+          type: boolean
+          title: manage_inventory
+          description: Whether Medusa manages the variant's inventory. If disabled, the variant is always considered in stock.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/storefront-development/products/inventory
+            description: 'Storefront guide: How to retrieve a product variant''s inventory details.'
+        inventory_quantity:
+          type: number
+          title: inventory_quantity
+          description: The variant's inventory quantity. This property is only available if you pass `+variants.inventory_quantity` in the `fields` query parameter.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/storefront-development/products/inventory
+            description: 'Storefront guide: How to retrieve a product variant''s inventory details.'
+        variant_rank:
+          type: number
+          title: variant_rank
+          description: The variant's rank among its siblings.
+        calculated_price:
+          $ref: '#/components/schemas/BaseCalculatedPriceSet'
+        thumbnail:
+          type: string
+          title: thumbnail
+          description: The variant's thumbnail.
+        images:
+          type: array
+          description: The variant's images.
+          items:
+            $ref: '#/components/schemas/BaseProductImage'
+      required:
+      - options
+      - title
+      - id
+      - created_at
+      - updated_at
+      - thumbnail
+      - width
+      - weight
+      - length
+      - height
+      - origin_country
+      - hs_code
+      - mid_code
+      - material
+      - deleted_at
+      - manage_inventory
+      - allow_backorder
+      - sku
+      - ean
+      - upc
+      - barcode
+  responses:
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+  examples:
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+  securitySchemes:
+    api_token:
+      type: http
+      x-displayName: API Token
+      scheme: basic
+    jwt_token:
+      type: http
+      x-displayName: JWT Token
+      scheme: bearer
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      x-displayName: Cookie Session ID
+    reset_password:
+      type: http
+      x-displayName: Reset Password Token
+      scheme: bearer
+      x-is-auth: false
+x-refined-from:
+- medusa-admin-openapi.yaml
+- medusa-store-openapi.yaml
