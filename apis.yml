@@ -55,13 +55,13 @@ tags_raw:
 - GraphQL
 - Agentic Commerce
 - MCP
-description: 'Medusa is an open-source, MIT-licensed digital commerce platform built around a modular
-  architecture: a suite of Commerce Modules (cart, products, orders, pricing, promotions, tax, inventory,
-  fulfillment, payment), a Framework for building custom API routes, data models, workflows and integrations,
-  and a customizable Medusa Admin dashboard. Medusa ships two first-party REST APIs — a Store API for
-  storefronts and an Admin API for merchant operations — both documented with published OpenAPI 3.0 specifications
-  generated from the codebase. Medusa is self-hosted by default; MedusaJS, Inc. also operates Medusa Cloud,
-  a managed PaaS, and a remote MCP server plus published Claude Code agent skills for agentic development.'
+description: 'Medusa is an open-source, MIT-licensed digital commerce platform built around a modular architecture:
+  a suite of Commerce Modules (cart, products, orders, pricing, promotions, tax, inventory, fulfillment, payment),
+  a Framework for building custom API routes, data models, workflows and integrations, and a customizable Medusa
+  Admin dashboard. Medusa ships two first-party REST APIs — a Store API for storefronts and an Admin API for merchant
+  operations — both documented with published OpenAPI 3.0 specifications generated from the codebase. Medusa is
+  self-hosted by default; MedusaJS, Inc. also operates Medusa Cloud, a managed PaaS, and a remote MCP server plus
+  published Claude Code agent skills for agentic development.'
 apis:
 - aid: medusa:medusa-graphql-api
   name: Medusa GraphQL API
@@ -74,18 +74,16 @@ apis:
   properties:
   - url: graphql/medusa-graphql.md
     type: GraphQL
-  description: >-
-    Medusa's GraphQL surface over the store data core. The schema in this repo was derived from the OAS
+  description: Medusa's GraphQL surface over the store data core. The schema in this repo was derived from the OAS
     output schemas published in the medusajs/medusa repository; Medusa does not publish a hosted, introspectable
     GraphQL endpoint of its own because every Medusa application is self-hosted.
 - aid: medusa:medusa-mcp-server
   name: Medusa MCP Remote Server
-  description: >-
-    Medusa hosts a Streamable HTTP Model Context Protocol server at https://docs.medusajs.com/mcp. It
-    exposes the Medusa documentation to coding agents plus curated implementation-guide tools for data
-    migration from Shopify/WooCommerce/Magento, payment and fulfillment provider integration, product
-    extension, version upgrades and feedback submission. Access is limited to Medusa Cloud accounts and
-    is authenticated with OAuth 2.1 (RFC 9728 protected resource) or a Cloud personal access key.
+  description: Medusa hosts a Streamable HTTP Model Context Protocol server at https://docs.medusajs.com/mcp. It
+    exposes the Medusa documentation to coding agents plus curated implementation-guide tools for data migration
+    from Shopify/WooCommerce/Magento, payment and fulfillment provider integration, product extension, version upgrades
+    and feedback submission. Access is limited to Medusa Cloud accounts and is authenticated with OAuth 2.1 (RFC
+    9728 protected resource) or a Cloud personal access key.
   tags:
   - MCP
   - Agentic Commerce
@@ -107,15 +105,14 @@ apis:
     url: mcp/medusa-tool-crosswalk.yml
 - aid: medusa:medusa-api-keys-api
   name: Medusa Api Keys API
-  description: >-
-    API keys can be used for authentication or resource-scoping.
+  description: 'API keys can be used for authentication or resource-scoping.
 
 
-    A secret API key can be used to authenticate admin users.  A publishable API key can be used to scope
-    client requests to one or more sales channels.
+    A secret API key can be used to authenticate admin users.  A publishable API key can be used to scope client
+    requests to one or more sales channels.
 
 
-    These API routes allow admin users to manage both publishable and secret API keys.
+    These API routes allow admin users to manage both publishable and secret API keys.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -130,8 +127,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -139,8 +135,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-auth-api
@@ -160,8 +155,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -169,8 +163,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-auth-provider-api
@@ -188,8 +181,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -197,18 +189,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-campaigns-api
   name: Medusa Campaigns API
-  description: >-
-    A campaign is a group of promotions that have the same conditions, such as start and end dates.
+  description: 'A campaign is a group of promotions that have the same conditions, such as start and end dates.
 
 
-    These API routes allow admin users to manage campaigns, their conditions, and promotions that belong
-    to them.
+    These API routes allow admin users to manage campaigns, their conditions, and promotions that belong to them.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -221,8 +210,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -230,20 +218,18 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-carts-api
   name: Medusa Carts API
-  description: >-
-    A cart is a virtual shopping bag that customers can use to add items they want to purchase.
+  description: 'A cart is a virtual shopping bag that customers can use to add items they want to purchase.
 
 
     A cart is then used to checkout and place an order.
 
 
-    These API routes allow customers to create and manage their cart, and place an order.
+    These API routes allow customers to create and manage their cart, and place an order.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -258,8 +244,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -267,17 +252,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-claims-api
   name: Medusa Claims API
-  description: >-
-    An admin creates a claim for an order when a customer reports that an item is defective or incorrect.
+  description: 'An admin creates a claim for an order when a customer reports that an item is defective or incorrect.
 
 
-    Using these API routes, admin users manage order claims, their items, and more.
+    Using these API routes, admin users manage order claims, their items, and more.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -290,8 +273,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -299,18 +281,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-collections-api
   name: Medusa Collections API
-  description: >-
-    A product collection organizes products into a collection for marketing purposes. For example, a summer
-    collection.
+  description: 'A product collection organizes products into a collection for marketing purposes. For example, a
+    summer collection.
 
 
-    These API routes allow admin users to manage collections and the products in them.
+    These API routes allow admin users to manage collections and the products in them.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -325,8 +305,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -334,18 +313,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-currencies-api
   name: Medusa Currencies API
-  description: >-
-    A store can use unlimited currencies, and each region must be associated with at least one currency.
+  description: 'A store can use unlimited currencies, and each region must be associated with at least one currency.
 
 
-    Currencies are defined by the Currency Module. Currency API Routes allow admins to list and update
-    currencies.
+    Currencies are defined by the Currency Module. Currency API Routes allow admins to list and update currencies.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -360,8 +336,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -369,21 +344,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-customer-groups-api
   name: Medusa Customer Groups API
-  description: >-
-    Customers can be organized into groups. These groups are useful for segregation and marketing purposes.
+  description: 'Customers can be organized into groups. These groups are useful for segregation and marketing purposes.
 
 
-    For example, you can provide different prices for specific customers by creating a price list conditioned
-    to their group.
+    For example, you can provide different prices for specific customers by creating a price list conditioned to
+    their group.
 
 
-    These API routes allow admin users to manage groups and the customers in them.
+    These API routes allow admin users to manage groups and the customers in them.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -396,8 +369,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -405,18 +377,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-customers-api
   name: Medusa Customers API
-  description: >-
-    Customers can either be created when they register through the Store APIs, or created by the admin
+  description: 'Customers can either be created when they register through the Store APIs, or created by the admin
     using the Admin APIs.
 
 
-    These API routes allow admin users to manage customers in their store.
+    These API routes allow admin users to manage customers in their store.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -429,8 +399,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -438,18 +407,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-draft-orders-api
   name: Medusa Draft Orders API
-  description: >-
-    A draft order is an order created by the admin user. This is useful for orders created offline or
+  description: 'A draft order is an order created by the admin user. This is useful for orders created offline or
     from clients other than a storefront, such as a third-party integration.
 
 
-    These API routes allow admin users to create and manage draft orders.
+    These API routes allow admin users to create and manage draft orders.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -462,8 +429,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -471,17 +437,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-exchanges-api
   name: Medusa Exchanges API
-  description: >-
-    An exchange is the replacement of an item that the customer ordered with another.
+  description: 'An exchange is the replacement of an item that the customer ordered with another.
 
 
-    These API routes allow admin users to create and manage exchanges.
+    These API routes allow admin users to create and manage exchanges.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -494,8 +458,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -503,16 +466,14 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-feature-flags-api
   name: Medusa Feature Flags API
-  description: >-
-    Feature flags are used to enable or disable certain features in your Medusa application.
+  description: 'Feature flags are used to enable or disable certain features in your Medusa application.
 
-    These API routes allow admin users to view feature flags.
+    These API routes allow admin users to view feature flags.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -525,8 +486,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -534,17 +494,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-fulfillment-providers-api
   name: Medusa Fulfillment Providers API
-  description: >-
-    A fulfillment provider is a third-party integration or custom logic used to  fulfill an order's items.
+  description: 'A fulfillment provider is a third-party integration or custom logic used to  fulfill an order''s
+    items.
 
 
-    Fulfillment providers are installed as module providers.
+    Fulfillment providers are installed as module providers.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -557,8 +516,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -566,20 +524,18 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-fulfillment-sets-api
   name: Medusa Fulfillment Sets API
-  description: >-
-    A fulfillment set is a general form or way of fulfillment, such as "shipping" or "pick up".
+  description: 'A fulfillment set is a general form or way of fulfillment, such as "shipping" or "pick up".
 
 
     All fulfillment-related configurations in a store are related to a fulfillment set.
 
 
-    These API routes allow admin users to manage fulfillment sets.
+    These API routes allow admin users to manage fulfillment sets.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -592,8 +548,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -601,18 +556,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-fulfillments-api
   name: Medusa Fulfillments API
-  description: >-
-    A fulfillment is created for items in an order, return, exchanges, or claims to deliver items to/from
+  description: 'A fulfillment is created for items in an order, return, exchanges, or claims to deliver items to/from
     the customer.
 
 
-    These API routes allow admin users to manage fulfillments.
+    These API routes allow admin users to manage fulfillments.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -625,8 +578,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -634,27 +586,23 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-gift-cards-api
   name: Medusa Gift Cards API
-  description: >-
-    A gift card is a prepaid card that can be used to pay for items during checkout.
+  description: 'A gift card is a prepaid card that can be used to pay for items during checkout.
 
-    Gift cards can be purchased by customers, or created by admin users. When a gift card is redeemed,
-    its amount is added to the customer's store credit account, which can then be used to pay for items
-    during checkout.
+    Gift cards can be purchased by customers, or created by admin users. When a gift card is redeemed, its amount
+    is added to the customer''s store credit account, which can then be used to pay for items during checkout.
 
-    These API routes allow admin users to manage gift cards, transfer gift cards between customers, and
-    more.
+    These API routes allow admin users to manage gift cards, transfer gift cards between customers, and more.
 
     <Note>
 
     Gift Card routes are only available through the [Loyalty Plugin](https://docs.medusajs.com/resources/commerce-modules/loyalty).
 
-    </Note>
+    </Note>'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -667,8 +615,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -676,18 +623,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-index-api
   name: Medusa Index API
-  description: >-
-    The Index Module is a tool to perform high-performance queries across modules, for example, to filter
+  description: 'The Index Module is a tool to perform high-performance queries across modules, for example, to filter
     linked modules.
 
-    The Index Module is currently experimental and is hidden behind a feature flag. Learn more about it
-    and how to enable it in the [Index Module guide](https://docs.medusajs.com/learn/fundamentals/module-links/index-module).
+    The Index Module is currently experimental and is hidden behind a feature flag. Learn more about it and how
+    to enable it in the [Index Module guide](https://docs.medusajs.com/learn/fundamentals/module-links/index-module).'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -700,8 +645,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -709,17 +653,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-inventory-items-api
   name: Medusa Inventory Items API
-  description: >-
-    An inventory item is a stock-kept product whose inventory is managed.
+  description: 'An inventory item is a stock-kept product whose inventory is managed.
 
 
-    These API routes allow admin users to manage inventory items.
+    These API routes allow admin users to manage inventory items.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -732,8 +674,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -741,18 +682,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-invites-api
   name: Medusa Invites API
-  description: >-
-    An admin can invite new users to manage their team. This allows new users to authenticate as admins
+  description: 'An admin can invite new users to manage their team. This allows new users to authenticate as admins
     and perform admin functionalities.
 
 
-    These API routes allow admin users to manage invites.
+    These API routes allow admin users to manage invites.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -765,8 +704,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -774,17 +712,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-layouts-api
   name: Medusa Layouts API
-  description: >-
-    An admin can modify the layout of their admin dashboard. This allows admins to customize their dashboard
+  description: 'An admin can modify the layout of their admin dashboard. This allows admins to customize their dashboard
     to their preferences and needs.
 
-    These API routes allow admin users to manage layouts.
+    These API routes allow admin users to manage layouts.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -797,8 +733,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -806,16 +741,14 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-locales-api
   name: Medusa Locales API
-  description: >-
-    A locale is a language that content is translated into for customers to view in a storefront.
+  description: 'A locale is a language that content is translated into for customers to view in a storefront.
 
-    Medusa installs locales by default. These API routes allow admin users to retrieve and view locales.
+    Medusa installs locales by default. These API routes allow admin users to retrieve and view locales.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -828,8 +761,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -837,17 +769,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-multi-factor-authentication-api
   name: Medusa Multi-Factor Authentication API
-  description: >-
-    Multi-factor authentication (MFA) adds an extra layer of security to admin accounts by requiring additional
-    verification factors during login, such as a TOTP code or a recovery code.
+  description: 'Multi-factor authentication (MFA) adds an extra layer of security to admin accounts by requiring
+    additional verification factors during login, such as a TOTP code or a recovery code.
 
-    These API routes allow admin users to manage their MFA factors, challenges, and recovery codes.
+    These API routes allow admin users to manage their MFA factors, challenges, and recovery codes.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -860,8 +790,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -869,19 +798,17 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-multi-factor-authentication-mfa-factors-api
   name: Medusa Multi-Factor Authentication (MFA) Factors API
-  description: >-
-    Multi-factor authentication (MFA) factors are additional ways to verify a customer's identity during
-    login, in addition to their password. Examples of MFA factors include authenticator apps, SMS messages,
-    and email.
+  description: 'Multi-factor authentication (MFA) factors are additional ways to verify a customer''s identity during
+    login, in addition to their password. Examples of MFA factors include authenticator apps, SMS messages, and
+    email.
 
-    These API routes allow customers to manage their MFA factors, such as enabling an authenticator app
-    or generating recovery codes.
+    These API routes allow customers to manage their MFA factors, such as enabling an authenticator app or generating
+    recovery codes.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -894,8 +821,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -903,17 +829,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-notifications-api
   name: Medusa Notifications API
-  description: >-
-    A notification informs an admin user of store changes or status changes of background tasks.
+  description: 'A notification informs an admin user of store changes or status changes of background tasks.
 
 
-    These API routes allow admin users to view and manage notifications.
+    These API routes allow admin users to view and manage notifications.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -928,8 +852,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -937,17 +860,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-order-changes-api
   name: Medusa Order Changes API
-  description: >-
-    An order change is a proposed change to an order, such as adding or removing items, changing shipping
+  description: 'An order change is a proposed change to an order, such as adding or removing items, changing shipping
     methods, and more. They can be associated with order edits, claims, or exchanges.
 
-    These API routes allow admin users to manage order changes.
+    These API routes allow admin users to manage order changes.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -960,8 +881,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -969,23 +889,21 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-order-edits-api
   name: Medusa Order Edits API
-  description: >-
-    An order edit is a change to an order's details, such as items, shipping methods, and more.
+  description: 'An order edit is a change to an order''s details, such as items, shipping methods, and more.
 
 
-    Changes made by an order edit are only applied on the order once they're confirmed.
+    Changes made by an order edit are only applied on the order once they''re confirmed.
 
 
-    The order's previous version is retained due to versioning.
+    The order''s previous version is retained due to versioning.
 
 
-    These API routes allow admin users to make edits to an order and manage those edits.
+    These API routes allow admin users to make edits to an order and manage those edits.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -998,8 +916,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1007,20 +924,18 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-orders-api
   name: Medusa Orders API
-  description: >-
-    An order is a purchase made by a customer through a storefront.
+  description: 'An order is a purchase made by a customer through a storefront.
 
 
     Orders can also originally be created as draft orders.
 
 
-    These API routes allow admin users to view and manage orders.
+    These API routes allow admin users to view and manage orders.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1035,8 +950,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1044,25 +958,23 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-payment-collections-api
   name: Medusa Payment Collections API
-  description: >-
-    A payment collection is one or more payments of an order. They're also used for outstanding payments
+  description: 'A payment collection is one or more payments of an order. They''re also used for outstanding payments
     due to order exchanges or claims.
 
 
     Every purchase or request for payment starts with a payment collection.
 
 
-    A payment collection holds the payment sessions used to authorize the payment amount, and the payments
-    to be captured / refunded.
+    A payment collection holds the payment sessions used to authorize the payment amount, and the payments to be
+    captured / refunded.
 
 
-    These API routes allow admin users to manage payment collections.
+    These API routes allow admin users to manage payment collections.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1075,8 +987,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1084,22 +995,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-payment-providers-api
   name: Medusa Payment Providers API
-  description: >-
-    Each region has a set of payment providers enabled.
+  description: 'Each region has a set of payment providers enabled.
 
 
-    During checkout, you retrieve the available payment providers in the customer's region to show them
-    to the customer. Customers then choose their preferred provider to authorize their payment and place
-    their order.
+    During checkout, you retrieve the available payment providers in the customer''s region to show them to the
+    customer. Customers then choose their preferred provider to authorize their payment and place their order.
 
 
-    These API routes allow customers to view available payment providers in their region.
+    These API routes allow customers to view available payment providers in their region.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1112,8 +1020,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1121,21 +1028,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-payments-api
   name: Medusa Payments API
-  description: >-
-    A payment is created when a payment amount is authorized. The payment can then be captured or refunded.
+  description: 'A payment is created when a payment amount is authorized. The payment can then be captured or refunded.
 
 
-    A payment is created from the payment session that was authorized, and it belongs to the payment session's
+    A payment is created from the payment session that was authorized, and it belongs to the payment session''s
     collection.
 
 
-    These API routes allow admin users to manage payments.
+    These API routes allow admin users to manage payments.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1148,8 +1053,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1157,19 +1061,17 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-plugins-api
   name: Medusa Plugins API
-  description: >-
-    A plugin is a package of reusable Medusa customizations that you can install in any Medusa application.
+  description: 'A plugin is a package of reusable Medusa customizations that you can install in any Medusa application.
 
-    Plugins can be used to add new functionality, such as wishlists, or integrate third-party services,
-    such as payment providers.
+    Plugins can be used to add new functionality, such as wishlists, or integrate third-party services, such as
+    payment providers.
 
-    These API routes allow admin users to retrieve plugins installed in their Medusa application.
+    These API routes allow admin users to retrieve plugins installed in their Medusa application.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1182,8 +1084,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1191,21 +1092,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-price-lists-api
   name: Medusa Price Lists API
-  description: >-
-    A price list is a group of prices applied if the specified conditions and rules are satisfied.
+  description: 'A price list is a group of prices applied if the specified conditions and rules are satisfied.
 
 
-    Price lists are useful for sales or special prices for special conditions, such as applying prices
-    for a set of customers.
+    Price lists are useful for sales or special prices for special conditions, such as applying prices for a set
+    of customers.
 
 
-    These API routes allow admin users to manage price lists.
+    These API routes allow admin users to manage price lists.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1218,8 +1117,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1227,18 +1125,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-price-preferences-api
   name: Medusa Price Preferences API
-  description: >-
-    A price preference is used to specify whether tax-inclusiveness is enabled for a context, such as
+  description: 'A price preference is used to specify whether tax-inclusiveness is enabled for a context, such as
     a region or currency code.
 
 
-    These API routes allow admin users to manage whether a region or currency is tax inclusive.
+    These API routes allow admin users to manage whether a region or currency is tax inclusive.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1251,8 +1147,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1260,21 +1155,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-product-categories-api
   name: Medusa Product Categories API
-  description: >-
-    Products can be categorized into categories.
+  description: 'Products can be categorized into categories.
 
 
-    Categories are nested and their heirarchy can be managed, giving admin users flexibility in how they
-    categorize their products.
+    Categories are nested and their heirarchy can be managed, giving admin users flexibility in how they categorize
+    their products.
 
 
-    These API routes allow admin users to manage categories and the products in them.
+    These API routes allow admin users to manage categories and the products in them.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1287,8 +1180,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1296,18 +1188,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-product-options-api
   name: Medusa Product Options API
-  description: >-
-    A product option is a way to define different options for a product, such as "Size" or "Color". Product
-    options can be created globally and used by multiple products, or they can be exclusive to a specific
+  description: 'A product option is a way to define different options for a product, such as "Size" or "Color".
+    Product options can be created globally and used by multiple products, or they can be exclusive to a specific
     product.
 
-    These API routes allow admin users to manage product options.
+    These API routes allow admin users to manage product options.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1320,8 +1210,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1329,20 +1218,18 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-product-tags-api
   name: Medusa Product Tags API
-  description: >-
-    A tag is another way of organizing a product. Each tag has a name and a value.
+  description: 'A tag is another way of organizing a product. Each tag has a name and a value.
 
 
     Products are organized into the same tag if they have the same value.
 
 
-    These API routes allow admin users to manage product tags.
+    These API routes allow admin users to manage product tags.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1355,8 +1242,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1364,20 +1250,18 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-product-types-api
   name: Medusa Product Types API
-  description: >-
-    Products can be organized into types. Each type has a name and a value.
+  description: 'Products can be organized into types. Each type has a name and a value.
 
 
     Products are organized into the same type if they have the same value.
 
 
-    These API routes allow admin users to manage product types.
+    These API routes allow admin users to manage product types.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1390,8 +1274,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1399,21 +1282,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-product-variants-api
   name: Medusa Product Variants API
-  description: >-
-    A product variant is a saleable form of the product.
+  description: 'A product variant is a saleable form of the product.
 
 
-    Each variant has different option values. For example, a "Shirt" product may have a  "Blue" variant
-    and a "Green" variant. Customers choose from these variants when they buy the product.
+    Each variant has different option values. For example, a "Shirt" product may have a  "Blue" variant and a "Green"
+    variant. Customers choose from these variants when they buy the product.
 
 
-    These API routes allow admin users to manage product variants.
+    These API routes allow admin users to manage product variants.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1426,8 +1307,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1435,23 +1315,21 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-products-api
   name: Medusa Products API
-  description: >-
-    A product is a set of variants that the customer chooses from when making a purchase.
+  description: 'A product is a set of variants that the customer chooses from when making a purchase.
 
 
     A product can be organized into categories or collections.
 
 
-    A product can have many options, and variants for each of these options' values.
+    A product can have many options, and variants for each of these options'' values.
 
 
-    These API routes allow admin users to manage products.
+    These API routes allow admin users to manage products.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1466,8 +1344,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1475,29 +1352,26 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-promotions-api
   name: Medusa Promotions API
-  description: >-
-    A promotion discounts an amount or percentage off a cart's items, shipping methods, or the entire
+  description: 'A promotion discounts an amount or percentage off a cart''s items, shipping methods, or the entire
     order.
 
 
-    Promotions have different types, such as a `standard` promotion that just discounts an amount, or
-    a `buyget` promotion to enforce a "buy X get Y" promotion.
+    Promotions have different types, such as a `standard` promotion that just discounts an amount, or a `buyget`
+    promotion to enforce a "buy X get Y" promotion.
 
 
-    A promotion has rules to restrict how and when they're applied.
+    A promotion has rules to restrict how and when they''re applied.
 
 
-    Promotions belong to a campaign, which sets conditions on the promotion such as when it starts and
-    ends.
+    Promotions belong to a campaign, which sets conditions on the promotion such as when it starts and ends.
 
 
-    These API routes allow admin users to manage promotions.
+    These API routes allow admin users to manage promotions.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1510,8 +1384,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1519,8 +1392,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-property-labels-api
@@ -1538,8 +1410,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1547,18 +1418,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-refund-reasons-api
   name: Medusa Refund Reasons API
-  description: >-
-    A refund reason is a possible reason used when issuing a refund to the customer, such as when returning
+  description: 'A refund reason is a possible reason used when issuing a refund to the customer, such as when returning
     an item and refunding the customer.
 
 
-    These API routes allow admin users to manage refund reasons.
+    These API routes allow admin users to manage refund reasons.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1571,8 +1440,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1580,17 +1448,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-regions-api
   name: Medusa Regions API
-  description: >-
-    Regions are different countries or geographical regions that the commerce store serves customers in.
+  description: 'Regions are different countries or geographical regions that the commerce store serves customers
+    in.
 
 
-    These API routes allow admin users to manage regions, their providers, and more.
+    These API routes allow admin users to manage regions, their providers, and more.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1603,8 +1470,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1612,21 +1478,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-reservations-api
   name: Medusa Reservations API
-  description: >-
-    A reservation is unavailable quantity of an inventory item in a location.
+  description: 'A reservation is unavailable quantity of an inventory item in a location.
 
 
-    A reservation is created automatically for variants in an order whose `manage_inventory` is enabled.
-    Admin users can also create reservations manually.
+    A reservation is created automatically for variants in an order whose `manage_inventory` is enabled. Admin users
+    can also create reservations manually.
 
 
-    These API routes allow admin users to manage reservations.
+    These API routes allow admin users to manage reservations.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1639,8 +1503,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1648,18 +1511,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-return-reasons-api
   name: Medusa Return Reasons API
-  description: >-
-    A return reason is a possible reason that an item is returned from the customer, such as when returning
+  description: 'A return reason is a possible reason that an item is returned from the customer, such as when returning
     an item.
 
 
-    These API routes allow admin users to manage return reasons.
+    These API routes allow admin users to manage return reasons.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1672,8 +1533,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1681,21 +1541,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-returns-api
   name: Medusa Returns API
-  description: >-
-    Admin users create a return when a customer returns an item to them.
+  description: 'Admin users create a return when a customer returns an item to them.
 
 
-    Returns can also be created by customers through the storefront, and admins will be able to manage
-    them and make refunds, if necessary. Refunds are made through the [Payment API Routes](#payment)
+    Returns can also be created by customers through the storefront, and admins will be able to manage them and
+    make refunds, if necessary. Refunds are made through the [Payment API Routes](#payment)
 
 
-    These API routes allow admin users to manage returns.
+    These API routes allow admin users to manage returns.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1708,8 +1566,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1717,18 +1574,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-sales-channels-api
   name: Medusa Sales Channels API
-  description: >-
-    A sales channel indicates a channel where products can be sold in. For example, a webshop or a mobile
+  description: 'A sales channel indicates a channel where products can be sold in. For example, a webshop or a mobile
     app.
 
 
-    These API routes allow admins to manage sales channels and the products available in them.
+    These API routes allow admins to manage sales channels and the products available in them.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1741,8 +1596,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1750,8 +1604,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-search-api
@@ -1769,8 +1622,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1778,17 +1630,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-shipping-option-types-api
   name: Medusa Shipping Option Types API
-  description: >-
-    Shipping option types define a group of shipping options with shared shipping characterstics. For
+  description: 'Shipping option types define a group of shipping options with shared shipping characterstics. For
     example,  you may have "Standard" and "Express" shipping option types.
 
-    These API routes allow admins to manage shipping option types.
+    These API routes allow admins to manage shipping option types.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1801,8 +1651,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1810,24 +1659,22 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-shipping-options-api
   name: Medusa Shipping Options API
-  description: >-
-    A shipping option is a way of shipping an item to or from the customer.
+  description: 'A shipping option is a way of shipping an item to or from the customer.
 
 
     Shipping options are associated with the fulfillment provider used to handle their fulfillment.
 
 
-    Shipping options can be restricted geographically by service zones, and by custom rules, such as an
-    item's weight or the customer's group.
+    Shipping options can be restricted geographically by service zones, and by custom rules, such as an item''s
+    weight or the customer''s group.
 
 
-    These API routes allow admins to manage shipping options.
+    These API routes allow admins to manage shipping options.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1840,8 +1687,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1849,18 +1695,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-shipping-profiles-api
   name: Medusa Shipping Profiles API
-  description: >-
-    A shipping profile defines a type of items that are shipping in a similar manner. For example,  digital
+  description: 'A shipping profile defines a type of items that are shipping in a similar manner. For example,  digital
     products may have a `digital` shipping profile.
 
 
-    These API routes allow admin users to manage shipping profiles.
+    These API routes allow admin users to manage shipping profiles.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1873,8 +1717,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1882,24 +1725,22 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-stock-locations-api
   name: Medusa Stock Locations API
-  description: >-
-    A stock location is where stock-kept items (products) are kept.
+  description: 'A stock location is where stock-kept items (products) are kept.
 
 
     Stock locations are linked to fulfillment providers used to fulfill items from this location.
 
 
-    A stock location is also link to a fulfillment set, indicating where an item is fulfilled from  when
-    an order is placed.
+    A stock location is also link to a fulfillment set, indicating where an item is fulfilled from  when an order
+    is placed.
 
 
-    These API routes allow admin users to manage stock locations and their linked data.
+    These API routes allow admin users to manage stock locations and their linked data.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1912,8 +1753,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1921,18 +1761,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-store-credit-accounts-api
   name: Medusa Store Credit Accounts API
-  description: >-
-    A store credit account is a ledger of store credit transactions for a customer. They hold the customer's
+  description: 'A store credit account is a ledger of store credit transactions for a customer. They hold the customer''s
     store credit balance,  including their credit and debit amounts.
 
-    Store credit accounts allow you to build features that let customers pay for items using their store
-    credit balance, such as gift cards or loyalty points.
+    Store credit accounts allow you to build features that let customers pay for items using their store credit
+    balance, such as gift cards or loyalty points.
 
     These API routes allow admin users to manage store credit accounts, their transactions, and more.
 
@@ -1940,7 +1778,7 @@ apis:
 
     Store Credit Account routes are only available for Cloud users using the [Loyalty Plugin](https://docs.medusajs.com/resources/commerce-modules/loyalty).
 
-    </Note>
+    </Note>'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1953,8 +1791,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1962,22 +1799,20 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-stores-api
   name: Medusa Stores API
-  description: >-
-    A store holds the main configuration and information of your commerce store, such as supported currencies
+  description: 'A store holds the main configuration and information of your commerce store, such as supported currencies
     or default sales channel.
 
 
-    By default, the Medusa application has one default store. There are no API routes to create more stores.
-    Instead, you'd have  to handle that customization manually.
+    By default, the Medusa application has one default store. There are no API routes to create more stores. Instead,
+    you''d have  to handle that customization manually.
 
 
-    These API routes allow admin users to manage their store.
+    These API routes allow admin users to manage their store.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -1990,8 +1825,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -1999,17 +1833,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-tax-providers-api
   name: Medusa Tax Providers API
-  description: >-
-    A tax provider is a third-party integration or custom logic used to calculate taxes for a cart or
+  description: 'A tax provider is a third-party integration or custom logic used to calculate taxes for a cart or
     an order.
 
-    These API routes allow admin users to manage tax providers installed in their Medusa application.
+    These API routes allow admin users to manage tax providers installed in their Medusa application.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -2022,8 +1854,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -2031,22 +1862,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-tax-rates-api
   name: Medusa Tax Rates API
-  description: >-
-    A tax rate is a percentage amount used to calculate the tax amount of each taxable item's price, such
-    as line items or shipping methods.
+  description: 'A tax rate is a percentage amount used to calculate the tax amount of each taxable item''s price,
+    such as line items or shipping methods.
 
 
-    Each tax region has a default tax rate. You can create tax rates that override the default using tax
-    rules.
+    Each tax region has a default tax rate. You can create tax rates that override the default using tax rules.
 
 
-    These API routes allow admin users to manage tax rates and their rules.
+    These API routes allow admin users to manage tax rates and their rules.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -2059,8 +1887,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -2068,21 +1895,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-tax-regions-api
   name: Medusa Tax Regions API
-  description: >-
-    A tax region is a region's tax settings. It has tax rates and rules. So, after you create a region,
+  description: 'A tax region is a region''s tax settings. It has tax rates and rules. So, after you create a region,
     you must create a tax region for it.
 
 
     A tax region can extend settings from a parent tax region.
 
 
-    These API routes allow admin users to manage tax regions.
+    These API routes allow admin users to manage tax regions.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -2095,8 +1920,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -2104,17 +1928,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-translations-api
   name: Medusa Translations API
-  description: >-
-    A translation is a localized version of content in a specific locale. For example, a product description
+  description: 'A translation is a localized version of content in a specific locale. For example, a product description
     in French.
 
-    These API routes allow admin users to manage translations for different locales and resources.
+    These API routes allow admin users to manage translations for different locales and resources.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -2127,8 +1949,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -2136,18 +1957,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-uploads-api
   name: Medusa Uploads API
-  description: >-
-    Use these API routes to upload files to your Medusa application using the installed file module provider.
+  description: 'Use these API routes to upload files to your Medusa application using the installed file module
+    provider.
 
 
-    You can upload public files, such as product images, or private files, such as CSV files used to import
-    products.
+    You can upload public files, such as product images, or private files, such as CSV files used to import products.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -2160,8 +1979,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -2169,21 +1987,19 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-users-api
   name: Medusa Users API
-  description: >-
-    A user is an admin user that can authenticate and perform functionalities as an admin user.
+  description: 'A user is an admin user that can authenticate and perform functionalities as an admin user.
 
 
-    An admin user can invite other users to join their team. Once they accept the invite, they'll become
-    admin users as well.
+    An admin user can invite other users to join their team. Once they accept the invite, they''ll become admin
+    users as well.
 
 
-    These API routes allow admin users to manage their team.
+    These API routes allow admin users to manage their team.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -2198,8 +2014,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -2207,17 +2022,15 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-views-api
   name: Medusa Views API
-  description: >-
-    A view configuration is a saved data-table view for an entity, such as products or orders. It lets
+  description: 'A view configuration is a saved data-table view for an entity, such as products or orders. It lets
     admin users customize how a table shows its data, then save that customization as a reusable view.
 
-    These API routes allow admin users to manage the system default and personal views.
+    These API routes allow admin users to manage the system default and personal views.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -2230,8 +2043,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -2239,18 +2051,16 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 - aid: medusa:medusa-workflows-executions-api
   name: Medusa Workflows Executions API
-  description: >-
-    These API routes allow you to track workflow executions in your Medusa application.
+  description: 'These API routes allow you to track workflow executions in your Medusa application.
 
 
-    Depending on the workflow engine you use, executions may only be retained for a short while, or only
-    until the Medusa application is restarted.
+    Depending on the workflow engine you use, executions may only be retained for a short while, or only until the
+    Medusa application is restarted.'
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
@@ -2263,8 +2073,7 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/store
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/store/openapi.full.yaml
   - type: Authentication
     url: https://docs.medusajs.com/api/store#authentication
   - type: Documentation
@@ -2272,8 +2081,359 @@ apis:
   - type: APIReference
     url: https://docs.medusajs.com/api/admin
   - type: OpenAPI Source
-    url: >-
-      https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+    url: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:js-sdk
+  name: Medusa JS SDK (@medusajs/js-sdk)
+  description: Official TypeScript / JavaScript SDK wrapping the Store and Admin REST APIs - typed clients, auth
+    helpers, and ergonomic resource methods. Distributed via npm as @medusajs/js-sdk with shared @medusajs/types.
+  humanURL: https://docs.medusajs.com/resources/js-sdk
+  baseURL: https://www.npmjs.com/package/@medusajs/js-sdk
+  tags:
+  - SDK
+  - JavaScript
+  - TypeScript
+  properties:
+  - type: Documentation
+    url: https://docs.medusajs.com/resources/js-sdk
+  - type: Package
+    url: https://www.npmjs.com/package/@medusajs/js-sdk
+  - type: Repository
+    url: https://github.com/medusajs/medusa/tree/develop/packages/core/js-sdk
+- aid: medusa:framework
+  name: Medusa Framework (Modules, Workflows, Routes)
+  description: Server-side framework primitives for extending Medusa - custom API Routes, Modules with their own
+    data models (DML), Module Links, Workflows for transactional business logic, Subscribers and Scheduled Jobs
+    for event-driven and recurring work, and Admin Extensions for the dashboard.
+  humanURL: https://docs.medusajs.com/learn/fundamentals/framework
+  baseURL: https://docs.medusajs.com/learn/fundamentals/framework
+  tags:
+  - Framework
+  - Workflows
+  - Modules
+  - Extensions
+  properties:
+  - type: Documentation
+    url: https://docs.medusajs.com/learn/fundamentals/framework
+  - type: Repository
+    url: https://github.com/medusajs/medusa
+- aid: medusa:commerce-modules
+  name: Medusa Commerce Modules
+  description: First-party domain modules that compose into a Medusa application - Cart, Payment, Customer, Pricing,
+    Promotion, Product, Order, Inventory, Fulfillment, Stock Location, Region, Sales Channel, Tax, Currency, API
+    Keys, User, and Auth. Each module ships its own data models, services, and APIs and can be replaced or extended.
+  humanURL: https://docs.medusajs.com/resources/commerce-modules
+  baseURL: https://docs.medusajs.com/resources/commerce-modules
+  tags:
+  - Modules
+  - Commerce
+  - Domain Models
+  properties:
+  - type: Documentation
+    url: https://docs.medusajs.com/resources/commerce-modules
+  - type: Repository
+    url: https://github.com/medusajs/medusa/tree/develop/packages/modules
+- aid: medusa:cli
+  name: Medusa CLI (create-medusa-app)
+  description: Command-line tooling for scaffolding new Medusa projects, generating modules and migrations, running
+    the server in dev, and managing common project tasks.
+  humanURL: https://docs.medusajs.com/learn/installation
+  baseURL: https://github.com/medusajs/medusa
+  tags:
+  - CLI
+  - Tooling
+  - Developer Experience
+  properties:
+  - type: Documentation
+    url: https://docs.medusajs.com/learn/installation
+  - type: Repository
+    url: https://github.com/medusajs/medusa
+  - type: Package
+    url: https://www.npmjs.com/package/create-medusa-app
+- aid: medusa:nextjs-starter
+  name: Medusa Next.js Storefront Starter
+  description: Reference Next.js storefront talking to the Medusa Store API - cart, checkout, account, product browse,
+    payments, and search. Used as the canonical starting point for headless storefronts.
+  humanURL: https://docs.medusajs.com/resources/nextjs-starter
+  baseURL: https://github.com/medusajs/nextjs-starter-medusa
+  tags:
+  - Starter
+  - Next.js
+  - Storefront
+  properties:
+  - type: Repository
+    url: https://github.com/medusajs/nextjs-starter-medusa
+  - type: Documentation
+    url: https://docs.medusajs.com/resources/nextjs-starter
+- aid: medusa:mcp-server
+  name: Medusa Docs MCP Server
+  description: Remote Model Context Protocol server exposing the Medusa documentation to LLM-powered coding assistants
+    - lets agents look up commerce modules, framework concepts, and APIs while writing Medusa code.
+  humanURL: https://docs.medusajs.com/learn/introduction/build-with-llms-ai
+  baseURL: https://docs.medusajs.com/learn/introduction/build-with-llms-ai
+  tags:
+  - MCP
+  - Artificial Intelligence
+  - LLM
+  - Documentation
+  tags_raw:
+  - MCP
+  - AI
+  - LLM
+  - Documentation
+  properties:
+  - type: Documentation
+    url: https://docs.medusajs.com/learn/introduction/build-with-llms-ai
+- aid: medusa:core-repo
+  name: Medusa Core Repository
+  description: Monorepo with the Medusa server, Admin, Commerce Modules, Framework, and packages. MIT-licensed reference
+    for self-hosting and for building modules and plugins.
+  humanURL: https://github.com/medusajs/medusa
+  baseURL: https://github.com/medusajs/medusa
+  tags:
+  - Open-Source
+  - Repository
+  - Monorepo
+  tags_raw:
+  - Open Source
+  - Repository
+  - Monorepo
+  properties:
+  - type: Repository
+    url: https://github.com/medusajs/medusa
+  - type: ReleaseNotes
+    url: https://github.com/medusajs/medusa/releases
+  - type: License
+    url: https://github.com/medusajs/medusa/blob/develop/LICENSE
+- aid: medusa:medusa-js-auth-api
+  name: Medusa Auth API
+  description: The Auth API from Medusa — 2 operation(s) for auth.
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://docs.medusajs.com/api/store
+  tags:
+  - Authentication
+  tags_raw:
+  - Auth
+  properties:
+  - type: OpenAPI
+    url: openapi/medusa-js-auth-api-openapi.yml
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:medusa-js-carts-api
+  name: Medusa Carts API
+  description: The Carts API from Medusa — 3 operation(s) for carts.
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://docs.medusajs.com/api/store
+  tags:
+  - Cart
+  tags_raw:
+  - Carts
+  properties:
+  - type: OpenAPI
+    url: openapi/medusa-js-carts-api-openapi.yml
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:medusa-js-categories-api
+  name: Medusa Categories API
+  description: The Categories API from Medusa — 1 operation(s) for categories.
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://docs.medusajs.com/api/store
+  tags:
+  - Categories
+  properties:
+  - type: OpenAPI
+    url: openapi/medusa-js-categories-api-openapi.yml
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:medusa-js-collections-api
+  name: Medusa Collections API
+  description: The Collections API from Medusa — 1 operation(s) for collections.
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://docs.medusajs.com/api/store
+  tags:
+  - Collection
+  tags_raw:
+  - Collections
+  properties:
+  - type: OpenAPI
+    url: openapi/medusa-js-collections-api-openapi.yml
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:medusa-js-customers-api
+  name: Medusa Customers API
+  description: The Customers API from Medusa — 2 operation(s) for customers.
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://docs.medusajs.com/api/store
+  tags:
+  - Customers
+  properties:
+  - type: OpenAPI
+    url: openapi/medusa-js-customers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:medusa-js-orders-api
+  name: Medusa Orders API
+  description: The Orders API from Medusa — 2 operation(s) for orders.
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://docs.medusajs.com/api/store
+  tags:
+  - Order
+  tags_raw:
+  - Orders
+  properties:
+  - type: OpenAPI
+    url: openapi/medusa-js-orders-api-openapi.yml
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:medusa-js-payments-api
+  name: Medusa Payments API
+  description: The Payments API from Medusa — 1 operation(s) for payments.
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://docs.medusajs.com/api/store
+  tags:
+  - Payments
+  properties:
+  - type: OpenAPI
+    url: openapi/medusa-js-payments-api-openapi.yml
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:medusa-js-products-api
+  name: Medusa Products API
+  description: The Products API from Medusa — 2 operation(s) for products.
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://docs.medusajs.com/api/store
+  tags:
+  - Product
+  tags_raw:
+  - Products
+  properties:
+  - type: OpenAPI
+    url: openapi/medusa-js-products-api-openapi.yml
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:medusa-js-regions-api
+  name: Medusa Regions API
+  description: The Regions API from Medusa — 2 operation(s) for regions.
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://docs.medusajs.com/api/store
+  tags:
+  - Regions
+  properties:
+  - type: OpenAPI
+    url: openapi/medusa-js-regions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
+  - type: Authentication
+    url: https://docs.medusajs.com/api/admin#authentication
+- aid: medusa:medusa-js-shipping-api
+  name: Medusa Shipping API
+  description: The Shipping API from Medusa — 1 operation(s) for shipping.
+  humanURL: https://docs.medusajs.com/api/store
+  baseURL: https://docs.medusajs.com/api/store
+  tags:
+  - Shipping
+  properties:
+  - type: OpenAPI
+    url: openapi/medusa-js-shipping-api-openapi.yml
+  - type: Documentation
+    url: https://docs.medusajs.com/api/store
+  - type: APIReference
+    url: https://docs.medusajs.com/api/store
+  - type: Authentication
+    url: https://docs.medusajs.com/api/store#authentication
+  - type: Documentation
+    url: https://docs.medusajs.com/api/admin
+  - type: APIReference
+    url: https://docs.medusajs.com/api/admin
   - type: Authentication
     url: https://docs.medusajs.com/api/admin#authentication
 common:
@@ -2366,6 +2526,8 @@ common:
   url: rate-limits/medusa-rate-limits.yml
 - type: GraphQL
   url: graphql/medusa-graphql.md
+- type: APIReference
+  url: https://docs.medusajs.com/api/admin
 created: '2026-07-22'
 modified: '2026-08-26'
 maintainers:
