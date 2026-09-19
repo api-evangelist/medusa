@@ -485,6 +485,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - Exchange
+  tags_raw:
   - Exchanges
   properties:
   - type: OpenAPI
@@ -2118,6 +2120,8 @@ apis:
   humanURL: https://docs.medusajs.com/api/store
   baseURL: https://{medusa-backend-domain}
   tags:
+  - Translation
+  tags_raw:
   - Translations
   properties:
   - type: OpenAPI
