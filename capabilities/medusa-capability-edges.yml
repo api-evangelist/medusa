@@ -1,0 +1,195 @@
+slug: medusa
+provider: Medusa
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Transportation & Logistics
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 17
+edges:
+- tag: Promotions
+  spec_file: medusa-promotions-api-openapi.yml
+  capability_id: BC-440.30
+  capability_id_l1: BC-440
+  capability_name: Discount & Promotion Management
+  confidence: 0.9
+  evidence: '"A promotion discounts an amount or percentage off a cart''s items, shipping methods, or
+    the entire order ... a `buyget` promotion to enforce a "buy X get Y" promotion"'
+  reason: Operations create and rule-configure discount and promotional offers, which is precisely Discount
+    & Promotion Management.
+- tag: Price Lists
+  spec_file: medusa-price-lists-api-openapi.yml
+  capability_id: BC-440.20
+  capability_id_l1: BC-440
+  capability_name: Price List Management
+  confidence: 0.88
+  evidence: '"A price list is a group of prices applied if the specified conditions and rules are satisfied";
+    POST /admin/price-lists Create Price List; GET /admin/price-lists/{id}/prices List Prices for a Price
+    List'
+  reason: Operations create and maintain lists of prices (including per-product prices and conditional/segment
+    pricing), which is squarely price book / price list maintenance under Pricing Management.
+- tag: Customers
+  spec_file: medusa-customers-api-openapi.yml
+  capability_id: BC-420.10
+  capability_id_l1: BC-420
+  capability_name: Customer Data Management
+  confidence: 0.85
+  evidence: '''Create Customer'', ''Update a Customer'', ''Add a Customer Address'', ''Register Customer'';
+    schemas AdminCustomer, StoreCustomerAddress'
+  reason: Full CRUD over customer records and their addresses plus self-registration is customer master/identity
+    data management.
+- tag: Reservations
+  spec_file: medusa-reservations-api-openapi.yml
+  capability_id: BC-530.30
+  capability_id_l1: BC-530
+  capability_name: Inventory Allocation Management
+  confidence: 0.82
+  evidence: '"A reservation is unavailable quantity of an inventory item in a location. A reservation
+    is created automatically for variants in an order whose `manage_inventory` is enabled"; operations
+    ''Create Reservation'', schemas AdminInventoryItem, AdminInventoryLevel'
+  reason: Operations manage reservations of inventory quantity at stock locations, which is precisely
+    inventory allocation/reservation across the network (BC-530.30).
+- tag: Customer Groups
+  spec_file: medusa-customer-groups-api-openapi.yml
+  capability_id: BC-420.20
+  capability_id_l1: BC-420
+  capability_name: Customer Segmentation Management
+  confidence: 0.8
+  evidence: '"Customers can be organized into groups. These groups are useful for segregation and marketing
+    purposes"; POST /admin/customer-groups/{id}/customers ''Manage Customers of a Customer Group'''
+  reason: Creating and maintaining customer groups and their membership for differentiated pricing/marketing
+    is customer segmentation.
+- tag: Tax Rates
+  spec_file: medusa-tax-rates-api-openapi.yml
+  capability_id: BC-220.20
+  capability_id_l1: BC-220
+  capability_name: Indirect Tax Management
+  confidence: 0.78
+  evidence: '"a tax rate is a percentage amount used to calculate the tax amount of each taxable item''s
+    price" — Create Tax Rate, Create Tax Rule for a Rate'
+  reason: Full CRUD over tax rates and rules used to compute transaction tax on line items and shipping
+    — sales tax/VAT determination, i.e. indirect tax management.
+- tag: Feature Flags
+  spec_file: medusa-feature-flags-api-openapi.yml
+  capability_id: BC-4210.50
+  capability_id_l1: BC-4210
+  capability_name: Feature Flag Management
+  confidence: 0.75
+  evidence: '"Feature flags are used to enable or disable certain features in your Medusa application";
+    GET /admin/feature-flags ''List Feature Flags'''
+  reason: Explicitly feature-flag inspection for the running application; only a read operation, so it
+    is a thin slice of feature flag lifecycle management.
+- tag: Orders
+  spec_file: medusa-orders-api-openapi.yml
+  capability_id: BC-520.40
+  capability_id_l1: BC-520
+  capability_name: Order Fulfilment Management
+  confidence: 0.75
+  evidence: '"Create an Order Fulfillment", "Mark a Fulfillment as Delivered.", "Cancel Order", "Complete
+    Order"'
+  reason: 'Full sales-order lifecycle plus fulfilment creation, cancellation and delivery confirmation
+    — order fulfilment management. Not transport operations: these are commerce order records, not carrier
+    movements.'
+- tag: Product Options
+  spec_file: medusa-product-options-api-openapi.yml
+  capability_id: BC-820.40
+  capability_id_l1: BC-820
+  capability_name: Product Configuration & Variant Management
+  confidence: 0.75
+  evidence: POST /admin/product-options Create Product Option; GET /admin/product-options/{id}/values
+    List Product Option Values; schema BaseProductOptionValue, AdminProductVariant
+  reason: Product options and their values are the definition of product variants/configurable options,
+    matching Product Configuration & Variant Management.
+- tag: Product Variants
+  spec_file: medusa-product-variants-api-openapi.yml
+  capability_id: BC-820.40
+  capability_id_l1: BC-820
+  capability_name: Product Configuration & Variant Management
+  confidence: 0.75
+  evidence: GET /admin/product-variants List Product Variants; schemas AdminProductVariant, AdminProductOptionValue,
+    BaseCalculatedPriceSet
+  reason: Exposes product variants (option-value combinations of a product), the core of variant/configuration
+    management, though the surface is read-only listing.
+- tag: Products
+  spec_file: medusa-products-api-openapi.yml
+  capability_id: BC-820
+  capability_id_l1: BC-820
+  capability_name: Product Lifecycle Management
+  confidence: 0.72
+  evidence: POST /admin/products Create Product; POST /admin/products/export Export Products; POST /admin/products/import
+    Create Product Import; schema AdminProduct
+  reason: Full lifecycle CRUD, batch, import/export over the product catalogue records of a commerce platform
+    — product definition and maintenance. L1 only since it spans specification, variants and catalogue
+    data rather than one sub-capability.
+- tag: Tax Regions
+  spec_file: medusa-tax-regions-api-openapi.yml
+  capability_id: BC-220.20
+  capability_id_l1: BC-220
+  capability_name: Indirect Tax Management
+  confidence: 0.72
+  evidence: '"A tax region is a region''s tax settings. It has tax rates and rules" — Create Tax Region'
+  reason: Manages jurisdictional tax settings that drive transaction tax calculation on orders, which
+    is indirect tax (VAT/sales tax) configuration rather than direct tax or reporting.
+- tag: Campaigns
+  spec_file: medusa-campaigns-api-openapi.yml
+  capability_id: BC-440.30
+  capability_id_l1: BC-440
+  capability_name: Discount & Promotion Management
+  confidence: 0.7
+  evidence: A campaign is a group of promotions that have the same conditions, such as start and end dates
+    ... POST /admin/campaigns/{id}/promotions Manage the Promotions of a Campaign
+  reason: Despite the marketing-sounding tag, the vendor defines a campaign purely as a container of commerce
+    promotions with budget/date conditions, and the only relationship operation links promotions. That
+    is promotion administration (Discount & Promotion Management) rather than demand-generation marketing.
+- tag: Fulfillments
+  spec_file: medusa-fulfillments-api-openapi.yml
+  capability_id: BC-520.50
+  capability_id_l1: BC-520
+  capability_name: Logistics Operations Management
+  confidence: 0.7
+  evidence: '"A fulfillment is created for items in an order, return, exchanges, or claims to deliver
+    items to/from the customer"; ''Create a Shipment for a Fulfillment''; schemas AdminFulfillmentLabel,
+    AdminFulfillmentDeliveryAddress'
+  reason: Creating, cancelling and shipping fulfilments with labels and delivery addresses is execution
+    of outbound logistics operations for orders.
+- tag: Inventory Items
+  spec_file: medusa-inventory-items-api-openapi.yml
+  capability_id: BC-530.10
+  capability_id_l1: BC-530
+  capability_name: Stock Level Management
+  confidence: 0.7
+  evidence: '"An inventory item is a stock-kept product whose inventory is managed"; POST /admin/inventory-items/{id}/location-levels  Create
+    Inventory Level for Inventory Item'
+  reason: Manages stock-kept items and their stocked quantities per location, i.e. inventory stock level
+    management. L2 choice between stock level and allocation management is somewhat uncertain.
+  recovered_from: sweep-20260829T005356Z-edges.json
+- tag: Multi-Factor Authentication
+  spec_file: medusa-multi-factor-authentication-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.7
+  evidence: '"Multi-factor authentication (MFA) adds an extra layer of security to admin accounts by requiring
+    additional verification factors during login"; POST /auth/mfa/factors  Start Multi-Factor Authentication
+    (MFA) Factor Enrollment'
+  reason: Enrollment, verification and recovery-code management of MFA factors for admin accounts is an
+    authentication/access-control control within Identity & Access Management. Confidence moderate because
+    authentication surfaces are often mere plumbing.
+  recovered_from: sweep-20260829T005356Z-edges.json
+- tag: Users
+  spec_file: medusa-users-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.7
+  evidence: A user is an admin user that can authenticate and perform functionalities as an admin user...
+    These API routes allow admin users to manage their team.
+  reason: CRUD over admin user accounts of the commerce platform — administrative user/identity account
+    management, closest to Identity & Access Management rather than any HR capability.
+  recovered_from: sweep-20260829T005356Z-edges.json
