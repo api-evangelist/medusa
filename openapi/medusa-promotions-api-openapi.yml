@@ -17,9 +17,7 @@ info:
     Promotions belong to a campaign, which sets conditions on the promotion such as when it starts and ends.
 
 
-    These API routes allow admin users to manage promotions.
-
-    '
+    These API routes allow admin users to manage promotions.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
@@ -37,9 +35,7 @@ tags:
     Promotions belong to a campaign, which sets conditions on the promotion such as when it starts and ends.
 
 
-    These API routes allow admin users to manage promotions.
-
-    '
+    These API routes allow admin users to manage promotions.'
   externalDocs:
     description: Learn more about promotions.
     url: https://docs.medusajs.com/resources/commerce-modules/promotion/concepts
@@ -1077,9 +1073,7 @@ paths:
         - If `rule_type` is `target-rules`, the target rules'' attributes of the application method''s type are retrieved.
 
 
-        - If `rule_type` is `buy-rules`, the buy rules'' attributes of the application method''s type are retrieved.
-
-        '
+        - If `rule_type` is `buy-rules`, the buy rules'' attributes of the application method''s type are retrieved.'
       x-authenticated: true
       parameters:
       - name: rule_type
@@ -1173,9 +1167,7 @@ paths:
       x-sidebar-summary: List Rule Values
       description: 'Retrieve all potential values for promotion rules and target and buy rules based on the specified rule attribute and type.
 
-        For example, if you provide the ID of the `currency_code` rule attribute, and set `rule_type` to `rules`, a list of currencies are retrieved in label-value pairs.
-
-        '
+        For example, if you provide the ID of the `currency_code` rule attribute, and set `rule_type` to `rules`, a list of currencies are retrieved in label-value pairs.'
       x-authenticated: true
       parameters:
       - name: rule_type
@@ -2044,9 +2036,7 @@ paths:
         - If `rule_type` is `rules`, the promotion''s rules are retrivied. - If `rule_type` is `target-rules`, the target rules of the promotion''s application method are retrieved.
 
 
-        - If `rule_type` is `buy-rules`, the buy rules of the promotion''s application method are retrieved.
-
-        '
+        - If `rule_type` is `buy-rules`, the buy rules of the promotion''s application method are retrieved.'
       x-authenticated: true
       parameters:
       - name: id
@@ -2151,6 +2141,51 @@ paths:
           $ref: '#/components/responses/500_error'
 components:
   schemas:
+    AdminUpdatePromotionRule:
+      type: object
+      description: The properties to update in a buy rule.
+      required:
+      - id
+      - values
+      properties:
+        id:
+          type: string
+          title: id
+          description: The buy rule's ID.
+        operator:
+          type: string
+          description: The operator used to check whether the buy rule applies on a cart. For example, `eq` means that the cart's value for the specified attribute must match the specified value.
+          enum:
+          - gte
+          - lte
+          - gt
+          - lt
+          - eq
+          - ne
+          - in
+        description:
+          type: string
+          title: description
+          description: The buy rule's description.
+        attribute:
+          type: string
+          title: attribute
+          description: The attribute to compare against when checking whether a promotion can be applied on a cart.
+          example: items.product.id
+        values:
+          oneOf:
+          - type: string
+            title: values
+            description: The attribute's value.
+            example: prod_123
+          - type: array
+            description: The allowed attribute values.
+            items:
+              type: string
+              title: values
+              description: An attribute value.
+              example: prod_123
+      x-schemaName: AdminUpdatePromotionRule
     AdminPromotion:
       type: object
       description: The promotion's details.
@@ -2227,6 +2262,141 @@ components:
           type: number
           title: used
           description: The number of times the promotion has been used.
+    AdminCreatePromotionRule:
+      type: object
+      description: The promotion rule's details.
+      x-schemaName: AdminCreatePromotionRule
+      required:
+      - operator
+      - attribute
+      - values
+      properties:
+        operator:
+          type: string
+          description: The operator used to check whether the buy rule applies on a cart. For example, `eq` means that the cart's value for the specified attribute must match the specified value.
+          enum:
+          - gte
+          - lte
+          - gt
+          - lt
+          - eq
+          - ne
+          - in
+        description:
+          type: string
+          title: description
+          description: The rule's description.
+        attribute:
+          type: string
+          title: attribute
+          description: The attribute to compare against when checking whether a promotion can be applied on a cart.
+          example: items.product.id
+        values:
+          oneOf:
+          - type: string
+            title: values
+            description: The attribute's value.
+            example: prod_123
+          - type: array
+            description: The allowed attribute values.
+            items:
+              type: string
+              title: values
+              description: An attribute value.
+              example: prod_123
+    AdminPromotionResponse:
+      type: object
+      description: The promotion's details.
+      x-schemaName: AdminPromotionResponse
+      required:
+      - promotion
+      properties:
+        promotion:
+          $ref: '#/components/schemas/AdminPromotion'
+    AdminPromotionRule:
+      type: object
+      description: The promotion rule's details.
+      x-schemaName: AdminPromotionRule
+      required:
+      - id
+      - values
+      properties:
+        id:
+          type: string
+          title: id
+          description: The promotion rule's ID.
+        description:
+          type: string
+          title: description
+          description: The promotion rule's description.
+        attribute:
+          type: string
+          title: attribute
+          description: The promotion rule's attribute.
+          example: customer_group_id
+        operator:
+          type: string
+          description: The rule's operator.
+          enum:
+          - gt
+          - lt
+          - eq
+          - ne
+          - in
+          - lte
+          - gte
+        values:
+          type: array
+          description: The rule's values.
+          example:
+          - cusgroup_123
+          items:
+            $ref: '#/components/schemas/BasePromotionRuleValue'
+    BasePromotionRuleValue:
+      type: object
+      description: The rule value's details.
+      x-schemaName: BasePromotionRuleValue
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The value's ID.
+        value:
+          type: string
+          title: value
+          description: The value.
+    AdminRuleAttributeOption:
+      type: object
+      description: The details of a potential rule attribute.
+      x-schemaName: AdminRuleAttributeOption
+      required:
+      - id
+      - value
+      - label
+      - operators
+      properties:
+        id:
+          type: string
+          title: id
+          description: The rule attribute's ID, which is a rule's `attribute` it refers to.
+          example: customer_group
+        value:
+          type: string
+          title: value
+          description: The rule attribute's value.
+          example: customer.groups.id
+        label:
+          type: string
+          title: label
+          description: The rule attribute option's label.
+          example: Customer Group
+        operators:
+          type: array
+          description: The attribute's operators.
+          items:
+            $ref: '#/components/schemas/BaseRuleOperatorOptions'
     AdminApplicationMethod:
       type: object
       description: The application method's details.
@@ -2290,94 +2460,24 @@ components:
           type: number
           title: apply_to_quantity
           description: The quantity that results from matching the `buyget` promotion's condition. For example, if the promotion is a "Buy 2 shirts get 1 free", the value of this attribute is `1`.
-    AdminPromotionResponse:
+    AdminRuleValueOption:
       type: object
-      description: The promotion's details.
-      x-schemaName: AdminPromotionResponse
+      description: The details of a potential rule value.
+      x-schemaName: AdminRuleValueOption
       required:
-      - promotion
+      - value
+      - label
       properties:
-        promotion:
-          $ref: '#/components/schemas/AdminPromotion'
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
+        value:
           type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
+          title: value
+          description: The rule value's value.
+          example: reg_123
+        label:
           type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminUpdatePromotionRule:
-      type: object
-      description: The properties to update in a buy rule.
-      required:
-      - id
-      - values
-      properties:
-        id:
-          type: string
-          title: id
-          description: The buy rule's ID.
-        operator:
-          type: string
-          description: The operator used to check whether the buy rule applies on a cart. For example, `eq` means that the cart's value for the specified attribute must match the specified value.
-          enum:
-          - gte
-          - lte
-          - gt
-          - lt
-          - eq
-          - ne
-          - in
-        description:
-          type: string
-          title: description
-          description: The buy rule's description.
-        attribute:
-          type: string
-          title: attribute
-          description: The attribute to compare against when checking whether a promotion can be applied on a cart.
-          example: items.product.id
-        values:
-          oneOf:
-          - type: string
-            title: values
-            description: The attribute's value.
-            example: prod_123
-          - type: array
-            description: The allowed attribute values.
-            items:
-              type: string
-              title: values
-              description: An attribute value.
-              example: prod_123
-      x-schemaName: AdminUpdatePromotionRule
+          title: label
+          description: The rule value's label.
+          example: Europe Region
     AdminCampaign:
       type: object
       description: The campaign's details.
@@ -2481,51 +2581,40 @@ components:
           format: date-time
           title: deleted_at
           description: The date the campaign was deleted.
-    AdminRuleAttributeOption:
+    Error:
+      title: Response Error
       type: object
-      description: The details of a potential rule attribute.
-      x-schemaName: AdminRuleAttributeOption
-      required:
-      - id
-      - value
-      - label
-      - operators
       properties:
-        id:
+        code:
           type: string
-          title: id
-          description: The rule attribute's ID, which is a rule's `attribute` it refers to.
-          example: customer_group
-        value:
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
           type: string
-          title: value
-          description: The rule attribute's value.
-          example: customer.groups.id
-        label:
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
           type: string
-          title: label
-          description: The rule attribute option's label.
-          example: Customer Group
-        operators:
-          type: array
-          description: The attribute's operators.
-          items:
-            $ref: '#/components/schemas/BaseRuleOperatorOptions'
-    BasePromotionRuleValue:
-      type: object
-      description: The rule value's details.
-      x-schemaName: BasePromotionRuleValue
-      required:
-      - id
-      properties:
-        id:
-          type: string
-          title: id
-          description: The value's ID.
-        value:
-          type: string
-          title: value
-          description: The value.
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     BaseRuleOperatorOptions:
       type: object
       description: The operator's details.
@@ -2550,105 +2639,6 @@ components:
           title: label
           description: The operator's label.
           example: In
-    AdminCreatePromotionRule:
-      type: object
-      description: The promotion rule's details.
-      x-schemaName: AdminCreatePromotionRule
-      required:
-      - operator
-      - attribute
-      - values
-      properties:
-        operator:
-          type: string
-          description: The operator used to check whether the buy rule applies on a cart. For example, `eq` means that the cart's value for the specified attribute must match the specified value.
-          enum:
-          - gte
-          - lte
-          - gt
-          - lt
-          - eq
-          - ne
-          - in
-        description:
-          type: string
-          title: description
-          description: The rule's description.
-        attribute:
-          type: string
-          title: attribute
-          description: The attribute to compare against when checking whether a promotion can be applied on a cart.
-          example: items.product.id
-        values:
-          oneOf:
-          - type: string
-            title: values
-            description: The attribute's value.
-            example: prod_123
-          - type: array
-            description: The allowed attribute values.
-            items:
-              type: string
-              title: values
-              description: An attribute value.
-              example: prod_123
-    AdminRuleValueOption:
-      type: object
-      description: The details of a potential rule value.
-      x-schemaName: AdminRuleValueOption
-      required:
-      - value
-      - label
-      properties:
-        value:
-          type: string
-          title: value
-          description: The rule value's value.
-          example: reg_123
-        label:
-          type: string
-          title: label
-          description: The rule value's label.
-          example: Europe Region
-    AdminPromotionRule:
-      type: object
-      description: The promotion rule's details.
-      x-schemaName: AdminPromotionRule
-      required:
-      - id
-      - values
-      properties:
-        id:
-          type: string
-          title: id
-          description: The promotion rule's ID.
-        description:
-          type: string
-          title: description
-          description: The promotion rule's description.
-        attribute:
-          type: string
-          title: attribute
-          description: The promotion rule's attribute.
-          example: customer_group_id
-        operator:
-          type: string
-          description: The rule's operator.
-          enum:
-          - gt
-          - lt
-          - eq
-          - ne
-          - in
-          - lte
-          - gte
-        values:
-          type: array
-          description: The rule's values.
-          example:
-          - cusgroup_123
-          items:
-            $ref: '#/components/schemas/BasePromotionRuleValue'
   responses:
     invalid_request_error:
       description: Invalid Request Error
@@ -2660,16 +2650,14 @@ components:
             code: invalid_request_error
             message: Discount with code TEST already exists.
             type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
+    unauthorized:
+      description: User is not authorized. Must log in first
       content:
-        application/json:
+        text/plain:
           schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+            type: string
+            default: Unauthorized
+            example: Unauthorized
     500_error:
       description: Server Error
       content:
@@ -2685,14 +2673,6 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
     400_error:
       description: Client Error
       content:
@@ -2713,18 +2693,32 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
   examples:
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
     unexpected_state_error:
       summary: Unexpected State Error
       value:
         message: cart.total must be defined
         type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
     default_error:
       summary: Default Error
       value:
@@ -2736,16 +2730,12 @@ components:
       value:
         message: cart.total must be defined
         type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
+    database_error:
+      summary: Database Error
       value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   securitySchemes:
     api_token:
       type: http

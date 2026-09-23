@@ -5,13 +5,25 @@ info:
   license:
     name: MIT
     url: https://github.com/medusajs/medusa/blob/develop/LICENSE
-  description: "A tax region is a region's tax settings. It has tax rates and rules. So, after you create a region, you must create a tax region for it.\n\nA tax region can extend settings from a parent tax region.\n\nThese API routes allow admin users to manage tax regions. \n"
+  description: 'A tax region is a region''s tax settings. It has tax rates and rules. So, after you create a region, you must create a tax region for it.
+
+
+    A tax region can extend settings from a parent tax region.
+
+
+    These API routes allow admin users to manage tax regions.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
 tags:
 - name: Tax Regions
-  description: "A tax region is a region's tax settings. It has tax rates and rules. So, after you create a region, you must create a tax region for it.\n\nA tax region can extend settings from a parent tax region.\n\nThese API routes allow admin users to manage tax regions. \n"
+  description: 'A tax region is a region''s tax settings. It has tax rates and rules. So, after you create a region, you must create a tax region for it.
+
+
+    A tax region can extend settings from a parent tax region.
+
+
+    These API routes allow admin users to manage tax regions.'
   externalDocs:
     description: Learn more about tax regions.
     url: https://docs.medusajs.com/resources/commerce-modules/tax/tax-region
@@ -1306,129 +1318,16 @@ paths:
       x-workflow: deleteTaxRegionsWorkflow
       x-events: []
 components:
-  examples:
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
   schemas:
-    AdminCreateTaxRegion:
+    AdminTaxRegionResponse:
       type: object
       description: The tax region's details.
-      x-schemaName: AdminCreateTaxRegion
+      x-schemaName: AdminTaxRegionResponse
       required:
-      - country_code
+      - tax_region
       properties:
-        country_code:
-          type: string
-          title: country_code
-          description: The tax region's country code.
-          example: us
-        province_code:
-          type: string
-          title: province_code
-          description: The tax region's ISO 3166-2 province code. Must be lower-case.
-          example: us-ca
-          externalDocs:
-            url: https://en.wikipedia.org/wiki/ISO_3166-2
-            description: Learn more about ISO 3166-2
-        parent_id:
-          type: string
-          title: parent_id
-          description: The ID of the parent tax region.
-        default_tax_rate:
-          type: object
-          description: The tax region's default tax rate.
-          required:
-          - code
-          - name
-          properties:
-            rate:
-              type: number
-              title: rate
-              description: The rate to charge.
-              example: 10
-            code:
-              type: string
-              title: code
-              description: The code the tax rate is identified by
-            name:
-              type: string
-              title: name
-              description: The default tax rate's name.
-              example: VAT
-            is_combinable:
-              type: boolean
-              description: Whether the tax rate should be combined with parent rates.
-              externalDocs:
-                url: https://docs.medusajs.com/resources/commerce-modules/tax/tax-rates-and-rules#combinable-tax-rates
-            metadata:
-              type: object
-              description: The default tax rate's metadata, used to store custom key-value pairs.
-              externalDocs:
-                url: https://docs.medusajs.com/api/admin#manage-metadata
-                description: Learn how to manage metadata
-        metadata:
-          type: object
-          description: The tax region's metadata, used to store custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        provider_id:
-          type: string
-          title: provider_id
-          description: The ID of the tax provider used to calculate the tax rate in this tax region.
-    AdminUpdateTaxRegion:
-      type: object
-      description: The details to update in a tax region.
-      x-schemaName: AdminUpdateTaxRegion
-      properties:
-        province_code:
-          type: string
-          title: province_code
-          description: The tax region's ISO 3166-2 province code. Must be lower-case.
-          example: us-ca
-          externalDocs:
-            url: https://en.wikipedia.org/wiki/ISO_3166-2
-            description: Learn more about ISO 3166-2
-        metadata:
-          type: object
-          description: The tax region's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        provider_id:
-          type: string
-          title: provider_id
-          description: The ID of the tax provider to use when calculating taxes for this tax region.
+        tax_region:
+          $ref: '#/components/schemas/AdminTaxRegion'
     AdminTaxRegion:
       type: object
       description: The tax region's details.
@@ -1561,26 +1460,96 @@ components:
           type: boolean
           title: deleted
           description: Whether the tax region was deleted.
-    AdminTaxRegionResponse:
+    AdminCreateTaxRegion:
       type: object
       description: The tax region's details.
-      x-schemaName: AdminTaxRegionResponse
+      x-schemaName: AdminCreateTaxRegion
       required:
-      - tax_region
+      - country_code
       properties:
-        tax_region:
-          $ref: '#/components/schemas/AdminTaxRegion'
+        country_code:
+          type: string
+          title: country_code
+          description: The tax region's country code.
+          example: us
+        province_code:
+          type: string
+          title: province_code
+          description: The tax region's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
+        parent_id:
+          type: string
+          title: parent_id
+          description: The ID of the parent tax region.
+        default_tax_rate:
+          type: object
+          description: The tax region's default tax rate.
+          required:
+          - code
+          - name
+          properties:
+            rate:
+              type: number
+              title: rate
+              description: The rate to charge.
+              example: 10
+            code:
+              type: string
+              title: code
+              description: The code the tax rate is identified by
+            name:
+              type: string
+              title: name
+              description: The default tax rate's name.
+              example: VAT
+            is_combinable:
+              type: boolean
+              description: Whether the tax rate should be combined with parent rates.
+              externalDocs:
+                url: https://docs.medusajs.com/resources/commerce-modules/tax/tax-rates-and-rules#combinable-tax-rates
+            metadata:
+              type: object
+              description: The default tax rate's metadata, used to store custom key-value pairs.
+              externalDocs:
+                url: https://docs.medusajs.com/api/admin#manage-metadata
+                description: Learn how to manage metadata
+        metadata:
+          type: object
+          description: The tax region's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the tax provider used to calculate the tax rate in this tax region.
+    AdminUpdateTaxRegion:
+      type: object
+      description: The details to update in a tax region.
+      x-schemaName: AdminUpdateTaxRegion
+      properties:
+        province_code:
+          type: string
+          title: province_code
+          description: The tax region's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
+        metadata:
+          type: object
+          description: The tax region's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the tax provider to use when calculating taxes for this tax region.
   responses:
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
     unauthorized:
       description: User is not authorized. Must log in first
       content:
@@ -1589,27 +1558,6 @@ components:
             type: string
             default: Unauthorized
             example: Unauthorized
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
     500_error:
       description: Server Error
       content:
@@ -1625,6 +1573,17 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
     not_found_error:
       description: Not Found Error
       content:
@@ -1634,6 +1593,59 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   securitySchemes:
     api_token:
       type: http

@@ -12,9 +12,7 @@ tags:
     $ref: '#/components/schemas/AdminProductOption'
   description: 'A product option is a way to define different options for a product, such as "Size" or "Color". Product options can be created globally and used by multiple products, or they can be exclusive to a specific product.
 
-    These API routes allow admin users to manage product options.
-
-    '
+    These API routes allow admin users to manage product options.'
   externalDocs:
     description: Learn more about the Product Module
     url: https://docs.medusajs.com/resources/commerce-modules/product
@@ -2173,53 +2171,60 @@ paths:
     - url: https://api.medusajs.com
 components:
   schemas:
-    AdminProductOptionValue:
+    AdminTranslation:
       type: object
-      description: The product option value's details.
-      x-schemaName: AdminProductOptionValue
+      description: The translation's details.
+      x-schemaName: AdminTranslation
       required:
       - id
-      - value
+      - reference_id
+      - reference
+      - locale_code
+      - translations
+      - created_at
+      - updated_at
+      - deleted_at
       properties:
         id:
           type: string
           title: id
-          description: The value's ID.
-        value:
+          description: The translation's ID.
+        reference_id:
           type: string
-          title: value
-          description: The value.
-        option:
-          $ref: '#/components/schemas/AdminProductOption'
-        option_id:
+          title: reference_id
+          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
+          example: prod_123
+        reference:
           type: string
-          title: option_id
-          description: The ID of the option this value belongs to.
-        metadata:
+          title: reference
+          description: The resource that the translation belongs to.
+          example: product
+        locale_code:
+          type: string
+          title: locale_code
+          description: The translation's locale code in BCP 47 format.
+          example: fr-FR
+        translations:
           type: object
-          description: The value's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
+          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
+          example:
+            title: Chaussures
+            description: Des chaussures élégantes.
         created_at:
           type: string
           format: date-time
           title: created_at
-          description: The date the value was created.
+          description: The date that the translation was created.
         updated_at:
           type: string
           format: date-time
           title: updated_at
-          description: The date the value was updated.
+          description: The date that the translation was updated.
         deleted_at:
           type: string
           format: date-time
           title: deleted_at
-          description: The date the value was deleted.
-        rank:
-          type: number
-          title: rank
-          description: The rank of the value among other option values.
+          description: The date that the translation was deleted.
     AdminProductType:
       type: object
       description: The product type's details.
@@ -2268,263 +2273,37 @@ components:
           type: string
           title: external_id
           description: The type's external ID used for integration with third-party systems.
-    BaseCollection:
+    AdminCreateProductOption:
       type: object
-      description: The product collection's details.
-      x-schemaName: BaseCollection
+      description: The product option's details.
+      x-schemaName: AdminCreateProductOption
       required:
-      - id
       - title
-      - handle
-      - created_at
-      - updated_at
-      - deleted_at
-      - metadata
+      - values
       properties:
-        id:
-          type: string
-          title: id
-          description: The collection's ID.
         title:
           type: string
           title: title
-          description: The collection's title.
-        handle:
-          type: string
-          title: handle
-          description: The collection's handle.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The collection's creation date.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The collection's update date.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The collection's deletion date.
-        products:
+          description: The product option's title.
+        values:
           type: array
-          description: The collection's products.
+          description: The product option's values.
           items:
-            type: object
-        metadata:
+            type: string
+            title: values
+            description: An option value.
+            example: Red
+        ranks:
           type: object
-          description: The collection's metadata, used to store custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        external_id:
-          type: string
-          title: external_id
-          description: The collection's external ID used to link it with external systems.
-    AdminShippingProfile:
-      type: object
-      description: The shipping profile's details..
-      x-schemaName: AdminShippingProfile
-      properties:
-        id:
-          type: string
-          title: id
-          description: The shipping profile's ID.
-        name:
-          type: string
-          title: name
-          description: The shipping profile's name.
-        type:
-          type: string
-          title: type
-          description: The shipping profile's type.
-        metadata:
-          type: object
-          description: The shipping profile's metadata, holds custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the shipping profile was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the shipping profile was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the shipping profile was deleted.
-      required:
-      - id
-      - name
-      - type
-      - metadata
-      - created_at
-      - updated_at
-      - deleted_at
-    AdminProductVariantInventoryItemLink:
-      type: object
-      description: An association between a product variant and an inventory item.
-      x-schemaName: AdminProductVariantInventoryItemLink
-      required:
-      - id
-      - variant_id
-      - inventory_item_id
-      properties:
-        id:
-          type: string
-          title: id
-          description: The ID of the association.
-        variant_id:
-          type: string
-          title: variant_id
-          description: The associated product variant's ID.
-        variant:
-          type: object
-        inventory_item_id:
-          type: string
-          title: inventory_item_id
-          description: The associated inventory item's ID.
-        inventory:
-          $ref: '#/components/schemas/AdminInventoryItem'
-        required_quantity:
-          type: number
-          title: required_quantity
-          description: The inventory item's required quantity.
-    AdminProductCategory:
-      type: object
-      description: The product category's details.
-      x-schemaName: AdminProductCategory
-      required:
-      - category_children
-      - parent_category
-      - name
-      - description
-      - id
-      - created_at
-      - updated_at
-      - handle
-      - deleted_at
-      - is_active
-      - is_internal
-      - rank
-      - parent_category_id
-      properties:
-        category_children:
-          type: array
-          description: The category's children.
-          items:
-            type: object
-        parent_category:
-          type: object
-        products:
-          type: array
-          description: The category's products.
-          items:
-            type: object
-        name:
-          type: string
-          title: name
-          description: The category's name.
-        description:
-          type: string
-          title: description
-          description: The category's description.
-        id:
-          type: string
-          title: id
-          description: The category's ID.
-        metadata:
-          type: object
-          description: The category's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the category was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the category was updated.
-        handle:
-          type: string
-          title: handle
-          description: The category's unique handle.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the category was deleted.
-        is_active:
+          description: The ranking of the option's values. The keys are the value names and the values are their respective ranks.
+          example:
+            Small: 1
+            Medium: 2
+            Large: 3
+        is_exclusive:
           type: boolean
-          title: is_active
-          description: Whether the category is active. If disabled, the category isn't shown in the storefront.
-        is_internal:
-          type: boolean
-          title: is_internal
-          description: Whether the category is internal. If enabled, the category is only seen by admin users.
-        rank:
-          type: number
-          title: rank
-          description: The category's rank among sibling categories.
-        parent_category_id:
-          type: string
-          title: parent_category_id
-          description: The ID of the category's parent.
-    BaseProductType:
-      type: object
-      description: The product type's details.
-      x-schemaName: BaseProductType
-      required:
-      - id
-      - value
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The type's ID.
-        value:
-          type: string
-          title: value
-          description: The type's value.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the type was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the type was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the type was deleted.
-        metadata:
-          type: object
-          description: The type's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        external_id:
-          type: string
-          title: external_id
-          description: The type's external ID used to link it with external systems.
+          title: is_exclusive
+          description: Whether the option is exclusive to the product.
     AdminProductVariant:
       type: object
       description: The product variant's details.
@@ -2683,558 +2462,35 @@ components:
           description: The variant's translations.
           items:
             $ref: '#/components/schemas/AdminTranslation'
-    BaseProductOption:
+    AdminProductVariantInventoryItemLink:
       type: object
-      description: The product option's details.
-      x-schemaName: BaseProductOption
+      description: An association between a product variant and an inventory item.
+      x-schemaName: AdminProductVariantInventoryItemLink
       required:
       - id
-      - title
-      - is_exclusive
+      - variant_id
+      - inventory_item_id
       properties:
         id:
           type: string
           title: id
-          description: The product option's ID.
-        title:
+          description: The ID of the association.
+        variant_id:
           type: string
-          title: title
-          description: The product option's title.
-        values:
-          type: array
-          description: The product option's values.
-          items:
-            $ref: '#/components/schemas/BaseProductOptionValue'
-        metadata:
+          title: variant_id
+          description: The associated product variant's ID.
+        variant:
           type: object
-          description: The product option's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
+        inventory_item_id:
           type: string
-          format: date-time
-          title: created_at
-          description: The date the product option was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the product option was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the product option was deleted.
-        is_exclusive:
-          type: boolean
-          title: is_exclusive
-          description: Whether the option is exclusive to a product.
-        products:
-          type: array
-          description: The products that use the option.
-          items:
-            type: object
-    BaseProductCategory:
-      type: object
-      description: The product category's details.
-      x-schemaName: BaseProductCategory
-      required:
-      - id
-      - name
-      - description
-      - handle
-      - is_active
-      - is_internal
-      - rank
-      - parent_category_id
-      - parent_category
-      - category_children
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        category_children:
-          type: array
-          description: The category's children.
-          items:
-            $ref: '#/components/schemas/AdminProductCategory'
-        parent_category:
-          $ref: '#/components/schemas/AdminProductCategory'
-        products:
-          type: array
-          description: The category's products.
-          items:
-            type: object
-        name:
-          type: string
-          title: name
-          description: The category's name.
-        description:
-          type: string
-          title: description
-          description: The category's description.
-        id:
-          type: string
-          title: id
-          description: The category's ID.
-        metadata:
-          type: object
-          description: The category's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the category was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the category was updated.
-        handle:
-          type: string
-          title: handle
-          description: The category's unique handle.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the category was deleted.
-        is_active:
-          type: boolean
-          title: is_active
-          description: Whether the category is active. If disabled, the category isn't shown in the storefront.
-        is_internal:
-          type: boolean
-          title: is_internal
-          description: Whether the category is internal. If enabled, the category is only seen by admin users.
-        rank:
+          title: inventory_item_id
+          description: The associated inventory item's ID.
+        inventory:
+          $ref: '#/components/schemas/AdminInventoryItem'
+        required_quantity:
           type: number
-          title: rank
-          description: The category's rank among sibling categories.
-        parent_category_id:
-          type: string
-          title: parent_category_id
-          description: The ID of the category's parent.
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminProductOption:
-      type: object
-      description: The product option's details.
-      x-schemaName: AdminProductOption
-      required:
-      - id
-      - title
-      - is_exclusive
-      properties:
-        id:
-          type: string
-          title: id
-          description: The product option's ID.
-        title:
-          type: string
-          title: title
-          description: The product option's title.
-        values:
-          type: array
-          description: The product option's values.
-          items:
-            type: object
-        metadata:
-          type: object
-          description: The product option's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the product option was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the product option was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the product option was deleted.
-        products:
-          type: array
-          description: The products that use the option.
-          items:
-            type: object
-        is_exclusive:
-          type: boolean
-          title: is_exclusive
-          description: Whether the option is exclusive to a product.
-    AdminUpdateProductOptionValue:
-      type: object
-      description: The details of updating a product option value.
-      x-schemaName: AdminUpdateProductOptionValue
-      properties:
-        value:
-          type: string
-          title: value
-          description: The product option's value.
-        metadata:
-          type: object
-          description: Key-value pairs that hold additional information about the product option value.
-    AdminProductTag:
-      type: object
-      description: The product tag's details.
-      x-schemaName: AdminProductTag
-      required:
-      - id
-      - value
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The tag's ID.
-        value:
-          type: string
-          title: value
-          description: The tag's value.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the tag was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the tag was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the tag was deleted.
-        metadata:
-          type: object
-          description: The tag's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        translations:
-          type: array
-          description: The tag's translations.
-          items:
-            $ref: '#/components/schemas/AdminTranslation'
-        external_id:
-          type: string
-          title: external_id
-          description: The tag's external ID used for integration with third-party systems.
-    AdminInventoryItem:
-      type: object
-      description: The inventory item's details.
-      x-schemaName: AdminInventoryItem
-      required:
-      - id
-      - requires_shipping
-      - stocked_quantity
-      - reserved_quantity
-      properties:
-        id:
-          type: string
-          title: id
-          description: The inventory item's ID.
-        sku:
-          type: string
-          title: sku
-          description: The inventory item's sku.
-        origin_country:
-          type: string
-          title: origin_country
-          description: The inventory item's origin country.
-        hs_code:
-          type: string
-          title: hs_code
-          description: The inventory item's HS code.
-        requires_shipping:
-          type: boolean
-          title: requires_shipping
-          description: Whether the inventory item requires shipping.
-        mid_code:
-          type: string
-          title: mid_code
-          description: The inventory item's MID code.
-        material:
-          type: string
-          title: material
-          description: The inventory item's material.
-        weight:
-          type: number
-          title: weight
-          description: The inventory item's weight.
-        length:
-          type: number
-          title: length
-          description: The inventory item's length.
-        height:
-          type: number
-          title: height
-          description: The inventory item's height.
-        width:
-          type: number
-          title: width
-          description: The inventory item's width.
-        title:
-          type: string
-          title: title
-          description: The inventory item's title.
-        description:
-          type: string
-          title: description
-          description: The inventory item's description.
-        thumbnail:
-          type: string
-          title: thumbnail
-          description: The thumbnail URL of the inventory item.
-        metadata:
-          type: object
-          description: Custom key-value pairs, used to store additional information about the inventory item.
-        location_levels:
-          type: array
-          description: The inventory item's location levels.
-          items:
-            $ref: '#/components/schemas/AdminInventoryLevel'
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The inventory item's stocked quantity.
-        reserved_quantity:
-          type: number
-          title: reserved_quantity
-          description: The inventory item's reserved quantity.
-    BaseProductOptionValue:
-      type: object
-      description: The product option value's details.
-      x-schemaName: BaseProductOptionValue
-      required:
-      - id
-      - value
-      properties:
-        id:
-          type: string
-          title: id
-          description: The value's ID.
-        value:
-          type: string
-          title: value
-          description: The value.
-        option:
-          type: object
-        option_id:
-          type: string
-          title: option_id
-          description: The ID of the option this value belongs to.
-        metadata:
-          type: object
-          description: The value's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the value was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the value was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the value was deleted.
-        rank:
-          type: number
-          title: rank
-          description: The rank of the value among other option values.
-    BaseCalculatedPriceSet:
-      type: object
-      description: The calculated price's details.
-      x-schemaName: BaseCalculatedPriceSet
-      required:
-      - id
-      - calculated_amount
-      - original_amount
-      - original_amount_with_tax
-      - original_amount_without_tax
-      - currency_code
-      properties:
-        id:
-          type: string
-          title: id
-          description: The calculated price's ID.
-        is_calculated_price_price_list:
-          type: boolean
-          title: is_calculated_price_price_list
-          description: Whether the calculated price belongs to a price list.
-        is_calculated_price_tax_inclusive:
-          type: boolean
-          title: is_calculated_price_tax_inclusive
-          description: Whether the calculated price is tax inclusive.
-        calculated_amount:
-          type: number
-          title: calculated_amount
-          description: The amount of the calculated price, or `null` if there isn't a calculated price. This is the amount shown to the customer.
-        calculated_amount_with_tax:
-          type: number
-          title: calculated_amount_with_tax
-          description: The calculated price's amount with taxes applied.
-        calculated_amount_without_tax:
-          type: number
-          title: calculated_amount_without_tax
-          description: The calculated price's amount without taxes applied.
-        is_original_price_price_list:
-          type: boolean
-          title: is_original_price_price_list
-          description: Whether the original price belongs to a price list.
-        is_original_price_tax_inclusive:
-          type: boolean
-          title: is_original_price_tax_inclusive
-          description: Whether the original price is tax inclusive.
-        original_amount:
-          type: number
-          title: original_amount
-          description: The amount of the original price, or `null` if there isn't an original price. This amount is useful to compare with the `calculated_amount`, such as to check for discounted value.
-        currency_code:
-          type: string
-          title: currency_code
-          description: The calculated price's currency code.
-          example: usd
-        calculated_price:
-          type: object
-          description: The calculated price's details.
-        original_price:
-          type: object
-          description: The original price's details.
-        original_amount_with_tax:
-          type: number
-          title: original_amount_with_tax
-          description: The amount of the original price with taxes applied.
-        original_amount_without_tax:
-          type: number
-          title: original_amount_without_tax
-          description: The amount of the original price without taxes.
-    AdminCreateProductOption:
-      type: object
-      description: The product option's details.
-      x-schemaName: AdminCreateProductOption
-      required:
-      - title
-      - values
-      properties:
-        title:
-          type: string
-          title: title
-          description: The product option's title.
-        values:
-          type: array
-          description: The product option's values.
-          items:
-            type: string
-            title: values
-            description: An option value.
-            example: Red
-        ranks:
-          type: object
-          description: The ranking of the option's values. The keys are the value names and the values are their respective ranks.
-          example:
-            Small: 1
-            Medium: 2
-            Large: 3
-        is_exclusive:
-          type: boolean
-          title: is_exclusive
-          description: Whether the option is exclusive to the product.
-    BaseProductTag:
-      type: object
-      description: The product tag's details.
-      x-schemaName: BaseProductTag
-      required:
-      - id
-      - value
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The tag's ID.
-        value:
-          type: string
-          title: value
-          description: The tag's value.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the tag was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the tag was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the tag was deleted.
-        metadata:
-          type: object
-          description: The tag's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        external_id:
-          type: string
-          title: external_id
-          description: The tag's external ID used to link it with external systems.
+          title: required_quantity
+          description: The inventory item's required quantity.
     BaseProductImage:
       type: object
       description: The image's details.
@@ -3277,138 +2533,61 @@ components:
       - id
       - url
       - rank
-    AdminPrice:
+    BaseCollection:
       type: object
-      description: The price's details.
-      x-schemaName: AdminPrice
+      description: The product collection's details.
+      x-schemaName: BaseCollection
       required:
       - id
       - title
-      - currency_code
-      - amount
-      - raw_amount
-      - min_quantity
-      - max_quantity
-      - price_set_id
+      - handle
       - created_at
       - updated_at
       - deleted_at
+      - metadata
       properties:
         id:
           type: string
           title: id
-          description: The price's ID.
+          description: The collection's ID.
         title:
           type: string
           title: title
-          description: The price's title.
-        currency_code:
+          description: The collection's title.
+        handle:
           type: string
-          title: currency_code
-          description: The price's currency code.
-          example: usd
-        amount:
-          type: number
-          title: amount
-          description: The price's amount.
-        raw_amount:
-          type: object
-          description: The price's raw amount.
-        min_quantity:
-          type: number
-          title: min_quantity
-          description: The minimum quantity that must be available in the cart for the price to be applied.
-        max_quantity:
-          type: number
-          title: max_quantity
-          description: The maximum quantity allowed to be available in the cart for the price to be applied.
-        price_set_id:
-          type: string
-          title: price_set_id
-          description: The ID of the associated price set.
+          title: handle
+          description: The collection's handle.
         created_at:
           type: string
           format: date-time
           title: created_at
-          description: The date the price was created.
+          description: The collection's creation date.
         updated_at:
           type: string
           format: date-time
           title: updated_at
-          description: The date the price was updated.
+          description: The collection's update date.
         deleted_at:
           type: string
           format: date-time
           title: deleted_at
-          description: The date the price was deleted.
-    AdminInventoryLevel:
-      type: object
-      description: The location level's location levels.
-      x-schemaName: AdminInventoryLevel
-      required:
-      - id
-      - created_at
-      - updated_at
-      - deleted_at
-      - inventory_item_id
-      - location_id
-      - stocked_quantity
-      - reserved_quantity
-      - incoming_quantity
-      - metadata
-      - available_quantity
-      properties:
-        id:
-          type: string
-          title: id
-          description: The location level's ID.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The location level's created at.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The location level's updated at.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The location level's deleted at.
-        inventory_item_id:
-          type: string
-          title: inventory_item_id
-          description: The location level's inventory item id.
-        location_id:
-          type: string
-          title: location_id
-          description: The location level's location id.
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The location level's stocked quantity.
-        reserved_quantity:
-          type: number
-          title: reserved_quantity
-          description: The location level's reserved quantity.
-        incoming_quantity:
-          type: number
-          title: incoming_quantity
-          description: The location level's incoming quantity.
+          description: The collection's deletion date.
+        products:
+          type: array
+          description: The collection's products.
+          items:
+            type: object
         metadata:
           type: object
-          description: The location level's metadata.
+          description: The collection's metadata, used to store custom key-value pairs.
           externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
+            url: https://docs.medusajs.com/api/store#manage-metadata
             description: Learn how to manage metadata
-        inventory_item:
-          type: object
-        available_quantity:
-          type: number
-          title: available_quantity
-          description: The location level's available quantity.
+        external_id:
+          type: string
+          title: external_id
+          description: The collection's external ID used to link it with external systems.
     AdminProductOptionValueDeleteResponse:
       type: object
       description: The details of the product option value deletion.
@@ -3433,398 +2612,6 @@ components:
           description: Whether the Product Option Value was deleted.
         parent:
           $ref: '#/components/schemas/AdminProductOption'
-    AdminProductOptionDeleteResponse:
-      type: object
-      description: The details of the product option deletion.
-      x-schemaName: AdminProductOptionDeleteResponse
-      required:
-      - id
-      - object
-      - deleted
-      properties:
-        id:
-          type: string
-          title: id
-          description: The product option's ID.
-        object:
-          type: string
-          title: object
-          description: The name of the deleted object.
-          default: product_option
-        deleted:
-          type: boolean
-          title: deleted
-          description: Whether the product option was deleted.
-        parent:
-          $ref: '#/components/schemas/AdminProduct'
-    AdminSalesChannel:
-      type: object
-      description: The sales channel's details.
-      x-schemaName: AdminSalesChannel
-      required:
-      - id
-      - name
-      - description
-      - is_disabled
-      - metadata
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The sales channel's ID.
-        name:
-          type: string
-          title: name
-          description: The sales channel's name.
-        description:
-          type: string
-          title: description
-          description: The sales channel's description.
-        is_disabled:
-          type: boolean
-          title: is_disabled
-          description: Whether the sales channel is disabled.
-        metadata:
-          type: object
-          description: The sales channel's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the sales channel was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the sales channel was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the sales channel was deleted.
-    AdminProductImage:
-      type: object
-      description: The image's details.
-      x-schemaName: AdminProductImage
-      properties:
-        id:
-          type: string
-          title: id
-          description: The image's ID.
-        url:
-          type: string
-          title: url
-          description: The image's URL.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the image was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the image was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the image was deleted.
-        metadata:
-          type: object
-          description: The image's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        rank:
-          type: number
-          title: rank
-          description: The image's rank among sibling images.
-        product:
-          type: object
-        variants:
-          type: array
-          description: The variants associated with the image.
-          items:
-            type: object
-      required:
-      - id
-      - url
-      - rank
-    AdminTranslation:
-      type: object
-      description: The translation's details.
-      x-schemaName: AdminTranslation
-      required:
-      - id
-      - reference_id
-      - reference
-      - locale_code
-      - translations
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The translation's ID.
-        reference_id:
-          type: string
-          title: reference_id
-          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
-          example: prod_123
-        reference:
-          type: string
-          title: reference
-          description: The resource that the translation belongs to.
-          example: product
-        locale_code:
-          type: string
-          title: locale_code
-          description: The translation's locale code in BCP 47 format.
-          example: fr-FR
-        translations:
-          type: object
-          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
-          example:
-            title: Chaussures
-            description: Des chaussures élégantes.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date that the translation was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date that the translation was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date that the translation was deleted.
-    AdminUpdateProductOption:
-      type: object
-      description: The details to update in a product option.
-      x-schemaName: AdminUpdateProductOption
-      properties:
-        title:
-          type: string
-          title: title
-          description: The option's title.
-        values:
-          type: array
-          description: The option's values.
-          items:
-            type: string
-            title: values
-            description: An option value.
-        id:
-          type: string
-          title: id
-          description: The option's ID.
-        ranks:
-          type: object
-          description: The product option's ranks.
-        is_exclusive:
-          type: boolean
-          title: is_exclusive
-          description: Whether the product option is exclusive to the product. If disabled, the product option can be used by other products.
-        metadata:
-          type: object
-          description: Key-value pairs that hold additional information about the product option.
-    BaseProduct:
-      type: object
-      description: The product's details.
-      x-schemaName: BaseProduct
-      required:
-      - id
-      - title
-      - handle
-      - subtitle
-      - description
-      - is_giftcard
-      - status
-      - thumbnail
-      - width
-      - weight
-      - length
-      - height
-      - origin_country
-      - hs_code
-      - mid_code
-      - material
-      - collection_id
-      - type_id
-      - variants
-      - options
-      - images
-      - discountable
-      - external_id
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        collection:
-          $ref: '#/components/schemas/BaseCollection'
-        categories:
-          type: array
-          description: The product's categories.
-          items:
-            $ref: '#/components/schemas/BaseProductCategory'
-        variants:
-          type: array
-          description: The product's variants.
-          items:
-            type: object
-        type:
-          $ref: '#/components/schemas/BaseProductType'
-        tags:
-          type: array
-          description: The product's tags.
-          items:
-            $ref: '#/components/schemas/BaseProductTag'
-        length:
-          type: number
-          title: length
-          description: The product's length.
-        title:
-          type: string
-          title: title
-          description: The product's title.
-        status:
-          type: string
-          description: The product's status.
-          enum:
-          - draft
-          - proposed
-          - published
-          - rejected
-        options:
-          type: array
-          description: The product's options.
-          items:
-            $ref: '#/components/schemas/BaseProductOption'
-        description:
-          type: string
-          title: description
-          description: The product's description.
-        id:
-          type: string
-          title: id
-          description: The product's ID.
-        metadata:
-          type: object
-          description: The product's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the product was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the product was updated.
-        handle:
-          type: string
-          title: handle
-          description: The product's unique handle.
-        subtitle:
-          type: string
-          title: subtitle
-          description: The product's subtitle.
-        is_giftcard:
-          type: boolean
-          title: is_giftcard
-          description: Whether the product is a gift card.
-        thumbnail:
-          type: string
-          title: thumbnail
-          description: The product's thumbnail.
-        width:
-          type: number
-          title: width
-          description: The product's width.
-        weight:
-          type: number
-          title: weight
-          description: The product's weight.
-        height:
-          type: number
-          title: height
-          description: The product's height.
-        origin_country:
-          type: string
-          title: origin_country
-          description: The product's origin country.
-        hs_code:
-          type: string
-          title: hs_code
-          description: The product's HS code.
-        mid_code:
-          type: string
-          title: mid_code
-          description: The product's MID code.
-        material:
-          type: string
-          title: material
-          description: The product's material.
-        collection_id:
-          type: string
-          title: collection_id
-          description: The ID of the collection that the product belongs to.
-        type_id:
-          type: string
-          title: type_id
-          description: The ID of the product's type.
-        images:
-          type: array
-          description: The product's images.
-          items:
-            $ref: '#/components/schemas/BaseProductImage'
-        discountable:
-          type: boolean
-          title: discountable
-          description: Whether discounts can be applied on the product.
-        external_id:
-          type: string
-          title: external_id
-          description: The ID of a product in an external system, such as an ERP or CMS.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the product was deleted.
-    AdminProductOptionResponse:
-      type: object
-      description: The product option's details.
-      x-schemaName: AdminProductOptionResponse
-      required:
-      - product_option
-      properties:
-        product_option:
-          $ref: '#/components/schemas/AdminProductOption'
-    AdminProductOptionValueResponse:
-      type: object
-      description: The details of a product option value.
-      x-schemaName: AdminProductOptionValueResponse
-      required:
-      - product_option_value
-      properties:
-        product_option_value:
-          $ref: '#/components/schemas/AdminProductOptionValue'
     AdminProduct:
       type: object
       description: The product's details.
@@ -4004,6 +2791,676 @@ components:
           description: The product's translations.
           items:
             $ref: '#/components/schemas/AdminTranslation'
+    BaseProductOptionValue:
+      type: object
+      description: The product option value's details.
+      x-schemaName: BaseProductOptionValue
+      required:
+      - id
+      - value
+      properties:
+        id:
+          type: string
+          title: id
+          description: The value's ID.
+        value:
+          type: string
+          title: value
+          description: The value.
+        option:
+          type: object
+        option_id:
+          type: string
+          title: option_id
+          description: The ID of the option this value belongs to.
+        metadata:
+          type: object
+          description: The value's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the value was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the value was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the value was deleted.
+        rank:
+          type: number
+          title: rank
+          description: The rank of the value among other option values.
+    BaseProductCategory:
+      type: object
+      description: The product category's details.
+      x-schemaName: BaseProductCategory
+      required:
+      - id
+      - name
+      - description
+      - handle
+      - is_active
+      - is_internal
+      - rank
+      - parent_category_id
+      - parent_category
+      - category_children
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        category_children:
+          type: array
+          description: The category's children.
+          items:
+            $ref: '#/components/schemas/AdminProductCategory'
+        parent_category:
+          $ref: '#/components/schemas/AdminProductCategory'
+        products:
+          type: array
+          description: The category's products.
+          items:
+            type: object
+        name:
+          type: string
+          title: name
+          description: The category's name.
+        description:
+          type: string
+          title: description
+          description: The category's description.
+        id:
+          type: string
+          title: id
+          description: The category's ID.
+        metadata:
+          type: object
+          description: The category's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the category was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the category was updated.
+        handle:
+          type: string
+          title: handle
+          description: The category's unique handle.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the category was deleted.
+        is_active:
+          type: boolean
+          title: is_active
+          description: Whether the category is active. If disabled, the category isn't shown in the storefront.
+        is_internal:
+          type: boolean
+          title: is_internal
+          description: Whether the category is internal. If enabled, the category is only seen by admin users.
+        rank:
+          type: number
+          title: rank
+          description: The category's rank among sibling categories.
+        parent_category_id:
+          type: string
+          title: parent_category_id
+          description: The ID of the category's parent.
+    BaseProductOption:
+      type: object
+      description: The product option's details.
+      x-schemaName: BaseProductOption
+      required:
+      - id
+      - title
+      - is_exclusive
+      properties:
+        id:
+          type: string
+          title: id
+          description: The product option's ID.
+        title:
+          type: string
+          title: title
+          description: The product option's title.
+        values:
+          type: array
+          description: The product option's values.
+          items:
+            $ref: '#/components/schemas/BaseProductOptionValue'
+        metadata:
+          type: object
+          description: The product option's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the product option was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the product option was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the product option was deleted.
+        is_exclusive:
+          type: boolean
+          title: is_exclusive
+          description: Whether the option is exclusive to a product.
+        products:
+          type: array
+          description: The products that use the option.
+          items:
+            type: object
+    AdminPrice:
+      type: object
+      description: The price's details.
+      x-schemaName: AdminPrice
+      required:
+      - id
+      - title
+      - currency_code
+      - amount
+      - raw_amount
+      - min_quantity
+      - max_quantity
+      - price_set_id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The price's ID.
+        title:
+          type: string
+          title: title
+          description: The price's title.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The price's currency code.
+          example: usd
+        amount:
+          type: number
+          title: amount
+          description: The price's amount.
+        raw_amount:
+          type: object
+          description: The price's raw amount.
+        min_quantity:
+          type: number
+          title: min_quantity
+          description: The minimum quantity that must be available in the cart for the price to be applied.
+        max_quantity:
+          type: number
+          title: max_quantity
+          description: The maximum quantity allowed to be available in the cart for the price to be applied.
+        price_set_id:
+          type: string
+          title: price_set_id
+          description: The ID of the associated price set.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the price was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the price was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the price was deleted.
+    AdminUpdateProductOptionValue:
+      type: object
+      description: The details of updating a product option value.
+      x-schemaName: AdminUpdateProductOptionValue
+      properties:
+        value:
+          type: string
+          title: value
+          description: The product option's value.
+        metadata:
+          type: object
+          description: Key-value pairs that hold additional information about the product option value.
+    AdminUpdateProductOption:
+      type: object
+      description: The details to update in a product option.
+      x-schemaName: AdminUpdateProductOption
+      properties:
+        title:
+          type: string
+          title: title
+          description: The option's title.
+        values:
+          type: array
+          description: The option's values.
+          items:
+            type: string
+            title: values
+            description: An option value.
+        id:
+          type: string
+          title: id
+          description: The option's ID.
+        ranks:
+          type: object
+          description: The product option's ranks.
+        is_exclusive:
+          type: boolean
+          title: is_exclusive
+          description: Whether the product option is exclusive to the product. If disabled, the product option can be used by other products.
+        metadata:
+          type: object
+          description: Key-value pairs that hold additional information about the product option.
+    AdminProductImage:
+      type: object
+      description: The image's details.
+      x-schemaName: AdminProductImage
+      properties:
+        id:
+          type: string
+          title: id
+          description: The image's ID.
+        url:
+          type: string
+          title: url
+          description: The image's URL.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the image was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the image was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the image was deleted.
+        metadata:
+          type: object
+          description: The image's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        rank:
+          type: number
+          title: rank
+          description: The image's rank among sibling images.
+        product:
+          type: object
+        variants:
+          type: array
+          description: The variants associated with the image.
+          items:
+            type: object
+      required:
+      - id
+      - url
+      - rank
+    BaseProduct:
+      type: object
+      description: The product's details.
+      x-schemaName: BaseProduct
+      required:
+      - id
+      - title
+      - handle
+      - subtitle
+      - description
+      - is_giftcard
+      - status
+      - thumbnail
+      - width
+      - weight
+      - length
+      - height
+      - origin_country
+      - hs_code
+      - mid_code
+      - material
+      - collection_id
+      - type_id
+      - variants
+      - options
+      - images
+      - discountable
+      - external_id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        collection:
+          $ref: '#/components/schemas/BaseCollection'
+        categories:
+          type: array
+          description: The product's categories.
+          items:
+            $ref: '#/components/schemas/BaseProductCategory'
+        variants:
+          type: array
+          description: The product's variants.
+          items:
+            type: object
+        type:
+          $ref: '#/components/schemas/BaseProductType'
+        tags:
+          type: array
+          description: The product's tags.
+          items:
+            $ref: '#/components/schemas/BaseProductTag'
+        length:
+          type: number
+          title: length
+          description: The product's length.
+        title:
+          type: string
+          title: title
+          description: The product's title.
+        status:
+          type: string
+          description: The product's status.
+          enum:
+          - draft
+          - proposed
+          - published
+          - rejected
+        options:
+          type: array
+          description: The product's options.
+          items:
+            $ref: '#/components/schemas/BaseProductOption'
+        description:
+          type: string
+          title: description
+          description: The product's description.
+        id:
+          type: string
+          title: id
+          description: The product's ID.
+        metadata:
+          type: object
+          description: The product's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the product was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the product was updated.
+        handle:
+          type: string
+          title: handle
+          description: The product's unique handle.
+        subtitle:
+          type: string
+          title: subtitle
+          description: The product's subtitle.
+        is_giftcard:
+          type: boolean
+          title: is_giftcard
+          description: Whether the product is a gift card.
+        thumbnail:
+          type: string
+          title: thumbnail
+          description: The product's thumbnail.
+        width:
+          type: number
+          title: width
+          description: The product's width.
+        weight:
+          type: number
+          title: weight
+          description: The product's weight.
+        height:
+          type: number
+          title: height
+          description: The product's height.
+        origin_country:
+          type: string
+          title: origin_country
+          description: The product's origin country.
+        hs_code:
+          type: string
+          title: hs_code
+          description: The product's HS code.
+        mid_code:
+          type: string
+          title: mid_code
+          description: The product's MID code.
+        material:
+          type: string
+          title: material
+          description: The product's material.
+        collection_id:
+          type: string
+          title: collection_id
+          description: The ID of the collection that the product belongs to.
+        type_id:
+          type: string
+          title: type_id
+          description: The ID of the product's type.
+        images:
+          type: array
+          description: The product's images.
+          items:
+            $ref: '#/components/schemas/BaseProductImage'
+        discountable:
+          type: boolean
+          title: discountable
+          description: Whether discounts can be applied on the product.
+        external_id:
+          type: string
+          title: external_id
+          description: The ID of a product in an external system, such as an ERP or CMS.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the product was deleted.
+    AdminProductCategory:
+      type: object
+      description: The product category's details.
+      x-schemaName: AdminProductCategory
+      required:
+      - category_children
+      - parent_category
+      - name
+      - description
+      - id
+      - created_at
+      - updated_at
+      - handle
+      - deleted_at
+      - is_active
+      - is_internal
+      - rank
+      - parent_category_id
+      properties:
+        category_children:
+          type: array
+          description: The category's children.
+          items:
+            type: object
+        parent_category:
+          type: object
+        products:
+          type: array
+          description: The category's products.
+          items:
+            type: object
+        name:
+          type: string
+          title: name
+          description: The category's name.
+        description:
+          type: string
+          title: description
+          description: The category's description.
+        id:
+          type: string
+          title: id
+          description: The category's ID.
+        metadata:
+          type: object
+          description: The category's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the category was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the category was updated.
+        handle:
+          type: string
+          title: handle
+          description: The category's unique handle.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the category was deleted.
+        is_active:
+          type: boolean
+          title: is_active
+          description: Whether the category is active. If disabled, the category isn't shown in the storefront.
+        is_internal:
+          type: boolean
+          title: is_internal
+          description: Whether the category is internal. If enabled, the category is only seen by admin users.
+        rank:
+          type: number
+          title: rank
+          description: The category's rank among sibling categories.
+        parent_category_id:
+          type: string
+          title: parent_category_id
+          description: The ID of the category's parent.
+    AdminInventoryItem:
+      type: object
+      description: The inventory item's details.
+      x-schemaName: AdminInventoryItem
+      required:
+      - id
+      - requires_shipping
+      - stocked_quantity
+      - reserved_quantity
+      properties:
+        id:
+          type: string
+          title: id
+          description: The inventory item's ID.
+        sku:
+          type: string
+          title: sku
+          description: The inventory item's sku.
+        origin_country:
+          type: string
+          title: origin_country
+          description: The inventory item's origin country.
+        hs_code:
+          type: string
+          title: hs_code
+          description: The inventory item's HS code.
+        requires_shipping:
+          type: boolean
+          title: requires_shipping
+          description: Whether the inventory item requires shipping.
+        mid_code:
+          type: string
+          title: mid_code
+          description: The inventory item's MID code.
+        material:
+          type: string
+          title: material
+          description: The inventory item's material.
+        weight:
+          type: number
+          title: weight
+          description: The inventory item's weight.
+        length:
+          type: number
+          title: length
+          description: The inventory item's length.
+        height:
+          type: number
+          title: height
+          description: The inventory item's height.
+        width:
+          type: number
+          title: width
+          description: The inventory item's width.
+        title:
+          type: string
+          title: title
+          description: The inventory item's title.
+        description:
+          type: string
+          title: description
+          description: The inventory item's description.
+        thumbnail:
+          type: string
+          title: thumbnail
+          description: The thumbnail URL of the inventory item.
+        metadata:
+          type: object
+          description: Custom key-value pairs, used to store additional information about the inventory item.
+        location_levels:
+          type: array
+          description: The inventory item's location levels.
+          items:
+            $ref: '#/components/schemas/AdminInventoryLevel'
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory item's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The inventory item's reserved quantity.
     AdminCollection:
       type: object
       description: The product collection's details.
@@ -4064,6 +3521,601 @@ components:
           type: string
           title: external_id
           description: The collection's external ID, which can be used to link the collection to an external system or database.
+    BaseProductTag:
+      type: object
+      description: The product tag's details.
+      x-schemaName: BaseProductTag
+      required:
+      - id
+      - value
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The tag's ID.
+        value:
+          type: string
+          title: value
+          description: The tag's value.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the tag was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the tag was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the tag was deleted.
+        metadata:
+          type: object
+          description: The tag's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        external_id:
+          type: string
+          title: external_id
+          description: The tag's external ID used to link it with external systems.
+    AdminProductOptionValueResponse:
+      type: object
+      description: The details of a product option value.
+      x-schemaName: AdminProductOptionValueResponse
+      required:
+      - product_option_value
+      properties:
+        product_option_value:
+          $ref: '#/components/schemas/AdminProductOptionValue'
+    AdminSalesChannel:
+      type: object
+      description: The sales channel's details.
+      x-schemaName: AdminSalesChannel
+      required:
+      - id
+      - name
+      - description
+      - is_disabled
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The sales channel's ID.
+        name:
+          type: string
+          title: name
+          description: The sales channel's name.
+        description:
+          type: string
+          title: description
+          description: The sales channel's description.
+        is_disabled:
+          type: boolean
+          title: is_disabled
+          description: Whether the sales channel is disabled.
+        metadata:
+          type: object
+          description: The sales channel's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the sales channel was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the sales channel was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the sales channel was deleted.
+    AdminProductOptionValue:
+      type: object
+      description: The product option value's details.
+      x-schemaName: AdminProductOptionValue
+      required:
+      - id
+      - value
+      properties:
+        id:
+          type: string
+          title: id
+          description: The value's ID.
+        value:
+          type: string
+          title: value
+          description: The value.
+        option:
+          $ref: '#/components/schemas/AdminProductOption'
+        option_id:
+          type: string
+          title: option_id
+          description: The ID of the option this value belongs to.
+        metadata:
+          type: object
+          description: The value's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the value was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the value was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the value was deleted.
+        rank:
+          type: number
+          title: rank
+          description: The rank of the value among other option values.
+    AdminShippingProfile:
+      type: object
+      description: The shipping profile's details..
+      x-schemaName: AdminShippingProfile
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping profile's ID.
+        name:
+          type: string
+          title: name
+          description: The shipping profile's name.
+        type:
+          type: string
+          title: type
+          description: The shipping profile's type.
+        metadata:
+          type: object
+          description: The shipping profile's metadata, holds custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the shipping profile was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the shipping profile was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the shipping profile was deleted.
+      required:
+      - id
+      - name
+      - type
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+    AdminProductOption:
+      type: object
+      description: The product option's details.
+      x-schemaName: AdminProductOption
+      required:
+      - id
+      - title
+      - is_exclusive
+      properties:
+        id:
+          type: string
+          title: id
+          description: The product option's ID.
+        title:
+          type: string
+          title: title
+          description: The product option's title.
+        values:
+          type: array
+          description: The product option's values.
+          items:
+            type: object
+        metadata:
+          type: object
+          description: The product option's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the product option was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the product option was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the product option was deleted.
+        products:
+          type: array
+          description: The products that use the option.
+          items:
+            type: object
+        is_exclusive:
+          type: boolean
+          title: is_exclusive
+          description: Whether the option is exclusive to a product.
+    AdminProductOptionDeleteResponse:
+      type: object
+      description: The details of the product option deletion.
+      x-schemaName: AdminProductOptionDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The product option's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: product_option
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the product option was deleted.
+        parent:
+          $ref: '#/components/schemas/AdminProduct'
+    AdminProductOptionResponse:
+      type: object
+      description: The product option's details.
+      x-schemaName: AdminProductOptionResponse
+      required:
+      - product_option
+      properties:
+        product_option:
+          $ref: '#/components/schemas/AdminProductOption'
+    BaseCalculatedPriceSet:
+      type: object
+      description: The calculated price's details.
+      x-schemaName: BaseCalculatedPriceSet
+      required:
+      - id
+      - calculated_amount
+      - original_amount
+      - original_amount_with_tax
+      - original_amount_without_tax
+      - currency_code
+      properties:
+        id:
+          type: string
+          title: id
+          description: The calculated price's ID.
+        is_calculated_price_price_list:
+          type: boolean
+          title: is_calculated_price_price_list
+          description: Whether the calculated price belongs to a price list.
+        is_calculated_price_tax_inclusive:
+          type: boolean
+          title: is_calculated_price_tax_inclusive
+          description: Whether the calculated price is tax inclusive.
+        calculated_amount:
+          type: number
+          title: calculated_amount
+          description: The amount of the calculated price, or `null` if there isn't a calculated price. This is the amount shown to the customer.
+        calculated_amount_with_tax:
+          type: number
+          title: calculated_amount_with_tax
+          description: The calculated price's amount with taxes applied.
+        calculated_amount_without_tax:
+          type: number
+          title: calculated_amount_without_tax
+          description: The calculated price's amount without taxes applied.
+        is_original_price_price_list:
+          type: boolean
+          title: is_original_price_price_list
+          description: Whether the original price belongs to a price list.
+        is_original_price_tax_inclusive:
+          type: boolean
+          title: is_original_price_tax_inclusive
+          description: Whether the original price is tax inclusive.
+        original_amount:
+          type: number
+          title: original_amount
+          description: The amount of the original price, or `null` if there isn't an original price. This amount is useful to compare with the `calculated_amount`, such as to check for discounted value.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The calculated price's currency code.
+          example: usd
+        calculated_price:
+          type: object
+          description: The calculated price's details.
+        original_price:
+          type: object
+          description: The original price's details.
+        original_amount_with_tax:
+          type: number
+          title: original_amount_with_tax
+          description: The amount of the original price with taxes applied.
+        original_amount_without_tax:
+          type: number
+          title: original_amount_without_tax
+          description: The amount of the original price without taxes.
+    AdminProductTag:
+      type: object
+      description: The product tag's details.
+      x-schemaName: AdminProductTag
+      required:
+      - id
+      - value
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The tag's ID.
+        value:
+          type: string
+          title: value
+          description: The tag's value.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the tag was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the tag was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the tag was deleted.
+        metadata:
+          type: object
+          description: The tag's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        translations:
+          type: array
+          description: The tag's translations.
+          items:
+            $ref: '#/components/schemas/AdminTranslation'
+        external_id:
+          type: string
+          title: external_id
+          description: The tag's external ID used for integration with third-party systems.
+    BaseProductType:
+      type: object
+      description: The product type's details.
+      x-schemaName: BaseProductType
+      required:
+      - id
+      - value
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The type's ID.
+        value:
+          type: string
+          title: value
+          description: The type's value.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the type was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the type was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the type was deleted.
+        metadata:
+          type: object
+          description: The type's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        external_id:
+          type: string
+          title: external_id
+          description: The type's external ID used to link it with external systems.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminInventoryLevel:
+      type: object
+      description: The location level's location levels.
+      x-schemaName: AdminInventoryLevel
+      required:
+      - id
+      - created_at
+      - updated_at
+      - deleted_at
+      - inventory_item_id
+      - location_id
+      - stocked_quantity
+      - reserved_quantity
+      - incoming_quantity
+      - metadata
+      - available_quantity
+      properties:
+        id:
+          type: string
+          title: id
+          description: The location level's ID.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The location level's created at.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The location level's updated at.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The location level's deleted at.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The location level's inventory item id.
+        location_id:
+          type: string
+          title: location_id
+          description: The location level's location id.
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The location level's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The location level's reserved quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The location level's incoming quantity.
+        metadata:
+          type: object
+          description: The location level's metadata.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        inventory_item:
+          type: object
+        available_quantity:
+          type: number
+          title: available_quantity
+          description: The location level's available quantity.
+    StoreProductOption:
+      type: object
+      description: The product option's details.
+      x-schemaName: StoreProductOption
+      properties:
+        id:
+          type: string
+          title: id
+          description: The option's ID.
+        title:
+          type: string
+          title: title
+          description: The option's title.
+        product:
+          type: object
+        values:
+          type: array
+          description: The option's values.
+          items:
+            $ref: '#/components/schemas/StoreProductOptionValue'
+        metadata:
+          type: object
+          description: The option's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the product option was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the product option was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the product option was deleted.
+        products:
+          type: array
+          description: The products that use the option.
+          items:
+            $ref: '#/components/schemas/BaseProduct'
+        is_exclusive:
+          type: boolean
+          title: is_exclusive
+          description: Whether the option is exclusive to a product.
+      required:
+      - title
+      - id
+      - is_exclusive
     StoreProductOptionResponse:
       type: object
       description: The product option's details.
@@ -4120,81 +4172,48 @@ components:
           type: number
           title: rank
           description: The rank of the value among other option values.
-    StoreProductOption:
-      type: object
-      description: The product option's details.
-      x-schemaName: StoreProductOption
-      properties:
-        id:
-          type: string
-          title: id
-          description: The option's ID.
-        title:
-          type: string
-          title: title
-          description: The option's title.
-        product:
-          type: object
-        values:
-          type: array
-          description: The option's values.
-          items:
-            $ref: '#/components/schemas/StoreProductOptionValue'
-        metadata:
-          type: object
-          description: The option's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the product option was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the product option was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the product option was deleted.
-        products:
-          type: array
-          description: The products that use the option.
-          items:
-            $ref: '#/components/schemas/BaseProduct'
-        is_exclusive:
-          type: boolean
-          title: is_exclusive
-          description: Whether the option is exclusive to a product.
-      required:
-      - title
-      - id
-      - is_exclusive
+  examples:
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   responses:
-    invalid_request_error:
-      description: Invalid Request Error
+    unauthorized:
+      description: User is not authorized. Must log in first
       content:
-        application/json:
+        text/plain:
           schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+            type: string
+            default: Unauthorized
+            example: Unauthorized
     500_error:
       description: Server Error
       content:
@@ -4210,14 +4229,6 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
     400_error:
       description: Client Error
       content:
@@ -4238,39 +4249,26 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
-  examples:
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

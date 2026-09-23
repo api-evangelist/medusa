@@ -8,9 +8,7 @@ info:
   description: 'An admin can invite new users to manage their team. This allows new users to authenticate as admins and perform admin functionalities.
 
 
-    These API routes allow admin users to manage invites.
-
-    '
+    These API routes allow admin users to manage invites.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
@@ -19,9 +17,7 @@ tags:
   description: 'An admin can invite new users to manage their team. This allows new users to authenticate as admins and perform admin functionalities.
 
 
-    These API routes allow admin users to manage invites.
-
-    '
+    These API routes allow admin users to manage invites.'
   externalDocs:
     description: Learn more about the User Module
     url: https://docs.medusajs.com/resources/commerce-modules/user
@@ -645,9 +641,7 @@ paths:
       summary: Accept Invite
       description: 'Accept an invite and create a new user.
 
-        Since the user isn''t created yet, the JWT token used in the authorization header is retrieved from the `/auth/user/emailpass/register` API route (or a provider other than `emailpass`). The user can then authenticate using the `/auth/user/emailpass` API route.
-
-        '
+        Since the user isn''t created yet, the JWT token used in the authorization header is retrieved from the `/auth/user/emailpass/register` API route (or a provider other than `emailpass`). The user can then authenticate using the `/auth/user/emailpass` API route.'
       x-authenticated: true
       requestBody:
         content:
@@ -920,71 +914,34 @@ paths:
           for example.'
         deprecated: false
 components:
-  responses:
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
   schemas:
+    AdminGetInviteAcceptParams:
+      type: object
+      description: The details of the user to be created.
+      properties:
+        email:
+          type: string
+          title: email
+          description: The invite's email.
+          format: email
+        first_name:
+          type: string
+          title: first_name
+          description: The invited user's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The invited user's last name.
+      x-schemaName: AdminGetInviteAcceptParams
+    AdminInviteResponse:
+      type: object
+      description: The invite's details.
+      x-schemaName: AdminInviteResponse
+      required:
+      - invite
+      properties:
+        invite:
+          $ref: '#/components/schemas/AdminInvite'
     AdminUser:
       type: object
       description: The user's details.
@@ -1099,24 +1056,70 @@ components:
           x-featureFlag: rbac
           items:
             $ref: '#/components/schemas/AdminRbacRole'
-    AdminGetInviteAcceptParams:
+    AdminRbacPolicy:
       type: object
-      description: The details of the user to be created.
+      description: The details of an RBAC policy.
+      x-schemaName: AdminRbacPolicy
+      required:
+      - id
+      - key
+      - resource
+      - operation
+      - name
+      - description
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
       properties:
-        email:
+        id:
           type: string
-          title: email
-          description: The invite's email.
-          format: email
-        first_name:
+          title: id
+          description: The policy's ID.
+        key:
           type: string
-          title: first_name
-          description: The invited user's first name.
-        last_name:
+          title: key
+          description: The policy's key.
+        resource:
           type: string
-          title: last_name
-          description: The invited user's last name.
-      x-schemaName: AdminGetInviteAcceptParams
+          title: resource
+          description: The resource that the policy applies to.
+          example: product
+        operation:
+          type: string
+          title: operation
+          description: The operation that the policy allows or denies.
+          example: create
+        name:
+          type: string
+          title: name
+          description: The policy's name. Used for display purposes.
+        description:
+          type: string
+          title: description
+          description: The policy's description.
+        metadata:
+          type: object
+          description: Key-value pairs that hold additional information about the policy.
+        inherited_from_role_id:
+          type: string
+          title: inherited_from_role_id
+          description: The ID of the role from which the policy is inherited.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the policy was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the policy was last updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the policy was deleted.
     Error:
       title: Response Error
       type: object
@@ -1204,91 +1207,22 @@ components:
           format: date-time
           title: deleted_at
           description: The date the RBAC role was deleted.
-    AdminRbacPolicy:
-      type: object
-      description: The details of an RBAC policy.
-      x-schemaName: AdminRbacPolicy
-      required:
-      - id
-      - key
-      - resource
-      - operation
-      - name
-      - description
-      - metadata
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The policy's ID.
-        key:
-          type: string
-          title: key
-          description: The policy's key.
-        resource:
-          type: string
-          title: resource
-          description: The resource that the policy applies to.
-          example: product
-        operation:
-          type: string
-          title: operation
-          description: The operation that the policy allows or denies.
-          example: create
-        name:
-          type: string
-          title: name
-          description: The policy's name. Used for display purposes.
-        description:
-          type: string
-          title: description
-          description: The policy's description.
-        metadata:
-          type: object
-          description: Key-value pairs that hold additional information about the policy.
-        inherited_from_role_id:
-          type: string
-          title: inherited_from_role_id
-          description: The ID of the role from which the policy is inherited.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the policy was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the policy was last updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the policy was deleted.
-    AdminInviteResponse:
-      type: object
-      description: The invite's details.
-      x-schemaName: AdminInviteResponse
-      required:
-      - invite
-      properties:
-        invite:
-          $ref: '#/components/schemas/AdminInvite'
   examples:
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
     unexpected_state_error:
       summary: Unexpected State Error
       value:
         message: cart.total must be defined
         type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
     default_error:
       summary: Default Error
       value:
@@ -1300,16 +1234,76 @@ components:
       value:
         message: cart.total must be defined
         type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
+    database_error:
+      summary: Database Error
       value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+  responses:
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

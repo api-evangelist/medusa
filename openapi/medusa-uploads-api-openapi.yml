@@ -8,9 +8,7 @@ info:
   description: 'Use these API routes to upload files to your Medusa application using the installed file module provider.
 
 
-    You can upload public files, such as product images, or private files, such as CSV files used to import products.
-
-    '
+    You can upload public files, such as product images, or private files, such as CSV files used to import products.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
@@ -19,9 +17,7 @@ tags:
   description: 'Use these API routes to upload files to your Medusa application using the installed file module provider.
 
 
-    You can upload public files, such as product images, or private files, such as CSV files used to import products.
-
-    '
+    You can upload public files, such as product images, or private files, such as CSV files used to import products.'
   externalDocs:
     description: Check out available file module providers.
     url: https://docs.medusajs.com/resources/infrastructure-modules/file
@@ -281,39 +277,6 @@ paths:
       x-workflow: deleteFilesWorkflow
       x-events: []
 components:
-  examples:
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
   schemas:
     AdminFileResponse:
       type: object
@@ -324,22 +287,6 @@ components:
       properties:
         file:
           $ref: '#/components/schemas/AdminFile'
-    AdminFile:
-      type: object
-      description: A file's details.
-      x-schemaName: AdminFile
-      required:
-      - id
-      - url
-      properties:
-        id:
-          type: string
-          title: id
-          description: The file's ID.
-        url:
-          type: string
-          title: url
-          description: The file's URL.
     Error:
       title: Response Error
       type: object
@@ -374,6 +321,18 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
+    AdminFileListResponse:
+      type: object
+      description: The list of uploaded files.
+      x-schemaName: AdminFileListResponse
+      required:
+      - files
+      properties:
+        files:
+          type: array
+          description: The list of uploaded files.
+          items:
+            $ref: '#/components/schemas/AdminFile'
     AdminUploadPreSignedUrlResponse:
       type: object
       description: The result of the pre-signed URL upload request.
@@ -412,18 +371,22 @@ components:
           type: number
           title: size
           description: The file's size in bytes.
-    AdminFileListResponse:
+    AdminFile:
       type: object
-      description: The list of uploaded files.
-      x-schemaName: AdminFileListResponse
+      description: A file's details.
+      x-schemaName: AdminFile
       required:
-      - files
+      - id
+      - url
       properties:
-        files:
-          type: array
-          description: The list of uploaded files.
-          items:
-            $ref: '#/components/schemas/AdminFile'
+        id:
+          type: string
+          title: id
+          description: The file's ID.
+        url:
+          type: string
+          title: url
+          description: The file's URL.
     AdminUploadPreSignedUrl:
       type: object
       description: The details of the file to upload.
@@ -461,37 +424,6 @@ components:
             type: string
             default: Unauthorized
             example: Unauthorized
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
     500_error:
       description: Server Error
       content:
@@ -507,6 +439,17 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
     not_found_error:
       description: Not Found Error
       content:
@@ -516,6 +459,59 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   securitySchemes:
     api_token:
       type: http

@@ -8,9 +8,7 @@ info:
   description: 'A campaign is a group of promotions that have the same conditions, such as start and end dates.
 
 
-    These API routes allow admin users to manage campaigns, their conditions, and promotions that belong to them.
-
-    '
+    These API routes allow admin users to manage campaigns, their conditions, and promotions that belong to them.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
@@ -19,9 +17,7 @@ tags:
   description: 'A campaign is a group of promotions that have the same conditions, such as start and end dates.
 
 
-    These API routes allow admin users to manage campaigns, their conditions, and promotions that belong to them.
-
-    '
+    These API routes allow admin users to manage campaigns, their conditions, and promotions that belong to them.'
   externalDocs:
     description: Learn more about campaigns.
     url: https://docs.medusajs.com/resources/commerce-modules/promotion/campaign
@@ -505,9 +501,7 @@ paths:
     delete:
       operationId: DeleteCampaignsId
       summary: Delete a Campaign
-      description: 'Delete a campaign by its ID. This doesn''t delete promotions that belong to this campaign.
-
-        '
+      description: Delete a campaign by its ID. This doesn't delete promotions that belong to this campaign.
       x-authenticated: true
       parameters:
       - name: id
@@ -637,29 +631,71 @@ paths:
       x-workflow: addOrRemoveCampaignPromotionsWorkflow
       x-events: []
 components:
+  responses:
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   examples:
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
     invalid_argument_error:
       summary: Invalid Argument Error
       value:
@@ -670,7 +706,164 @@ components:
       value:
         message: cart.total must be defined
         type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   schemas:
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminBatchLink:
+      type: object
+      description: A batch operation to manage the associations between two entities.
+      properties:
+        add:
+          type: array
+          description: The IDs of an entity to add to the other.
+          items:
+            type: string
+            title: add
+            description: The entity's ID.
+        remove:
+          type: array
+          description: The IDs of an entity to remove from the other.
+          items:
+            type: string
+            title: remove
+            description: The entity's ID.
+      x-schemaName: AdminBatchLink
+    AdminCampaignResponse:
+      type: object
+      description: The campaign's details.
+      x-schemaName: AdminCampaignResponse
+      required:
+      - campaign
+      properties:
+        campaign:
+          $ref: '#/components/schemas/AdminCampaign'
+    CampaignResponse:
+      type: object
+      description: The campaign's details.
+      x-schemaName: CampaignResponse
+      required:
+      - id
+      - name
+      - description
+      - currency
+      - campaign_identifier
+      - starts_at
+      - ends_at
+      - budget
+      properties:
+        id:
+          type: string
+          title: id
+          description: The campaign's ID.
+        name:
+          type: string
+          title: name
+          description: The campaign's name.
+        description:
+          type: string
+          title: description
+          description: The campaign's description.
+        currency:
+          type: string
+          title: currency
+          description: The campaign's currency.
+        campaign_identifier:
+          type: string
+          title: campaign_identifier
+          description: The campaign's campaign identifier.
+        starts_at:
+          type: string
+          title: starts_at
+          description: The campaign's starts at.
+        ends_at:
+          type: string
+          title: ends_at
+          description: The campaign's ends at.
+        budget:
+          type: object
+          description: The campaign's budget.
+          required:
+          - id
+          - type
+          - currency_code
+          - limit
+          - used
+          properties:
+            id:
+              type: string
+              title: id
+              description: The budget's ID.
+            type:
+              type: string
+              enum:
+              - spend
+              - usage
+            currency_code:
+              type: string
+              title: currency_code
+              description: The budget's currency code.
+            limit:
+              type: number
+              title: limit
+              description: The budget's limit.
+            used:
+              type: number
+              title: used
+              description: The budget's used.
     AdminCampaign:
       type: object
       description: The campaign's details.
@@ -774,205 +967,6 @@ components:
           format: date-time
           title: deleted_at
           description: The date the campaign was deleted.
-    AdminBatchLink:
-      type: object
-      description: A batch operation to manage the associations between two entities.
-      properties:
-        add:
-          type: array
-          description: The IDs of an entity to add to the other.
-          items:
-            type: string
-            title: add
-            description: The entity's ID.
-        remove:
-          type: array
-          description: The IDs of an entity to remove from the other.
-          items:
-            type: string
-            title: remove
-            description: The entity's ID.
-      x-schemaName: AdminBatchLink
-    CampaignResponse:
-      type: object
-      description: The campaign's details.
-      x-schemaName: CampaignResponse
-      required:
-      - id
-      - name
-      - description
-      - currency
-      - campaign_identifier
-      - starts_at
-      - ends_at
-      - budget
-      properties:
-        id:
-          type: string
-          title: id
-          description: The campaign's ID.
-        name:
-          type: string
-          title: name
-          description: The campaign's name.
-        description:
-          type: string
-          title: description
-          description: The campaign's description.
-        currency:
-          type: string
-          title: currency
-          description: The campaign's currency.
-        campaign_identifier:
-          type: string
-          title: campaign_identifier
-          description: The campaign's campaign identifier.
-        starts_at:
-          type: string
-          title: starts_at
-          description: The campaign's starts at.
-        ends_at:
-          type: string
-          title: ends_at
-          description: The campaign's ends at.
-        budget:
-          type: object
-          description: The campaign's budget.
-          required:
-          - id
-          - type
-          - currency_code
-          - limit
-          - used
-          properties:
-            id:
-              type: string
-              title: id
-              description: The budget's ID.
-            type:
-              type: string
-              enum:
-              - spend
-              - usage
-            currency_code:
-              type: string
-              title: currency_code
-              description: The budget's currency code.
-            limit:
-              type: number
-              title: limit
-              description: The budget's limit.
-            used:
-              type: number
-              title: used
-              description: The budget's used.
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminCampaignResponse:
-      type: object
-      description: The campaign's details.
-      x-schemaName: AdminCampaignResponse
-      required:
-      - campaign
-      properties:
-        campaign:
-          $ref: '#/components/schemas/AdminCampaign'
-  responses:
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
   securitySchemes:
     api_token:
       type: http

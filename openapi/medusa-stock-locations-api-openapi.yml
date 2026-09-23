@@ -11,12 +11,10 @@ info:
     Stock locations are linked to fulfillment providers used to fulfill items from this location.
 
 
-    A stock location is also link to a fulfillment set, indicating where an item is fulfilled from  when an order is placed.
+    A stock location is also link to a fulfillment set, indicating where an item is fulfilled from when an order is placed.
 
 
-    These API routes allow admin users to manage stock locations and their linked data.
-
-    '
+    These API routes allow admin users to manage stock locations and their linked data.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
@@ -28,12 +26,10 @@ tags:
     Stock locations are linked to fulfillment providers used to fulfill items from this location.
 
 
-    A stock location is also link to a fulfillment set, indicating where an item is fulfilled from  when an order is placed.
+    A stock location is also link to a fulfillment set, indicating where an item is fulfilled from when an order is placed.
 
 
-    These API routes allow admin users to manage stock locations and their linked data.
-
-    '
+    These API routes allow admin users to manage stock locations and their linked data.'
   externalDocs:
     description: Learn more about stock locations.
     url: https://docs.medusajs.com/resources/commerce-modules/stock-location/concepts
@@ -985,59 +981,54 @@ paths:
       x-events: []
 components:
   schemas:
-    AdminStockLocationListResponse:
+    AdminUpsertStockLocationAddress:
       type: object
-      description: The paginated list of stock locations.
-      x-schemaName: AdminStockLocationListResponse
+      description: The details of the stock location address to create.
+      x-schemaName: AdminUpsertStockLocationAddress
       required:
-      - limit
-      - offset
-      - count
-      - stock_locations
+      - country_code
+      - address_1
       properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the returned items.
-        count:
-          type: number
-          title: count
-          description: The total number of items.
-        stock_locations:
-          type: array
-          description: The list of stock locations.
-          items:
-            $ref: '#/components/schemas/AdminStockLocation'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
-          x-featureFlag: index_engine
-    AdminUpdateStockLocation:
-      type: object
-      description: The properties to update in a stock location.
-      x-schemaName: AdminUpdateStockLocation
-      properties:
-        name:
+        address_1:
           type: string
-          title: name
-          description: The stock location's name.
-        address:
-          $ref: '#/components/schemas/AdminUpsertStockLocationAddress'
-        address_id:
+          title: address_1
+          description: The address's first line.
+        address_2:
           type: string
-          title: address_id
-          description: The ID of an existing stock location address to associate the stock location with.
+          title: address_2
+          description: The address's second line.
+        company:
+          type: string
+          title: company
+          description: The address's company.
+        country_code:
+          type: string
+          title: country_code
+          description: The address's country code.
+          example: usd
+        city:
+          type: string
+          title: city
+          description: The address's city.
+        phone:
+          type: string
+          title: phone
+          description: The address's phone.
+        postal_code:
+          type: string
+          title: postal_code
+          description: The address's postal code.
+        province:
+          type: string
+          title: province
+          description: The address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
         metadata:
           type: object
-          description: The stock location's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
+          description: The address's metadata.
     AdminCreateStockLocation:
       type: object
       description: The stock location's details.
@@ -1061,184 +1052,6 @@ components:
           externalDocs:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminFulfillmentProvider:
-      type: object
-      description: The fulfillment provider's details.
-      x-schemaName: AdminFulfillmentProvider
-      required:
-      - id
-      - is_enabled
-      properties:
-        id:
-          type: string
-          title: id
-          description: The provider's ID.
-        is_enabled:
-          type: boolean
-          title: is_enabled
-          description: The provider's is enabled.
-    AdminStockLocation:
-      type: object
-      description: The stock location's details.
-      x-schemaName: AdminStockLocation
-      required:
-      - id
-      - name
-      - metadata
-      - address_id
-      properties:
-        id:
-          type: string
-          title: id
-          description: The location's ID.
-        name:
-          type: string
-          title: name
-          description: The location's name.
-        address_id:
-          type: string
-          title: address_id
-          description: The ID of the associated address.
-        address:
-          $ref: '#/components/schemas/AdminStockLocationAddress'
-        sales_channels:
-          type: array
-          description: The sales channels associated with the location.
-          items:
-            $ref: '#/components/schemas/AdminSalesChannel'
-        fulfillment_providers:
-          type: array
-          description: The fulfillment providers associated with the location.
-          items:
-            $ref: '#/components/schemas/AdminFulfillmentProvider'
-        fulfillment_sets:
-          type: array
-          description: The fulfillment sets associated with the location.
-          items:
-            type: object
-        metadata:
-          type: object
-          description: Key-value pairs of custom data.
-    AdminSalesChannel:
-      type: object
-      description: The sales channel's details.
-      x-schemaName: AdminSalesChannel
-      required:
-      - id
-      - name
-      - description
-      - is_disabled
-      - metadata
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The sales channel's ID.
-        name:
-          type: string
-          title: name
-          description: The sales channel's name.
-        description:
-          type: string
-          title: description
-          description: The sales channel's description.
-        is_disabled:
-          type: boolean
-          title: is_disabled
-          description: Whether the sales channel is disabled.
-        metadata:
-          type: object
-          description: The sales channel's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the sales channel was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the sales channel was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the sales channel was deleted.
-    AdminBatchLink:
-      type: object
-      description: A batch operation to manage the associations between two entities.
-      properties:
-        add:
-          type: array
-          description: The IDs of an entity to add to the other.
-          items:
-            type: string
-            title: add
-            description: The entity's ID.
-        remove:
-          type: array
-          description: The IDs of an entity to remove from the other.
-          items:
-            type: string
-            title: remove
-            description: The entity's ID.
-      x-schemaName: AdminBatchLink
-    AdminCreateStockLocationFulfillmentSet:
-      type: object
-      description: The fulfillment set to create.
-      required:
-      - name
-      - type
-      properties:
-        name:
-          type: string
-          title: name
-          description: The fulfillment set's name.
-        type:
-          type: string
-          title: type
-          description: The fulfillment set's type.
-      x-schemaName: AdminCreateStockLocationFulfillmentSet
     AdminStockLocationAddress:
       type: object
       description: The details of the stock location address.
@@ -1299,6 +1112,104 @@ components:
       - postal_code
       - province
       - metadata
+    AdminStockLocation:
+      type: object
+      description: The stock location's details.
+      x-schemaName: AdminStockLocation
+      required:
+      - id
+      - name
+      - metadata
+      - address_id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The location's ID.
+        name:
+          type: string
+          title: name
+          description: The location's name.
+        address_id:
+          type: string
+          title: address_id
+          description: The ID of the associated address.
+        address:
+          $ref: '#/components/schemas/AdminStockLocationAddress'
+        sales_channels:
+          type: array
+          description: The sales channels associated with the location.
+          items:
+            $ref: '#/components/schemas/AdminSalesChannel'
+        fulfillment_providers:
+          type: array
+          description: The fulfillment providers associated with the location.
+          items:
+            $ref: '#/components/schemas/AdminFulfillmentProvider'
+        fulfillment_sets:
+          type: array
+          description: The fulfillment sets associated with the location.
+          items:
+            type: object
+        metadata:
+          type: object
+          description: Key-value pairs of custom data.
+    AdminUpdateStockLocation:
+      type: object
+      description: The properties to update in a stock location.
+      x-schemaName: AdminUpdateStockLocation
+      properties:
+        name:
+          type: string
+          title: name
+          description: The stock location's name.
+        address:
+          $ref: '#/components/schemas/AdminUpsertStockLocationAddress'
+        address_id:
+          type: string
+          title: address_id
+          description: The ID of an existing stock location address to associate the stock location with.
+        metadata:
+          type: object
+          description: The stock location's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+    AdminFulfillmentProvider:
+      type: object
+      description: The fulfillment provider's details.
+      x-schemaName: AdminFulfillmentProvider
+      required:
+      - id
+      - is_enabled
+      properties:
+        id:
+          type: string
+          title: id
+          description: The provider's ID.
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: The provider's is enabled.
+    AdminBatchLink:
+      type: object
+      description: A batch operation to manage the associations between two entities.
+      properties:
+        add:
+          type: array
+          description: The IDs of an entity to add to the other.
+          items:
+            type: string
+            title: add
+            description: The entity's ID.
+        remove:
+          type: array
+          description: The IDs of an entity to remove from the other.
+          items:
+            type: string
+            title: remove
+            description: The entity's ID.
+      x-schemaName: AdminBatchLink
     AdminStockLocationDeleteResponse:
       type: object
       description: The details of the stock location's deletion.
@@ -1321,54 +1232,107 @@ components:
           type: boolean
           title: deleted
           description: Whether the stock location was deleted.
-    AdminUpsertStockLocationAddress:
+    AdminSalesChannel:
       type: object
-      description: The details of the stock location address to create.
-      x-schemaName: AdminUpsertStockLocationAddress
+      description: The sales channel's details.
+      x-schemaName: AdminSalesChannel
       required:
-      - country_code
-      - address_1
+      - id
+      - name
+      - description
+      - is_disabled
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
       properties:
-        address_1:
+        id:
           type: string
-          title: address_1
-          description: The address's first line.
-        address_2:
+          title: id
+          description: The sales channel's ID.
+        name:
           type: string
-          title: address_2
-          description: The address's second line.
-        company:
+          title: name
+          description: The sales channel's name.
+        description:
           type: string
-          title: company
-          description: The address's company.
-        country_code:
-          type: string
-          title: country_code
-          description: The address's country code.
-          example: usd
-        city:
-          type: string
-          title: city
-          description: The address's city.
-        phone:
-          type: string
-          title: phone
-          description: The address's phone.
-        postal_code:
-          type: string
-          title: postal_code
-          description: The address's postal code.
-        province:
-          type: string
-          title: province
-          description: The address's ISO 3166-2 province code. Must be lower-case.
-          example: us-ca
-          externalDocs:
-            url: https://en.wikipedia.org/wiki/ISO_3166-2
-            description: Learn more about ISO 3166-2
+          title: description
+          description: The sales channel's description.
+        is_disabled:
+          type: boolean
+          title: is_disabled
+          description: Whether the sales channel is disabled.
         metadata:
           type: object
-          description: The address's metadata.
+          description: The sales channel's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the sales channel was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the sales channel was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the sales channel was deleted.
+    AdminCreateStockLocationFulfillmentSet:
+      type: object
+      description: The fulfillment set to create.
+      required:
+      - name
+      - type
+      properties:
+        name:
+          type: string
+          title: name
+          description: The fulfillment set's name.
+        type:
+          type: string
+          title: type
+          description: The fulfillment set's type.
+      x-schemaName: AdminCreateStockLocationFulfillmentSet
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     AdminStockLocationResponse:
       type: object
       description: The stock location's details.
@@ -1378,27 +1342,80 @@ components:
       properties:
         stock_location:
           $ref: '#/components/schemas/AdminStockLocation'
+    AdminStockLocationListResponse:
+      type: object
+      description: The paginated list of stock locations.
+      x-schemaName: AdminStockLocationListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - stock_locations
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        stock_locations:
+          type: array
+          description: The list of stock locations.
+          items:
+            $ref: '#/components/schemas/AdminStockLocation'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+  examples:
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   responses:
-    invalid_request_error:
-      description: Invalid Request Error
+    unauthorized:
+      description: User is not authorized. Must log in first
       content:
-        application/json:
+        text/plain:
           schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+            type: string
+            default: Unauthorized
+            example: Unauthorized
     500_error:
       description: Server Error
       content:
@@ -1414,14 +1431,6 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
     400_error:
       description: Client Error
       content:
@@ -1442,39 +1451,26 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
-  examples:
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

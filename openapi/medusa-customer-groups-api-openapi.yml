@@ -11,9 +11,7 @@ info:
     For example, you can provide different prices for specific customers by creating a price list conditioned to their group.
 
 
-    These API routes allow admin users to manage groups and the customers in them.
-
-    '
+    These API routes allow admin users to manage groups and the customers in them.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
@@ -25,9 +23,7 @@ tags:
     For example, you can provide different prices for specific customers by creating a price list conditioned to their group.
 
 
-    These API routes allow admin users to manage groups and the customers in them.
-
-    '
+    These API routes allow admin users to manage groups and the customers in them.'
   externalDocs:
     description: Learn more about the Customer Module
     url: https://docs.medusajs.com/resources/commerce-modules/customer
@@ -1107,9 +1103,7 @@ paths:
     delete:
       operationId: DeleteCustomerGroupsId
       summary: Delete a Customer Group
-      description: 'Delete a customer group. Customers in the group aren''t deleted.
-
-        '
+      description: Delete a customer group. Customers in the group aren't deleted.
       x-authenticated: true
       parameters:
       - name: id
@@ -1238,70 +1232,6 @@ paths:
       x-workflow: linkCustomersToCustomerGroupWorkflow
       x-events: []
 components:
-  responses:
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
   schemas:
     AdminUpdateCustomerGroup:
       type: object
@@ -1318,6 +1248,34 @@ components:
           externalDocs:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
+    AdminCustomerGroupResponse:
+      type: object
+      description: The customer group's details.
+      x-schemaName: AdminCustomerGroupResponse
+      required:
+      - customer_group
+      properties:
+        customer_group:
+          $ref: '#/components/schemas/AdminCustomerGroup'
+    AdminBatchLink:
+      type: object
+      description: A batch operation to manage the associations between two entities.
+      properties:
+        add:
+          type: array
+          description: The IDs of an entity to add to the other.
+          items:
+            type: string
+            title: add
+            description: The entity's ID.
+        remove:
+          type: array
+          description: The IDs of an entity to remove from the other.
+          items:
+            type: string
+            title: remove
+            description: The entity's ID.
+      x-schemaName: AdminBatchLink
     AdminCustomerInGroupFilters:
       type: object
       description: Filters to apply on customers to retrieve their groups.
@@ -1872,66 +1830,6 @@ components:
               type: boolean
               title: $exists
               description: Filter by whether a value for this parameter exists (not `null`).
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminCreateCustomerGroup:
-      type: object
-      description: The customer group's details.
-      x-schemaName: AdminCreateCustomerGroup
-      required:
-      - name
-      properties:
-        name:
-          type: string
-          title: name
-          description: The customer group's name.
-        metadata:
-          type: object
-          description: The customer group's metadata, used to store custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-    AdminCustomerGroupResponse:
-      type: object
-      description: The customer group's details.
-      x-schemaName: AdminCustomerGroupResponse
-      required:
-      - customer_group
-      properties:
-        customer_group:
-          $ref: '#/components/schemas/AdminCustomerGroup'
     AdminCustomerGroup:
       type: object
       description: The customer group's details.
@@ -1973,37 +1871,73 @@ components:
           format: date-time
           title: updated_at
           description: The customer group's update date.
-    AdminBatchLink:
+    AdminCreateCustomerGroup:
       type: object
-      description: A batch operation to manage the associations between two entities.
+      description: The customer group's details.
+      x-schemaName: AdminCreateCustomerGroup
+      required:
+      - name
       properties:
-        add:
-          type: array
-          description: The IDs of an entity to add to the other.
-          items:
-            type: string
-            title: add
-            description: The entity's ID.
-        remove:
-          type: array
-          description: The IDs of an entity to remove from the other.
-          items:
-            type: string
-            title: remove
-            description: The entity's ID.
-      x-schemaName: AdminBatchLink
+        name:
+          type: string
+          title: name
+          description: The customer group's name.
+        metadata:
+          type: object
+          description: The customer group's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
   examples:
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
     unexpected_state_error:
       summary: Unexpected State Error
       value:
         message: cart.total must be defined
         type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
     default_error:
       summary: Default Error
       value:
@@ -2015,16 +1949,76 @@ components:
       value:
         message: cart.total must be defined
         type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
+    database_error:
+      summary: Database Error
       value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+  responses:
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

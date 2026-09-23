@@ -14,9 +14,7 @@ tags:
     Products are organized into the same type if they have the same value.
 
 
-    These API routes allow admin users to manage product types.
-
-    '
+    These API routes allow admin users to manage product types.'
   externalDocs:
     description: Learn more about the Product Module
     url: https://docs.medusajs.com/resources/commerce-modules/product
@@ -1507,6 +1505,60 @@ paths:
     - url: https://api.medusajs.com
 components:
   schemas:
+    AdminTranslation:
+      type: object
+      description: The translation's details.
+      x-schemaName: AdminTranslation
+      required:
+      - id
+      - reference_id
+      - reference
+      - locale_code
+      - translations
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The translation's ID.
+        reference_id:
+          type: string
+          title: reference_id
+          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
+          example: prod_123
+        reference:
+          type: string
+          title: reference
+          description: The resource that the translation belongs to.
+          example: product
+        locale_code:
+          type: string
+          title: locale_code
+          description: The translation's locale code in BCP 47 format.
+          example: fr-FR
+        translations:
+          type: object
+          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
+          example:
+            title: Chaussures
+            description: Des chaussures élégantes.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date that the translation was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date that the translation was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date that the translation was deleted.
     AdminProductType:
       type: object
       description: The product type's details.
@@ -1576,6 +1628,60 @@ components:
           type: string
           title: external_id
           description: The ID of the product type in an external or third-party system.
+    AdminProductTypeListResponse:
+      type: object
+      description: The paginated list of product types.
+      x-schemaName: AdminProductTypeListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - product_types
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        product_types:
+          type: array
+          description: The list of product types.
+          items:
+            $ref: '#/components/schemas/AdminProductType'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    AdminProductTypeDeleteResponse:
+      type: object
+      description: The details of the product type deletion.
+      x-schemaName: AdminProductTypeDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The product type's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: product_type
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the product type was deleted.
     AdminUpdateProductType:
       type: object
       description: The properties to update in the product type.
@@ -1638,114 +1744,15 @@ components:
       properties:
         product_type:
           $ref: '#/components/schemas/AdminProductType'
-    AdminProductTypeDeleteResponse:
+    StoreProductTypeResponse:
       type: object
-      description: The details of the product type deletion.
-      x-schemaName: AdminProductTypeDeleteResponse
+      description: The product type's details.
+      x-schemaName: StoreProductTypeResponse
       required:
-      - id
-      - object
-      - deleted
+      - product_type
       properties:
-        id:
-          type: string
-          title: id
-          description: The product type's ID.
-        object:
-          type: string
-          title: object
-          description: The name of the deleted object.
-          default: product_type
-        deleted:
-          type: boolean
-          title: deleted
-          description: Whether the product type was deleted.
-    AdminTranslation:
-      type: object
-      description: The translation's details.
-      x-schemaName: AdminTranslation
-      required:
-      - id
-      - reference_id
-      - reference
-      - locale_code
-      - translations
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The translation's ID.
-        reference_id:
-          type: string
-          title: reference_id
-          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
-          example: prod_123
-        reference:
-          type: string
-          title: reference
-          description: The resource that the translation belongs to.
-          example: product
-        locale_code:
-          type: string
-          title: locale_code
-          description: The translation's locale code in BCP 47 format.
-          example: fr-FR
-        translations:
-          type: object
-          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
-          example:
-            title: Chaussures
-            description: Des chaussures élégantes.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date that the translation was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date that the translation was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date that the translation was deleted.
-    AdminProductTypeListResponse:
-      type: object
-      description: The paginated list of product types.
-      x-schemaName: AdminProductTypeListResponse
-      required:
-      - limit
-      - offset
-      - count
-      - product_types
-      properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the returned items.
-        count:
-          type: number
-          title: count
-          description: The total number of items.
-        product_types:
-          type: array
-          description: The list of product types.
-          items:
-            $ref: '#/components/schemas/AdminProductType'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
-          x-featureFlag: index_engine
+        product_type:
+          $ref: '#/components/schemas/StoreProductType'
     StoreProductTypeListResponse:
       type: object
       description: The paginated list of product types.
@@ -1778,15 +1785,6 @@ components:
           title: estimate_count
           description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
           x-featureFlag: index_engine
-    StoreProductTypeResponse:
-      type: object
-      description: The product type's details.
-      x-schemaName: StoreProductTypeResponse
-      required:
-      - product_type
-      properties:
-        product_type:
-          $ref: '#/components/schemas/StoreProductType'
     StoreProductType:
       type: object
       description: The product type's details.
@@ -1830,27 +1828,48 @@ components:
           type: string
           title: external_id
           description: The type's external ID used to link it with external systems.
+  examples:
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   responses:
-    invalid_request_error:
-      description: Invalid Request Error
+    unauthorized:
+      description: User is not authorized. Must log in first
       content:
-        application/json:
+        text/plain:
           schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+            type: string
+            default: Unauthorized
+            example: Unauthorized
     500_error:
       description: Server Error
       content:
@@ -1866,14 +1885,6 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
     400_error:
       description: Client Error
       content:
@@ -1894,39 +1905,26 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
-  examples:
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

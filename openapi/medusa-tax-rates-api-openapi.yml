@@ -11,9 +11,7 @@ info:
     Each tax region has a default tax rate. You can create tax rates that override the default using tax rules.
 
 
-    These API routes allow admin users to manage tax rates and their rules.
-
-    '
+    These API routes allow admin users to manage tax rates and their rules.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
@@ -25,9 +23,7 @@ tags:
     Each tax region has a default tax rate. You can create tax rates that override the default using tax rules.
 
 
-    These API routes allow admin users to manage tax rates and their rules.
-
-    '
+    These API routes allow admin users to manage tax rates and their rules.'
   externalDocs:
     description: Learn more about tax rates and rules.
     url: https://docs.medusajs.com/resources/commerce-modules/tax/tax-rates-and-rules
@@ -975,6 +971,15 @@ paths:
       x-events: []
 components:
   schemas:
+    AdminTaxRateResponse:
+      type: object
+      description: The tax rate's details.
+      x-schemaName: AdminTaxRateResponse
+      required:
+      - tax_rate
+      properties:
+        tax_rate:
+          $ref: '#/components/schemas/AdminTaxRate'
     AdminUpdateTaxRate:
       type: object
       description: The properties to update in the tax rate.
@@ -1013,15 +1018,76 @@ components:
           externalDocs:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
-    AdminTaxRateResponse:
+    AdminCreateTaxRate:
       type: object
       description: The tax rate's details.
-      x-schemaName: AdminTaxRateResponse
+      x-schemaName: AdminCreateTaxRate
       required:
-      - tax_rate
+      - name
+      - tax_region_id
+      - code
       properties:
-        tax_rate:
-          $ref: '#/components/schemas/AdminTaxRate'
+        name:
+          type: string
+          title: name
+          description: The tax rate's name.
+          example: VAT
+        tax_region_id:
+          type: string
+          title: tax_region_id
+          description: The ID of the tax region this rate belongs to.
+        rate:
+          type: number
+          title: rate
+          description: The rate to charge.
+          example: 10
+        code:
+          type: string
+          title: code
+          description: The code the tax rate is identified by.
+        rules:
+          type: array
+          description: The tax rate's rules.
+          items:
+            $ref: '#/components/schemas/AdminCreateTaxRateRule'
+        is_default:
+          type: boolean
+          title: is_default
+          description: Whether the tax rate is the default in its tax region.
+        is_combinable:
+          type: boolean
+          title: is_combinable
+          description: Whether the tax rate should be combined with parent rates.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/tax/tax-rates-and-rules#combinable-tax-rates
+        metadata:
+          type: object
+          description: The tax rate's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+    AdminTaxRateDeleteResponse:
+      type: object
+      description: The details of the tax rate deletion.
+      x-schemaName: AdminTaxRateDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The tax rate's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: tax_rate
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the tax rate was deleted.
     AdminTaxRegion:
       type: object
       description: The tax region's details.
@@ -1098,30 +1164,6 @@ components:
           description: The tax region's children.
           items:
             type: object
-    AdminTaxRateRule:
-      type: object
-      description: The tax rate rule's details.
-      x-schemaName: AdminTaxRateRule
-      required:
-      - reference
-      - reference_id
-      - created_at
-      properties:
-        reference:
-          type: string
-          title: reference
-          description: The name of the table this rule references.
-          example: product_type
-        reference_id:
-          type: string
-          title: reference_id
-          description: The ID of a record in the table that this rule references.
-          example: ptyp_1
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the tax rate rule was created.
     Error:
       title: Response Error
       type: object
@@ -1156,6 +1198,24 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
+    AdminCreateTaxRateRule:
+      type: object
+      description: The tax rate rule's details.
+      x-schemaName: AdminCreateTaxRateRule
+      required:
+      - reference
+      - reference_id
+      properties:
+        reference:
+          type: string
+          title: reference
+          description: The name of a table in the database that this rule points to.
+          example: product_type
+        reference_id:
+          type: string
+          title: reference_id
+          description: The ID of a record in the table specified in reference.
+          example: ptype_123
     AdminTaxRate:
       type: object
       description: The tax rate's details.
@@ -1239,115 +1299,72 @@ components:
           description: The tax rate's rules.
           items:
             $ref: '#/components/schemas/AdminTaxRateRule'
-    AdminCreateTaxRate:
-      type: object
-      description: The tax rate's details.
-      x-schemaName: AdminCreateTaxRate
-      required:
-      - name
-      - tax_region_id
-      - code
-      properties:
-        name:
-          type: string
-          title: name
-          description: The tax rate's name.
-          example: VAT
-        tax_region_id:
-          type: string
-          title: tax_region_id
-          description: The ID of the tax region this rate belongs to.
-        rate:
-          type: number
-          title: rate
-          description: The rate to charge.
-          example: 10
-        code:
-          type: string
-          title: code
-          description: The code the tax rate is identified by.
-        rules:
-          type: array
-          description: The tax rate's rules.
-          items:
-            $ref: '#/components/schemas/AdminCreateTaxRateRule'
-        is_default:
-          type: boolean
-          title: is_default
-          description: Whether the tax rate is the default in its tax region.
-        is_combinable:
-          type: boolean
-          title: is_combinable
-          description: Whether the tax rate should be combined with parent rates.
-          externalDocs:
-            url: https://docs.medusajs.com/resources/commerce-modules/tax/tax-rates-and-rules#combinable-tax-rates
-        metadata:
-          type: object
-          description: The tax rate's metadata, used to store custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-    AdminTaxRateDeleteResponse:
-      type: object
-      description: The details of the tax rate deletion.
-      x-schemaName: AdminTaxRateDeleteResponse
-      required:
-      - id
-      - object
-      - deleted
-      properties:
-        id:
-          type: string
-          title: id
-          description: The tax rate's ID.
-        object:
-          type: string
-          title: object
-          description: The name of the deleted object.
-          default: tax_rate
-        deleted:
-          type: boolean
-          title: deleted
-          description: Whether the tax rate was deleted.
-    AdminCreateTaxRateRule:
+    AdminTaxRateRule:
       type: object
       description: The tax rate rule's details.
-      x-schemaName: AdminCreateTaxRateRule
+      x-schemaName: AdminTaxRateRule
       required:
       - reference
       - reference_id
+      - created_at
       properties:
         reference:
           type: string
           title: reference
-          description: The name of a table in the database that this rule points to.
+          description: The name of the table this rule references.
           example: product_type
         reference_id:
           type: string
           title: reference_id
-          description: The ID of a record in the table specified in reference.
-          example: ptype_123
+          description: The ID of a record in the table that this rule references.
+          example: ptyp_1
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the tax rate rule was created.
+  examples:
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   responses:
-    invalid_request_error:
-      description: Invalid Request Error
+    unauthorized:
+      description: User is not authorized. Must log in first
       content:
-        application/json:
+        text/plain:
           schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+            type: string
+            default: Unauthorized
+            example: Unauthorized
     500_error:
       description: Server Error
       content:
@@ -1374,14 +1391,6 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
     not_found_error:
       description: Not Found Error
       content:
@@ -1391,39 +1400,26 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
-  examples:
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

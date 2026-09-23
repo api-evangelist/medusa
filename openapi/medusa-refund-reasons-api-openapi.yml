@@ -8,9 +8,7 @@ info:
   description: 'A refund reason is a possible reason used when issuing a refund to the customer, such as when returning an item and refunding the customer.
 
 
-    These API routes allow admin users to manage refund reasons.
-
-    '
+    These API routes allow admin users to manage refund reasons.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
@@ -19,9 +17,7 @@ tags:
   description: 'A refund reason is a possible reason used when issuing a refund to the customer, such as when returning an item and refunding the customer.
 
 
-    These API routes allow admin users to manage refund reasons.
-
-    '
+    These API routes allow admin users to manage refund reasons.'
   x-associatedSchema:
     $ref: '#/components/schemas/AdminRefundReason'
 paths:
@@ -405,29 +401,71 @@ paths:
       x-workflow: deleteRefundReasonsWorkflow
       x-events: []
 components:
+  responses:
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   examples:
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
     invalid_argument_error:
       summary: Invalid Argument Error
       value:
@@ -438,101 +476,29 @@ components:
       value:
         message: cart.total must be defined
         type: unexpected_state
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   schemas:
-    AdminRefundReasonDeleteResponse:
-      type: object
-      description: The deletion's details.
-      required:
-      - id
-      - object
-      - deleted
-      properties:
-        id:
-          type: string
-          title: id
-          description: The refund reason's ID.
-        object:
-          type: string
-          title: object
-          description: The name of the deleted object.
-          default: refund_reason
-        deleted:
-          type: boolean
-          title: deleted
-          description: Whether the refund reason was deleted.
-      x-schemaName: AdminRefundReasonDeleteResponse
-    RefundReasonResponse:
-      type: object
-      description: The refund reason's details.
-      x-schemaName: RefundReasonResponse
-      required:
-      - refund_reason
-      properties:
-        refund_reason:
-          $ref: '#/components/schemas/AdminRefundReason'
-    AdminCreateRefundReason:
-      type: object
-      description: The refund reason's details.
-      x-schemaName: AdminCreateRefundReason
-      required:
-      - label
-      - code
-      properties:
-        label:
-          type: string
-          title: label
-          description: The refund reason's label.
-        description:
-          type: string
-          title: description
-          description: The refund reason's description.
-        code:
-          type: string
-          title: code
-          description: The refund reason's code.
-    AdminRefundReason:
-      type: object
-      description: The refund reason's details.
-      x-schemaName: AdminRefundReason
-      required:
-      - id
-      - label
-      - code
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The refund reason's ID.
-        label:
-          type: string
-          title: label
-          description: The refund reason's label.
-        description:
-          type: string
-          title: description
-          description: The refund reason's description.
-        metadata:
-          type: object
-          description: The refund reason's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the refund reason was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the refund reason was updated.
-        code:
-          type: string
-          title: code
-          description: The refund reason's code.
     AdminUpdateRefundReason:
       type: object
       description: The properties to update in the refund reason.
@@ -584,70 +550,100 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
-  responses:
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
+    RefundReasonResponse:
+      type: object
+      description: The refund reason's details.
+      x-schemaName: RefundReasonResponse
+      required:
+      - refund_reason
+      properties:
+        refund_reason:
+          $ref: '#/components/schemas/AdminRefundReason'
+    AdminCreateRefundReason:
+      type: object
+      description: The refund reason's details.
+      x-schemaName: AdminCreateRefundReason
+      required:
+      - label
+      - code
+      properties:
+        label:
+          type: string
+          title: label
+          description: The refund reason's label.
+        description:
+          type: string
+          title: description
+          description: The refund reason's description.
+        code:
+          type: string
+          title: code
+          description: The refund reason's code.
+    AdminRefundReasonDeleteResponse:
+      type: object
+      description: The deletion's details.
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The refund reason's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: refund_reason
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the refund reason was deleted.
+      x-schemaName: AdminRefundReasonDeleteResponse
+    AdminRefundReason:
+      type: object
+      description: The refund reason's details.
+      x-schemaName: AdminRefundReason
+      required:
+      - id
+      - label
+      - code
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The refund reason's ID.
+        label:
+          type: string
+          title: label
+          description: The refund reason's label.
+        description:
+          type: string
+          title: description
+          description: The refund reason's description.
+        metadata:
+          type: object
+          description: The refund reason's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the refund reason was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the refund reason was updated.
+        code:
+          type: string
+          title: code
+          description: The refund reason's code.
   securitySchemes:
     api_token:
       type: http

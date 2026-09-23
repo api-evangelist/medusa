@@ -11,9 +11,7 @@ tags:
   description: 'Customers can either be created when they register through the Store APIs, or created by the admin using the Admin APIs.
 
 
-    These API routes allow admin users to manage customers in their store.
-
-    '
+    These API routes allow admin users to manage customers in their store.'
   externalDocs:
     description: Learn more about the Customer Module
     url: https://docs.medusajs.com/resources/commerce-modules/customer
@@ -5359,70 +5357,6 @@ paths:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
 components:
-  responses:
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
   schemas:
     AdminCustomerAddressResponse:
       type: object
@@ -5433,168 +5367,15 @@ components:
       properties:
         address:
           $ref: '#/components/schemas/AdminCustomerAddress'
-    AdminCustomer:
+    AdminCustomerResponse:
       type: object
       description: The customer's details.
-      x-schemaName: AdminCustomer
+      x-schemaName: AdminCustomerResponse
       required:
-      - has_account
-      - addresses
-      - id
-      - email
-      - default_billing_address_id
-      - default_shipping_address_id
-      - company_name
-      - first_name
-      - last_name
+      - customer
       properties:
-        id:
-          type: string
-          title: id
-          description: The customer's ID.
-        has_account:
-          type: boolean
-          title: has_account
-          description: Whether the customer is registered.
-        groups:
-          type: array
-          description: The customer's groups.
-          items:
-            $ref: '#/components/schemas/AdminCustomerGroup'
-        email:
-          type: string
-          title: email
-          description: The customer's email.
-          format: email
-        default_billing_address_id:
-          type: string
-          title: default_billing_address_id
-          description: The ID of the address used as the default billing address.
-        default_shipping_address_id:
-          type: string
-          title: default_shipping_address_id
-          description: The ID of the address used as the default shipping address.
-        company_name:
-          type: string
-          title: company_name
-          description: The customer's company name.
-        first_name:
-          type: string
-          title: first_name
-          description: The customer's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The customer's last name.
-        addresses:
-          type: array
-          description: The customer's addresses.
-          items:
-            $ref: '#/components/schemas/AdminCustomerAddress'
-        phone:
-          type: string
-          title: phone
-          description: The customer's phone.
-        metadata:
-          type: object
-          description: The customer's metadata, used to store custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_by:
-          type: string
-          title: created_by
-          description: The ID of the user that created this customer, if available.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The customer's creation date.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The customer's update date.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The customer's deletion date.
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminCustomerGroup:
-      type: object
-      description: The customer group's details.
-      x-schemaName: AdminCustomerGroup
-      required:
-      - customers
-      - id
-      - name
-      - metadata
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The customer group's ID.
-        name:
-          type: string
-          title: name
-          description: The customer group's name.
-        customers:
-          type: array
-          description: The customer group's customers.
-          items:
-            type: object
-        metadata:
-          type: object
-          description: The customer group's metadata, used to store custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The customer group's creation date.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The customer group's update date.
+        customer:
+          $ref: '#/components/schemas/AdminCustomer'
     AdminCustomerAddress:
       type: object
       description: The customer's address.
@@ -5700,6 +5481,187 @@ components:
           format: date-time
           title: updated_at
           description: The address's update date.
+    AdminBatchLink:
+      type: object
+      description: A batch operation to manage the associations between two entities.
+      properties:
+        add:
+          type: array
+          description: The IDs of an entity to add to the other.
+          items:
+            type: string
+            title: add
+            description: The entity's ID.
+        remove:
+          type: array
+          description: The IDs of an entity to remove from the other.
+          items:
+            type: string
+            title: remove
+            description: The entity's ID.
+      x-schemaName: AdminBatchLink
+    AdminCustomer:
+      type: object
+      description: The customer's details.
+      x-schemaName: AdminCustomer
+      required:
+      - has_account
+      - addresses
+      - id
+      - email
+      - default_billing_address_id
+      - default_shipping_address_id
+      - company_name
+      - first_name
+      - last_name
+      properties:
+        id:
+          type: string
+          title: id
+          description: The customer's ID.
+        has_account:
+          type: boolean
+          title: has_account
+          description: Whether the customer is registered.
+        groups:
+          type: array
+          description: The customer's groups.
+          items:
+            $ref: '#/components/schemas/AdminCustomerGroup'
+        email:
+          type: string
+          title: email
+          description: The customer's email.
+          format: email
+        default_billing_address_id:
+          type: string
+          title: default_billing_address_id
+          description: The ID of the address used as the default billing address.
+        default_shipping_address_id:
+          type: string
+          title: default_shipping_address_id
+          description: The ID of the address used as the default shipping address.
+        company_name:
+          type: string
+          title: company_name
+          description: The customer's company name.
+        first_name:
+          type: string
+          title: first_name
+          description: The customer's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The customer's last name.
+        addresses:
+          type: array
+          description: The customer's addresses.
+          items:
+            $ref: '#/components/schemas/AdminCustomerAddress'
+        phone:
+          type: string
+          title: phone
+          description: The customer's phone.
+        metadata:
+          type: object
+          description: The customer's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_by:
+          type: string
+          title: created_by
+          description: The ID of the user that created this customer, if available.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The customer's creation date.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The customer's update date.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The customer's deletion date.
+    AdminCustomerGroup:
+      type: object
+      description: The customer group's details.
+      x-schemaName: AdminCustomerGroup
+      required:
+      - customers
+      - id
+      - name
+      - metadata
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The customer group's ID.
+        name:
+          type: string
+          title: name
+          description: The customer group's name.
+        customers:
+          type: array
+          description: The customer group's customers.
+          items:
+            type: object
+        metadata:
+          type: object
+          description: The customer group's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The customer group's creation date.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The customer group's update date.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     CustomerGroupInCustomerFilters:
       type: object
       description: Filter by customer groups to get their associated customers.
@@ -6078,66 +6040,188 @@ components:
               type: boolean
               title: $exists
               description: Filter by whether a value for this parameter exists (not `null`).
-    AdminCustomerResponse:
+    StoreCustomerAddressResponse:
+      type: object
+      description: The address's details.
+      x-schemaName: StoreCustomerAddressResponse
+      required:
+      - address
+      properties:
+        address:
+          $ref: '#/components/schemas/StoreCustomerAddress'
+    StoreCreateCustomer:
+      type: object
+      description: The details of the customer to create.
+      x-schemaName: StoreCreateCustomer
+      properties:
+        email:
+          type: string
+          title: email
+          description: The customer's email.
+          format: email
+        company_name:
+          type: string
+          title: company_name
+          description: The customer's company name.
+        first_name:
+          type: string
+          title: first_name
+          description: The customer's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The customer's last name.
+        phone:
+          type: string
+          title: phone
+          description: The customer's phone.
+        metadata:
+          type: object
+          description: The customer's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+    StoreUpdateCustomer:
+      type: object
+      description: The details to update in the customer.
+      x-schemaName: StoreUpdateCustomer
+      properties:
+        company_name:
+          type: string
+          title: company_name
+          description: The customer's company name.
+        first_name:
+          type: string
+          title: first_name
+          description: The customer's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The customer's last name.
+        phone:
+          type: string
+          title: phone
+          description: The customer's phone.
+        metadata:
+          type: object
+          description: The customer's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+    StoreCustomerResponse:
       type: object
       description: The customer's details.
-      x-schemaName: AdminCustomerResponse
+      x-schemaName: StoreCustomerResponse
       required:
       - customer
       properties:
         customer:
-          $ref: '#/components/schemas/AdminCustomer'
-    AdminBatchLink:
+          $ref: '#/components/schemas/StoreCustomer'
+    StoreCustomerAddress:
       type: object
-      description: A batch operation to manage the associations between two entities.
-      properties:
-        add:
-          type: array
-          description: The IDs of an entity to add to the other.
-          items:
-            type: string
-            title: add
-            description: The entity's ID.
-        remove:
-          type: array
-          description: The IDs of an entity to remove from the other.
-          items:
-            type: string
-            title: remove
-            description: The entity's ID.
-      x-schemaName: AdminBatchLink
-    StoreCustomerAddressListResponse:
-      type: object
-      description: The paginated list of customer addresses.
-      x-schemaName: StoreCustomerAddressListResponse
+      description: The customer address's details
+      x-schemaName: StoreCustomerAddress
       required:
-      - limit
-      - offset
-      - count
-      - addresses
+      - id
+      - address_name
+      - is_default_shipping
+      - is_default_billing
+      - customer_id
+      - company
+      - first_name
+      - last_name
+      - address_1
+      - address_2
+      - city
+      - country_code
+      - province
+      - postal_code
+      - phone
+      - metadata
+      - created_at
+      - updated_at
       properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the returned items.
-        count:
-          type: number
-          title: count
-          description: The total number of items.
-        addresses:
-          type: array
-          description: The list of addresses.
-          items:
-            $ref: '#/components/schemas/StoreCustomerAddress'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
-          x-featureFlag: index_engine
+        id:
+          type: string
+          title: id
+          description: The address's ID.
+        address_name:
+          type: string
+          title: address_name
+          description: The address's name.
+        is_default_shipping:
+          type: boolean
+          title: is_default_shipping
+          description: Whether the address is used for shipping by default.
+        is_default_billing:
+          type: boolean
+          title: is_default_billing
+          description: Whether the address is used for billing by default.
+        customer_id:
+          type: string
+          title: customer_id
+          description: The ID of the customer the address belongs to.
+        company:
+          type: string
+          title: company
+          description: The address's company.
+        first_name:
+          type: string
+          title: first_name
+          description: The address's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The address's last name.
+        address_1:
+          type: string
+          title: address_1
+          description: The address's first line.
+        address_2:
+          type: string
+          title: address_2
+          description: The address's second line.
+        city:
+          type: string
+          title: city
+          description: The address's city.
+        country_code:
+          type: string
+          title: country_code
+          description: The address's country code.
+          example: usd
+        province:
+          type: string
+          title: province
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
+        postal_code:
+          type: string
+          title: postal_code
+          description: The address's postal code.
+        phone:
+          type: string
+          title: phone
+          description: The address's phone.
+        metadata:
+          type: object
+          description: The address's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the address was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the address was updated.
     StoreCreateCustomerAddress:
       type: object
       description: The address's details.
@@ -6202,74 +6286,6 @@ components:
           type: object
           description: Holds custom key-value pairs.
       x-schemaName: StoreCreateCustomerAddress
-    StoreUpdateCustomer:
-      type: object
-      description: The details to update in the customer.
-      x-schemaName: StoreUpdateCustomer
-      properties:
-        company_name:
-          type: string
-          title: company_name
-          description: The customer's company name.
-        first_name:
-          type: string
-          title: first_name
-          description: The customer's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The customer's last name.
-        phone:
-          type: string
-          title: phone
-          description: The customer's phone.
-        metadata:
-          type: object
-          description: The customer's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-    StoreCustomerAddressResponse:
-      type: object
-      description: The address's details.
-      x-schemaName: StoreCustomerAddressResponse
-      required:
-      - address
-      properties:
-        address:
-          $ref: '#/components/schemas/StoreCustomerAddress'
-    StoreCreateCustomer:
-      type: object
-      description: The details of the customer to create.
-      x-schemaName: StoreCreateCustomer
-      properties:
-        email:
-          type: string
-          title: email
-          description: The customer's email.
-          format: email
-        company_name:
-          type: string
-          title: company_name
-          description: The customer's company name.
-        first_name:
-          type: string
-          title: first_name
-          description: The customer's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The customer's last name.
-        phone:
-          type: string
-          title: phone
-          description: The customer's phone.
-        metadata:
-          type: object
-          description: The customer's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
     StoreCustomer:
       type: object
       description: The customer's details.
@@ -6407,132 +6423,54 @@ components:
           type: object
           description: Holds custom key-value pairs.
       x-schemaName: StoreUpdateCustomerAddress
-    StoreCustomerAddress:
+    StoreCustomerAddressListResponse:
       type: object
-      description: The customer address's details
-      x-schemaName: StoreCustomerAddress
+      description: The paginated list of customer addresses.
+      x-schemaName: StoreCustomerAddressListResponse
       required:
-      - id
-      - address_name
-      - is_default_shipping
-      - is_default_billing
-      - customer_id
-      - company
-      - first_name
-      - last_name
-      - address_1
-      - address_2
-      - city
-      - country_code
-      - province
-      - postal_code
-      - phone
-      - metadata
-      - created_at
-      - updated_at
+      - limit
+      - offset
+      - count
+      - addresses
       properties:
-        id:
-          type: string
-          title: id
-          description: The address's ID.
-        address_name:
-          type: string
-          title: address_name
-          description: The address's name.
-        is_default_shipping:
-          type: boolean
-          title: is_default_shipping
-          description: Whether the address is used for shipping by default.
-        is_default_billing:
-          type: boolean
-          title: is_default_billing
-          description: Whether the address is used for billing by default.
-        customer_id:
-          type: string
-          title: customer_id
-          description: The ID of the customer the address belongs to.
-        company:
-          type: string
-          title: company
-          description: The address's company.
-        first_name:
-          type: string
-          title: first_name
-          description: The address's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The address's last name.
-        address_1:
-          type: string
-          title: address_1
-          description: The address's first line.
-        address_2:
-          type: string
-          title: address_2
-          description: The address's second line.
-        city:
-          type: string
-          title: city
-          description: The address's city.
-        country_code:
-          type: string
-          title: country_code
-          description: The address's country code.
-          example: usd
-        province:
-          type: string
-          title: province
-          description: The address's lower-case ISO 3166-2 province code.
-          example: us-ca
-          externalDocs:
-            url: https://en.wikipedia.org/wiki/ISO_3166-2
-            description: Learn more about ISO 3166-2
-        postal_code:
-          type: string
-          title: postal_code
-          description: The address's postal code.
-        phone:
-          type: string
-          title: phone
-          description: The address's phone.
-        metadata:
-          type: object
-          description: The address's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the address was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the address was updated.
-    StoreCustomerResponse:
-      type: object
-      description: The customer's details.
-      x-schemaName: StoreCustomerResponse
-      required:
-      - customer
-      properties:
-        customer:
-          $ref: '#/components/schemas/StoreCustomer'
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        addresses:
+          type: array
+          description: The list of addresses.
+          items:
+            $ref: '#/components/schemas/StoreCustomerAddress'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
   examples:
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
     unexpected_state_error:
       summary: Unexpected State Error
       value:
         message: cart.total must be defined
         type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
     default_error:
       summary: Default Error
       value:
@@ -6544,16 +6482,76 @@ components:
       value:
         message: cart.total must be defined
         type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
+    database_error:
+      summary: Database Error
       value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+  responses:
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

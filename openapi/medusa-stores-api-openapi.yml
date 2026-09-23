@@ -8,12 +8,10 @@ info:
   description: 'A store holds the main configuration and information of your commerce store, such as supported currencies or default sales channel.
 
 
-    By default, the Medusa application has one default store. There are no API routes to create more stores. Instead, you''d have  to handle that customization manually.
+    By default, the Medusa application has one default store. There are no API routes to create more stores. Instead, you''d have to handle that customization manually.
 
 
-    These API routes allow admin users to manage their store.
-
-    '
+    These API routes allow admin users to manage their store.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
@@ -22,12 +20,10 @@ tags:
   description: 'A store holds the main configuration and information of your commerce store, such as supported currencies or default sales channel.
 
 
-    By default, the Medusa application has one default store. There are no API routes to create more stores. Instead, you''d have  to handle that customization manually.
+    By default, the Medusa application has one default store. There are no API routes to create more stores. Instead, you''d have to handle that customization manually.
 
 
-    These API routes allow admin users to manage their store.
-
-    '
+    These API routes allow admin users to manage their store.'
   externalDocs:
     description: Learn more about the Store Module.
     url: https://docs.medusajs.com/resources/commerce-modules/store
@@ -295,26 +291,6 @@ paths:
       x-events: []
 components:
   schemas:
-    AdminUpdateStoreSupportedCurrency:
-      type: object
-      description: The details to update in a supported currency of the store.
-      required:
-      - currency_code
-      properties:
-        currency_code:
-          type: string
-          title: currency_code
-          description: The currency's code.
-          example: usd
-        is_default:
-          type: boolean
-          title: is_default
-          description: Whether the currency is the default in the store.
-        is_tax_inclusive:
-          type: boolean
-          title: is_tax_inclusive
-          description: Whether prices using this currency are tax inclusive.
-      x-schemaName: AdminUpdateStoreSupportedCurrency
     AdminStoreLocale:
       type: object
       description: The details of a store's locale.
@@ -357,107 +333,6 @@ components:
           format: date-time
           title: deleted_at
           description: The date the locale was deleted.
-    AdminLocale:
-      type: object
-      description: The locale's details.
-      x-schemaName: AdminLocale
-      required:
-      - code
-      - name
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        code:
-          type: string
-          title: code
-          description: The locale's code in BCP 47 format.
-          example: fr-FR
-        name:
-          type: string
-          title: name
-          description: The locale's display name.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date and time at which the locale was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date and time at which the locale was last updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date and time at which the locale was deleted.
-    AdminStoreListResponse:
-      type: object
-      description: The paginated list of stores.
-      x-schemaName: AdminStoreListResponse
-      required:
-      - limit
-      - offset
-      - count
-      - stores
-      properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the returned items.
-        count:
-          type: number
-          title: count
-          description: The total number of items.
-        stores:
-          type: array
-          description: The list of stores.
-          items:
-            $ref: '#/components/schemas/AdminStore'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
-          x-featureFlag: index_engine
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
     AdminUpdateStoreSupportedLocale:
       type: object
       description: The payload to update a store's supported locale.
@@ -470,153 +345,6 @@ components:
           title: locale_code
           description: The locale's code in [BCP 47 format](https://gist.github.com/typpo/b2b828a35e683b9bf8db91b5404f1bd1).
           example: fr-FR
-    AdminStoreCurrency:
-      type: object
-      description: The details of a store's currency.
-      x-schemaName: AdminStoreCurrency
-      required:
-      - id
-      - currency_code
-      - store_id
-      - is_default
-      - currency
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The currency's ID.
-        currency_code:
-          type: string
-          title: currency_code
-          description: The currency's code.
-          example: usd
-        store_id:
-          type: string
-          title: store_id
-          description: The ID of the store this currency belongs to.
-        is_default:
-          type: boolean
-          title: is_default
-          description: Whether this currency is the default in the store.
-        currency:
-          $ref: '#/components/schemas/AdminCurrency'
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the currency was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the currency was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the currency was deleted.
-    AdminUpdateStore:
-      type: object
-      description: The properties to update in a store.
-      x-schemaName: AdminUpdateStore
-      properties:
-        name:
-          type: string
-          title: name
-          description: The store's name.
-        supported_currencies:
-          type: array
-          description: The store's supported currencies.
-          items:
-            $ref: '#/components/schemas/AdminUpdateStoreSupportedCurrency'
-        default_sales_channel_id:
-          type: string
-          title: default_sales_channel_id
-          description: The ID of the default sales channel in the store.
-        default_region_id:
-          type: string
-          title: default_region_id
-          description: The ID of the default region in the store.
-        default_location_id:
-          type: string
-          title: default_location_id
-          description: The ID of the default stock location in the store.
-        metadata:
-          type: object
-          description: The store's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        supported_locales:
-          type: array
-          description: The store's supported locales.
-          items:
-            $ref: '#/components/schemas/AdminUpdateStoreSupportedLocale'
-    AdminStore:
-      type: object
-      description: The store's details.
-      x-schemaName: AdminStore
-      required:
-      - id
-      - name
-      - supported_currencies
-      - supported_locales
-      - default_sales_channel_id
-      - default_region_id
-      - default_location_id
-      - metadata
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The store's ID.
-        name:
-          type: string
-          title: name
-          description: The store's name.
-        supported_currencies:
-          type: array
-          description: The store's supported currencies.
-          items:
-            $ref: '#/components/schemas/AdminStoreCurrency'
-        default_sales_channel_id:
-          type: string
-          title: default_sales_channel_id
-          description: The ID of the sales channel used by default in the store.
-        default_region_id:
-          type: string
-          title: default_region_id
-          description: The ID of the region used by default in the store.
-        default_location_id:
-          type: string
-          title: default_location_id
-          description: The ID of the stock location used by default in the store.
-        metadata:
-          type: object
-          description: The store's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the store was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the store was updated.
-        supported_locales:
-          type: array
-          description: The store's supported locales.
-          items:
-            $ref: '#/components/schemas/AdminStoreLocale'
     AdminCurrency:
       type: object
       description: The currency's currencies.
@@ -683,6 +411,274 @@ components:
       properties:
         store:
           $ref: '#/components/schemas/AdminStore'
+    AdminStoreCurrency:
+      type: object
+      description: The details of a store's currency.
+      x-schemaName: AdminStoreCurrency
+      required:
+      - id
+      - currency_code
+      - store_id
+      - is_default
+      - currency
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The currency's ID.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The currency's code.
+          example: usd
+        store_id:
+          type: string
+          title: store_id
+          description: The ID of the store this currency belongs to.
+        is_default:
+          type: boolean
+          title: is_default
+          description: Whether this currency is the default in the store.
+        currency:
+          $ref: '#/components/schemas/AdminCurrency'
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the currency was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the currency was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the currency was deleted.
+    AdminLocale:
+      type: object
+      description: The locale's details.
+      x-schemaName: AdminLocale
+      required:
+      - code
+      - name
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        code:
+          type: string
+          title: code
+          description: The locale's code in BCP 47 format.
+          example: fr-FR
+        name:
+          type: string
+          title: name
+          description: The locale's display name.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date and time at which the locale was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date and time at which the locale was last updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date and time at which the locale was deleted.
+    AdminStore:
+      type: object
+      description: The store's details.
+      x-schemaName: AdminStore
+      required:
+      - id
+      - name
+      - supported_currencies
+      - supported_locales
+      - default_sales_channel_id
+      - default_region_id
+      - default_location_id
+      - metadata
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The store's ID.
+        name:
+          type: string
+          title: name
+          description: The store's name.
+        supported_currencies:
+          type: array
+          description: The store's supported currencies.
+          items:
+            $ref: '#/components/schemas/AdminStoreCurrency'
+        default_sales_channel_id:
+          type: string
+          title: default_sales_channel_id
+          description: The ID of the sales channel used by default in the store.
+        default_region_id:
+          type: string
+          title: default_region_id
+          description: The ID of the region used by default in the store.
+        default_location_id:
+          type: string
+          title: default_location_id
+          description: The ID of the stock location used by default in the store.
+        metadata:
+          type: object
+          description: The store's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the store was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the store was updated.
+        supported_locales:
+          type: array
+          description: The store's supported locales.
+          items:
+            $ref: '#/components/schemas/AdminStoreLocale'
+    AdminStoreListResponse:
+      type: object
+      description: The paginated list of stores.
+      x-schemaName: AdminStoreListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - stores
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        stores:
+          type: array
+          description: The list of stores.
+          items:
+            $ref: '#/components/schemas/AdminStore'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    AdminUpdateStore:
+      type: object
+      description: The properties to update in a store.
+      x-schemaName: AdminUpdateStore
+      properties:
+        name:
+          type: string
+          title: name
+          description: The store's name.
+        supported_currencies:
+          type: array
+          description: The store's supported currencies.
+          items:
+            $ref: '#/components/schemas/AdminUpdateStoreSupportedCurrency'
+        default_sales_channel_id:
+          type: string
+          title: default_sales_channel_id
+          description: The ID of the default sales channel in the store.
+        default_region_id:
+          type: string
+          title: default_region_id
+          description: The ID of the default region in the store.
+        default_location_id:
+          type: string
+          title: default_location_id
+          description: The ID of the default stock location in the store.
+        metadata:
+          type: object
+          description: The store's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        supported_locales:
+          type: array
+          description: The store's supported locales.
+          items:
+            $ref: '#/components/schemas/AdminUpdateStoreSupportedLocale'
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminUpdateStoreSupportedCurrency:
+      type: object
+      description: The details to update in a supported currency of the store.
+      required:
+      - currency_code
+      properties:
+        currency_code:
+          type: string
+          title: currency_code
+          description: The currency's code.
+          example: usd
+        is_default:
+          type: boolean
+          title: is_default
+          description: Whether the currency is the default in the store.
+        is_tax_inclusive:
+          type: boolean
+          title: is_tax_inclusive
+          description: Whether prices using this currency are tax inclusive.
+      x-schemaName: AdminUpdateStoreSupportedCurrency
   responses:
     invalid_request_error:
       description: Invalid Request Error
@@ -694,16 +690,14 @@ components:
             code: invalid_request_error
             message: Discount with code TEST already exists.
             type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
+    unauthorized:
+      description: User is not authorized. Must log in first
       content:
-        application/json:
+        text/plain:
           schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+            type: string
+            default: Unauthorized
+            example: Unauthorized
     500_error:
       description: Server Error
       content:
@@ -730,14 +724,6 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
     not_found_error:
       description: Not Found Error
       content:
@@ -747,18 +733,32 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
   examples:
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
     unexpected_state_error:
       summary: Unexpected State Error
       value:
         message: cart.total must be defined
         type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
     default_error:
       summary: Default Error
       value:
@@ -770,16 +770,12 @@ components:
       value:
         message: cart.total must be defined
         type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
+    database_error:
+      summary: Database Error
       value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   securitySchemes:
     api_token:
       type: http

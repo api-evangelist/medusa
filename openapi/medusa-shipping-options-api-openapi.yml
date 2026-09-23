@@ -17,9 +17,7 @@ tags:
     Shipping options can be restricted geographically by service zones, and by custom rules, such as an item''s weight or the customer''s group.
 
 
-    These API routes allow admins to manage shipping options.
-
-    '
+    These API routes allow admins to manage shipping options.'
   externalDocs:
     description: Learn more about shipping options.
     url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option
@@ -756,9 +754,7 @@ paths:
         The `rules` you provide for a price similarly replace that price''s existing rules, so omit a rule to remove it.
 
 
-        Omitting the `prices` property entirely leaves the existing prices unchanged, whereas setting `price_type` to `calculated` removes all flat-rate prices.
-
-        '
+        Omitting the `prices` property entirely leaves the existing prices unchanged, whereas setting `price_type` to `calculated` removes all flat-rate prices.'
       x-authenticated: true
       parameters:
       - name: id
@@ -1016,9 +1012,7 @@ paths:
         The shipping options also be sorted or paginated.
 
 
-        For a shipping option whose `price_type` is `calculated`, the returned `amount` isn''t reliable, as its price is computed on the fly by the fulfillment provider. To retrieve its price, use the [Calculate Shipping Option Price API route](https://docs.medusajs.com/api/store#shipping-options_postshippingoptionsidcalculate).
-
-        '
+        For a shipping option whose `price_type` is `calculated`, the returned `amount` isn''t reliable, as its price is computed on the fly by the fulfillment provider. To retrieve its price, use the Calculate Shipping Option Price API route.'
       externalDocs:
         url: https://docs.medusajs.com/resources/storefront-development/checkout/shipping
         description: 'Storefront guide: How to implement shipping during checkout.'
@@ -1168,9 +1162,7 @@ paths:
       description: 'Calculate the price of a shipping option in a cart. Use this API route for shipping options whose `price_type` is `calculated`, as their price isn''t stored but computed on the fly by the associated fulfillment provider against the cart.
 
 
-        If the fulfillment provider fails to calculate the price, this route returns an error.
-
-        '
+        If the fulfillment provider fails to calculate the price, this route returns an error.'
       x-authenticated: false
       parameters:
       - name: id
@@ -1345,171 +1337,6 @@ components:
           format: date-time
           title: deleted_at
           description: The date the price was deleted.
-    AdminShippingProfile:
-      type: object
-      description: The shipping profile's details..
-      x-schemaName: AdminShippingProfile
-      properties:
-        id:
-          type: string
-          title: id
-          description: The shipping profile's ID.
-        name:
-          type: string
-          title: name
-          description: The shipping profile's name.
-        type:
-          type: string
-          title: type
-          description: The shipping profile's type.
-        metadata:
-          type: object
-          description: The shipping profile's metadata, holds custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the shipping profile was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the shipping profile was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the shipping profile was deleted.
-      required:
-      - id
-      - name
-      - type
-      - metadata
-      - created_at
-      - updated_at
-      - deleted_at
-    AdminCreateShippingOptionRule:
-      type: object
-      description: The details of the shipping option rule.
-      x-schemaName: AdminCreateShippingOptionRule
-      required:
-      - operator
-      - attribute
-      - value
-      properties:
-        operator:
-          type: string
-          description: The operator used to check whether a rule applies.
-          enum:
-          - gt
-          - lt
-          - eq
-          - ne
-          - in
-          - lte
-          - gte
-          - nin
-        attribute:
-          type: string
-          title: attribute
-          description: The name of a property or table that the rule applies to.
-          example: customer_group
-        value:
-          oneOf:
-          - type: string
-            title: value
-            description: A value of the attribute that enables this rule.
-            example: cusgroup_123
-          - type: array
-            description: Values of the attribute that enable this rule.
-            items:
-              type: string
-              title: value
-              description: A value of the attribute that enables this rule.
-              example: cusgroup_123
-    AdminCreateCalculatedShippingOption:
-      type: object
-      description: The calculated shipping option's details.
-      x-schemaName: AdminCreateCalculatedShippingOption
-      required:
-      - price_type
-      - name
-      - service_zone_id
-      - shipping_profile_id
-      - provider_id
-      properties:
-        price_type:
-          type: string
-          title: price_type
-          description: The calculated shipping option's price type.
-          enum:
-          - calculated
-          - flat
-        name:
-          type: string
-          title: name
-          description: The calculated shipping option's name.
-        service_zone_id:
-          type: string
-          title: service_zone_id
-          description: The ID of the associated service zone.
-        shipping_profile_id:
-          type: string
-          title: shipping_profile_id
-          description: The ID of the associated shipping profile.
-        data:
-          type: object
-          description: The calculated shipping option's data.
-          externalDocs:
-            url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property
-        provider_id:
-          type: string
-          title: provider_id
-          description: The ID of the fulfillment provider handling this calculated shipping option.
-        type:
-          $ref: '#/components/schemas/AdminCreateShippingOptionType'
-        type_id:
-          type: string
-          title: type_id
-          description: The ID of the shipping option type that this shipping option belongs to.
-        rules:
-          type: array
-          description: The calculated shipping option's rules.
-          items:
-            $ref: '#/components/schemas/AdminCreateShippingOptionRule'
-        metadata:
-          type: object
-          description: The shipping option's metadata, can hold custom key-value pairs.
-    PriceRule:
-      type: object
-      description: The price rule's details.
-      x-schemaName: PriceRule
-      required:
-      - attribute
-      - operator
-      - value
-      properties:
-        attribute:
-          type: string
-          title: attribute
-          description: The rule's attribute.
-        operator:
-          type: string
-          title: operator
-          description: The rule's operator.
-          enum:
-          - gt
-          - lt
-          - eq
-          - lte
-          - gte
-        value:
-          type: number
-          title: value
-          description: The rule's value.
     AdminShippingOptionResponse:
       type: object
       description: The shipping option's details.
@@ -1542,140 +1369,14 @@ components:
           description: The price's rules. These rules replace the price's existing rules, so omit a rule to remove it.
           items:
             $ref: '#/components/schemas/PriceRule'
-    Error:
-      title: Response Error
+    AdminCreateShippingOptionType:
       type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminShippingOptionPriceRule:
-      type: object
-      description: The details of a shipping option price's rule.
-      x-schemaName: AdminShippingOptionPriceRule
+      description: The shipping option type's details.
+      x-schemaName: AdminCreateShippingOptionType
       required:
-      - id
-      - value
-      - operator
-      - attribute
-      - price_id
-      - priority
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The price rule's ID.
-        value:
-          oneOf:
-          - type: string
-            title: value
-            description: The price rule's value.
-          - type: number
-            title: value
-            description: The price rule's value.
-          description: The price rule's value.
-        operator:
-          type: string
-          description: The price rule's operator.
-          enum:
-          - gt
-          - lt
-          - eq
-          - ne
-          - in
-          - lte
-          - gte
-          - nin
-        attribute:
-          type: string
-          title: attribute
-          description: The price rule's attribute.
-        price_id:
-          type: string
-          title: price_id
-          description: The ID of the price this rule applies to.
-        priority:
-          type: number
-          title: priority
-          description: The price rule's priority.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the price rule was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the price rule was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the price rule was deleted.
-    AdminShippingOptionType:
-      type: object
-      description: The shipping option's details.
-      x-schemaName: AdminShippingOptionType
-      required:
-      - id
-      - label
-      - description
       - code
-      - shipping_option_id
-      - created_at
-      - updated_at
-      - deleted_at
+      - label
       properties:
-        id:
-          type: string
-          title: id
-          description: The shipping option's ID.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the shipping option was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the shipping option was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the shipping option was deleted.
         label:
           type: string
           title: label
@@ -1688,30 +1389,16 @@ components:
           type: string
           title: code
           description: The type's code.
-        shipping_option_id:
-          type: string
-          title: shipping_option_id
-          description: The type's shipping option id.
-    AdminShippingOption:
+    AdminShippingOptionRule:
       type: object
-      description: The shipping option's details.
-      x-schemaName: AdminShippingOption
+      description: The shipping option rule's details.
+      x-schemaName: AdminShippingOptionRule
       required:
       - id
-      - name
-      - price_type
-      - service_zone_id
-      - service_zone
-      - provider_id
-      - provider
-      - shipping_option_type_id
-      - type
-      - shipping_profile_id
-      - shipping_profile
-      - rules
-      - prices
-      - data
-      - metadata
+      - attribute
+      - operator
+      - value
+      - shipping_option_id
       - created_at
       - updated_at
       - deleted_at
@@ -1719,93 +1406,56 @@ components:
         id:
           type: string
           title: id
-          description: The shipping option's ID.
-        name:
+          description: The shipping option rule's ID.
+        attribute:
           type: string
-          title: name
-          description: The shipping option's name.
-        price_type:
+          title: attribute
+          description: The shipping option rule's attribute.
+          example: is_return
+        operator:
           type: string
-          description: The shipping option's price type. If it's `flat`, the price is fixed and is set in the `prices` property. If it's `calculated`, the price is calculated on checkout by the associated fulfillment provider.
+          description: The rule's operator.
           enum:
-          - calculated
-          - flat
-        service_zone_id:
+          - gt
+          - lt
+          - eq
+          - ne
+          - in
+          - lte
+          - gte
+          - nin
+        value:
+          oneOf:
+          - type: string
+            title: value
+            description: The shipping option rule's value.
+            example: 'true'
+          - type: array
+            description: The shipping option rule's values.
+            items:
+              type: string
+              title: value
+              description: A value of the shipping option rule.
+              example: 'true'
+        shipping_option_id:
           type: string
-          title: service_zone_id
-          description: The ID of the service zone this option belongs to.
-        service_zone:
-          type: object
-        provider_id:
-          type: string
-          title: provider_id
-          description: The ID of the provider handling fulfillments created from this shipping option.
-        provider:
-          $ref: '#/components/schemas/AdminFulfillmentProvider'
-        shipping_option_type_id:
-          type: string
-          title: shipping_option_type_id
-          description: The ID of the associated shipping option type.
-        type:
-          $ref: '#/components/schemas/AdminShippingOptionType'
-        shipping_profile_id:
-          type: string
-          title: shipping_profile_id
-          description: The ID of the associated shipping profile.
-        shipping_profile:
-          $ref: '#/components/schemas/AdminShippingProfile'
-        rules:
-          type: array
-          description: The shipping option's rules.
-          items:
-            $ref: '#/components/schemas/AdminShippingOptionRule'
-        prices:
-          type: array
-          description: The shipping option's prices. If the `price_type` is `calculated`, this array will be empty since the price is calculated by the fulfillment provider during checkout.
-          items:
-            $ref: '#/components/schemas/AdminShippingOptionPrice'
-        data:
-          type: object
-          description: The shipping option's data, useful for the fulfillment provider handling fulfillments created from this option.
-          externalDocs:
-            url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property
-        metadata:
-          type: object
-          description: The shipping option's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
+          title: shipping_option_id
+          description: The ID of the shipping option this rule is for.
         created_at:
           type: string
           format: date-time
           title: created_at
-          description: The date the shipping option was created.
+          description: The date the shipping option rule was created.
         updated_at:
           type: string
           format: date-time
           title: updated_at
-          description: The date the shipping option was updated.
+          description: The date the shipping option rule was updated.
         deleted_at:
           type: string
           format: date-time
           title: deleted_at
-          description: The date the shipping option was deleted.
-    AdminFulfillmentProvider:
-      type: object
-      description: The fulfillment provider's details.
-      x-schemaName: AdminFulfillmentProvider
-      required:
-      - id
-      - is_enabled
-      properties:
-        id:
-          type: string
-          title: id
-          description: The provider's ID.
-        is_enabled:
-          type: boolean
-          title: is_enabled
-          description: The provider's is enabled.
+          description: The date the shipping option rule was deleted.
     AdminUpdateShippingOption:
       type: object
       description: The properties to update in the shipping option type.
@@ -1855,50 +1505,6 @@ components:
           type: object
           description: The shipping option's metadata.
       x-schemaName: AdminUpdateShippingOption
-    AdminUpdateShippingOptionPriceWithRegion:
-      type: object
-      description: The properties to update in a shipping option price with a region.
-      x-schemaName: AdminUpdateShippingOptionPriceWithRegion
-      properties:
-        id:
-          type: string
-          title: id
-          description: The price's ID. If not provided, a new price is created; existing prices whose ID isn't included in the request are deleted.
-        region_id:
-          type: string
-          title: region_id
-          description: The ID of the region the price is associated with.
-        amount:
-          type: number
-          title: amount
-          description: The price's amount.
-        rules:
-          type: array
-          description: The price's rules. These rules replace the price's existing rules, so omit a rule to remove it.
-          items:
-            $ref: '#/components/schemas/PriceRule'
-    AdminShippingOptionDeleteResponse:
-      type: object
-      description: The details of the shipping option's deletion.
-      x-schemaName: AdminShippingOptionDeleteResponse
-      required:
-      - id
-      - object
-      - deleted
-      properties:
-        id:
-          type: string
-          title: id
-          description: The shipping option's ID.
-        object:
-          type: string
-          title: object
-          description: The name of the deleted object.
-          default: shipping_option
-        deleted:
-          type: boolean
-          title: deleted
-          description: Whether the shipping option was deleted.
     AdminUpdateShippingOptionRule:
       type: object
       description: The properties to update in the shipping option rule.
@@ -2090,14 +1696,83 @@ components:
         metadata:
           type: object
           description: The shipping option's metadata.
-    AdminCreateShippingOptionType:
+    AdminUpdateShippingOptionPriceWithRegion:
       type: object
-      description: The shipping option type's details.
-      x-schemaName: AdminCreateShippingOptionType
-      required:
-      - code
-      - label
+      description: The properties to update in a shipping option price with a region.
+      x-schemaName: AdminUpdateShippingOptionPriceWithRegion
       properties:
+        id:
+          type: string
+          title: id
+          description: The price's ID. If not provided, a new price is created; existing prices whose ID isn't included in the request are deleted.
+        region_id:
+          type: string
+          title: region_id
+          description: The ID of the region the price is associated with.
+        amount:
+          type: number
+          title: amount
+          description: The price's amount.
+        rules:
+          type: array
+          description: The price's rules. These rules replace the price's existing rules, so omit a rule to remove it.
+          items:
+            $ref: '#/components/schemas/PriceRule'
+    AdminShippingOptionDeleteResponse:
+      type: object
+      description: The details of the shipping option's deletion.
+      x-schemaName: AdminShippingOptionDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping option's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: shipping_option
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the shipping option was deleted.
+    AdminShippingOptionType:
+      type: object
+      description: The shipping option's details.
+      x-schemaName: AdminShippingOptionType
+      required:
+      - id
+      - label
+      - description
+      - code
+      - shipping_option_id
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping option's ID.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the shipping option was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the shipping option was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the shipping option was deleted.
         label:
           type: string
           title: label
@@ -2110,16 +1785,163 @@ components:
           type: string
           title: code
           description: The type's code.
-    AdminShippingOptionRule:
+        shipping_option_id:
+          type: string
+          title: shipping_option_id
+          description: The type's shipping option id.
+    AdminFulfillmentProvider:
       type: object
-      description: The shipping option rule's details.
-      x-schemaName: AdminShippingOptionRule
+      description: The fulfillment provider's details.
+      x-schemaName: AdminFulfillmentProvider
       required:
       - id
+      - is_enabled
+      properties:
+        id:
+          type: string
+          title: id
+          description: The provider's ID.
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: The provider's is enabled.
+    AdminCreateCalculatedShippingOption:
+      type: object
+      description: The calculated shipping option's details.
+      x-schemaName: AdminCreateCalculatedShippingOption
+      required:
+      - price_type
+      - name
+      - service_zone_id
+      - shipping_profile_id
+      - provider_id
+      properties:
+        price_type:
+          type: string
+          title: price_type
+          description: The calculated shipping option's price type.
+          enum:
+          - calculated
+          - flat
+        name:
+          type: string
+          title: name
+          description: The calculated shipping option's name.
+        service_zone_id:
+          type: string
+          title: service_zone_id
+          description: The ID of the associated service zone.
+        shipping_profile_id:
+          type: string
+          title: shipping_profile_id
+          description: The ID of the associated shipping profile.
+        data:
+          type: object
+          description: The calculated shipping option's data.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the fulfillment provider handling this calculated shipping option.
+        type:
+          $ref: '#/components/schemas/AdminCreateShippingOptionType'
+        type_id:
+          type: string
+          title: type_id
+          description: The ID of the shipping option type that this shipping option belongs to.
+        rules:
+          type: array
+          description: The calculated shipping option's rules.
+          items:
+            $ref: '#/components/schemas/AdminCreateShippingOptionRule'
+        metadata:
+          type: object
+          description: The shipping option's metadata, can hold custom key-value pairs.
+    PriceRule:
+      type: object
+      description: The price rule's details.
+      x-schemaName: PriceRule
+      required:
       - attribute
       - operator
       - value
-      - shipping_option_id
+      properties:
+        attribute:
+          type: string
+          title: attribute
+          description: The rule's attribute.
+        operator:
+          type: string
+          title: operator
+          description: The rule's operator.
+          enum:
+          - gt
+          - lt
+          - eq
+          - lte
+          - gte
+        value:
+          type: number
+          title: value
+          description: The rule's value.
+    AdminShippingProfile:
+      type: object
+      description: The shipping profile's details..
+      x-schemaName: AdminShippingProfile
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping profile's ID.
+        name:
+          type: string
+          title: name
+          description: The shipping profile's name.
+        type:
+          type: string
+          title: type
+          description: The shipping profile's type.
+        metadata:
+          type: object
+          description: The shipping profile's metadata, holds custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the shipping profile was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the shipping profile was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the shipping profile was deleted.
+      required:
+      - id
+      - name
+      - type
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+    AdminShippingOptionPriceRule:
+      type: object
+      description: The details of a shipping option price's rule.
+      x-schemaName: AdminShippingOptionPriceRule
+      required:
+      - id
+      - value
+      - operator
+      - attribute
+      - price_id
+      - priority
       - created_at
       - updated_at
       - deleted_at
@@ -2127,15 +1949,19 @@ components:
         id:
           type: string
           title: id
-          description: The shipping option rule's ID.
-        attribute:
-          type: string
-          title: attribute
-          description: The shipping option rule's attribute.
-          example: is_return
+          description: The price rule's ID.
+        value:
+          oneOf:
+          - type: string
+            title: value
+            description: The price rule's value.
+          - type: number
+            title: value
+            description: The price rule's value.
+          description: The price rule's value.
         operator:
           type: string
-          description: The rule's operator.
+          description: The price rule's operator.
           enum:
           - gt
           - lt
@@ -2145,38 +1971,204 @@ components:
           - lte
           - gte
           - nin
-        value:
-          oneOf:
-          - type: string
-            title: value
-            description: The shipping option rule's value.
-            example: 'true'
-          - type: array
-            description: The shipping option rule's values.
-            items:
-              type: string
-              title: value
-              description: A value of the shipping option rule.
-              example: 'true'
-        shipping_option_id:
+        attribute:
           type: string
-          title: shipping_option_id
-          description: The ID of the shipping option this rule is for.
+          title: attribute
+          description: The price rule's attribute.
+        price_id:
+          type: string
+          title: price_id
+          description: The ID of the price this rule applies to.
+        priority:
+          type: number
+          title: priority
+          description: The price rule's priority.
         created_at:
           type: string
           format: date-time
           title: created_at
-          description: The date the shipping option rule was created.
+          description: The date the price rule was created.
         updated_at:
           type: string
           format: date-time
           title: updated_at
-          description: The date the shipping option rule was updated.
+          description: The date the price rule was updated.
         deleted_at:
           type: string
           format: date-time
           title: deleted_at
-          description: The date the shipping option rule was deleted.
+          description: The date the price rule was deleted.
+    AdminCreateShippingOptionRule:
+      type: object
+      description: The details of the shipping option rule.
+      x-schemaName: AdminCreateShippingOptionRule
+      required:
+      - operator
+      - attribute
+      - value
+      properties:
+        operator:
+          type: string
+          description: The operator used to check whether a rule applies.
+          enum:
+          - gt
+          - lt
+          - eq
+          - ne
+          - in
+          - lte
+          - gte
+          - nin
+        attribute:
+          type: string
+          title: attribute
+          description: The name of a property or table that the rule applies to.
+          example: customer_group
+        value:
+          oneOf:
+          - type: string
+            title: value
+            description: A value of the attribute that enables this rule.
+            example: cusgroup_123
+          - type: array
+            description: Values of the attribute that enable this rule.
+            items:
+              type: string
+              title: value
+              description: A value of the attribute that enables this rule.
+              example: cusgroup_123
+    AdminShippingOption:
+      type: object
+      description: The shipping option's details.
+      x-schemaName: AdminShippingOption
+      required:
+      - id
+      - name
+      - price_type
+      - service_zone_id
+      - service_zone
+      - provider_id
+      - provider
+      - shipping_option_type_id
+      - type
+      - shipping_profile_id
+      - shipping_profile
+      - rules
+      - prices
+      - data
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The shipping option's ID.
+        name:
+          type: string
+          title: name
+          description: The shipping option's name.
+        price_type:
+          type: string
+          description: The shipping option's price type. If it's `flat`, the price is fixed and is set in the `prices` property. If it's `calculated`, the price is calculated on checkout by the associated fulfillment provider.
+          enum:
+          - calculated
+          - flat
+        service_zone_id:
+          type: string
+          title: service_zone_id
+          description: The ID of the service zone this option belongs to.
+        service_zone:
+          type: object
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the provider handling fulfillments created from this shipping option.
+        provider:
+          $ref: '#/components/schemas/AdminFulfillmentProvider'
+        shipping_option_type_id:
+          type: string
+          title: shipping_option_type_id
+          description: The ID of the associated shipping option type.
+        type:
+          $ref: '#/components/schemas/AdminShippingOptionType'
+        shipping_profile_id:
+          type: string
+          title: shipping_profile_id
+          description: The ID of the associated shipping profile.
+        shipping_profile:
+          $ref: '#/components/schemas/AdminShippingProfile'
+        rules:
+          type: array
+          description: The shipping option's rules.
+          items:
+            $ref: '#/components/schemas/AdminShippingOptionRule'
+        prices:
+          type: array
+          description: The shipping option's prices. If the `price_type` is `calculated`, this array will be empty since the price is calculated by the fulfillment provider during checkout.
+          items:
+            $ref: '#/components/schemas/AdminShippingOptionPrice'
+        data:
+          type: object
+          description: The shipping option's data, useful for the fulfillment provider handling fulfillments created from this option.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property
+        metadata:
+          type: object
+          description: The shipping option's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the shipping option was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the shipping option was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the shipping option was deleted.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     StorePriceRule:
       type: object
       description: The price rule's details.
@@ -2208,148 +2200,6 @@ components:
           type: string
           title: value
           description: The price rule's value.
-    StoreCartShippingOption:
-      type: object
-      description: The shipping option's details.
-      x-schemaName: StoreCartShippingOption
-      required:
-      - id
-      - name
-      - price_type
-      - service_zone_id
-      - shipping_profile_id
-      - provider_id
-      - data
-      - type
-      - provider
-      - amount
-      - prices
-      - calculated_price
-      - insufficient_inventory
-      properties:
-        id:
-          type: string
-          title: id
-          description: The shipping option's ID.
-        name:
-          type: string
-          title: name
-          description: The shipping option's name.
-        price_type:
-          type: string
-          description: The shipping option's price type. If it's `flat`, the price is fixed and is set in the `prices` property. If it's `calculated`, the price is calculated on checkout by the associated fulfillment provider.
-          enum:
-          - flat
-          - calculated
-        service_zone_id:
-          type: string
-          title: service_zone_id
-          description: The ID of the service zone the shipping option belongs to.
-        provider_id:
-          type: string
-          title: provider_id
-          description: The ID of the fulfillment provider handling this option.
-        provider:
-          type: object
-          description: The fulfillment provider's details.
-          required:
-          - id
-          - is_enabled
-          properties:
-            id:
-              type: string
-              title: id
-              description: The provider's ID.
-            is_enabled:
-              type: boolean
-              title: is_enabled
-              description: Whether the provider is enabled.
-        type:
-          type: object
-          description: The shipping option type's details.
-          required:
-          - id
-          - label
-          - description
-          - code
-          properties:
-            id:
-              type: string
-              title: id
-              description: The type's ID.
-            label:
-              type: string
-              title: label
-              description: The type's label.
-            description:
-              type: string
-              title: description
-              description: The type's description.
-            code:
-              type: string
-              title: code
-              description: The type's code.
-        shipping_profile_id:
-          type: string
-          title: shipping_profile_id
-          description: The ID of the associated shipping profile.
-        amount:
-          type: number
-          title: amount
-          description: The shipping option's amount for the cart. For a shipping option whose `price_type` is `calculated`, this amount is computed on the fly by the fulfillment provider against the cart.
-        data:
-          type: object
-          description: The shipping option's data, useful for the provider handling fulfillment.
-          externalDocs:
-            url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property
-        prices:
-          type: array
-          description: The shipping option's prices.
-          items:
-            $ref: '#/components/schemas/StorePrice'
-        calculated_price:
-          $ref: '#/components/schemas/StoreCalculatedPrice'
-        insufficient_inventory:
-          type: boolean
-          title: insufficient_inventory
-          description: Whether the shipping option's location doesn't have sufficient quantity for any of the cart's items.
-    StorePrice:
-      type: object
-      description: The price's details.
-      x-schemaName: StorePrice
-      required:
-      - id
-      - currency_code
-      - amount
-      - min_quantity
-      - max_quantity
-      properties:
-        id:
-          type: string
-          title: id
-          description: The price's ID.
-        currency_code:
-          type: string
-          title: currency_code
-          description: The price's ISO 2 currency code.
-          example: usd
-        amount:
-          type: number
-          title: amount
-          description: The price's amount.
-        min_quantity:
-          type: number
-          title: min_quantity
-          description: The minimum quantity required in the cart for the price to apply.
-        max_quantity:
-          type: number
-          title: max_quantity
-          description: The maximum quantity required in the cart for the price to apply.
-        price_rules:
-          type: array
-          description: The price's rules.
-          items:
-            $ref: '#/components/schemas/StorePriceRule'
     StoreCalculatedPrice:
       type: object
       description: The shipping option's calculated price.
@@ -2474,70 +2324,52 @@ components:
           type: number
           title: original_amount_without_tax
           description: The original amount without taxes.
-    StoreShippingOptionListResponse:
+    StorePrice:
       type: object
-      description: The list of shipping options.
-      x-schemaName: StoreShippingOptionListResponse
+      description: The price's details.
+      x-schemaName: StorePrice
       required:
-      - shipping_options
+      - id
+      - currency_code
+      - amount
+      - min_quantity
+      - max_quantity
       properties:
-        shipping_options:
+        id:
+          type: string
+          title: id
+          description: The price's ID.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The price's ISO 2 currency code.
+          example: usd
+        amount:
+          type: number
+          title: amount
+          description: The price's amount.
+        min_quantity:
+          type: number
+          title: min_quantity
+          description: The minimum quantity required in the cart for the price to apply.
+        max_quantity:
+          type: number
+          title: max_quantity
+          description: The maximum quantity required in the cart for the price to apply.
+        price_rules:
           type: array
-          description: The list of shipping options.
+          description: The price's rules.
           items:
-            allOf:
-            - $ref: '#/components/schemas/StoreCartShippingOption'
-            - type: object
-              description: The shipping option's details.
-              required:
-              - service_zone
-              properties:
-                service_zone:
-                  type: object
-                  description: The shipping option's service zone.
-                  required:
-                  - id
-                  - fulfillment_set_id
-                  - fulfillment_set
-                  properties:
-                    id:
-                      type: string
-                      title: id
-                      description: The service zone's ID.
-                    fulfillment_set_id:
-                      type: string
-                      title: fulfillment_set_id
-                      description: The ID of the service zone's fulfillment set.
-                    fulfillment_set:
-                      type: object
-                      description: The service zone's fulfillment set.
-                      required:
-                      - id
-                      - type
-                      - location
-                      properties:
-                        id:
-                          type: string
-                          title: id
-                          description: The fulfillment set's ID.
-                        type:
-                          type: string
-                          title: type
-                          description: The fulfillment set's type.
-                        location:
-                          type: object
-                          description: The fulfillment set's location details.
-                          required:
-                          - id
-                          - address
-                          properties:
-                            id:
-                              type: string
-                              title: id
-                              description: The location's ID.
-                            address:
-                              $ref: '#/components/schemas/StoreFulfillmentAddress'
-            description: The shipping option's details.
+            $ref: '#/components/schemas/StorePriceRule'
+    StoreShippingOptionResponse:
+      type: object
+      description: The shipping option's details.
+      x-schemaName: StoreShippingOptionResponse
+      required:
+      - shipping_option
+      properties:
+        shipping_option:
+          $ref: '#/components/schemas/StoreCartShippingOption'
     StoreFulfillmentAddress:
       type: object
       description: The location's address details.
@@ -2612,36 +2444,217 @@ components:
           format: date-time
           title: deleted_at
           description: The date the address was deleted.
-    StoreShippingOptionResponse:
+    StoreShippingOptionListResponse:
+      type: object
+      description: The list of shipping options.
+      x-schemaName: StoreShippingOptionListResponse
+      required:
+      - shipping_options
+      properties:
+        shipping_options:
+          type: array
+          description: The list of shipping options.
+          items:
+            allOf:
+            - $ref: '#/components/schemas/StoreCartShippingOption'
+            - type: object
+              description: The shipping option's details.
+              required:
+              - service_zone
+              properties:
+                service_zone:
+                  type: object
+                  description: The shipping option's service zone.
+                  required:
+                  - id
+                  - fulfillment_set_id
+                  - fulfillment_set
+                  properties:
+                    id:
+                      type: string
+                      title: id
+                      description: The service zone's ID.
+                    fulfillment_set_id:
+                      type: string
+                      title: fulfillment_set_id
+                      description: The ID of the service zone's fulfillment set.
+                    fulfillment_set:
+                      type: object
+                      description: The service zone's fulfillment set.
+                      required:
+                      - id
+                      - type
+                      - location
+                      properties:
+                        id:
+                          type: string
+                          title: id
+                          description: The fulfillment set's ID.
+                        type:
+                          type: string
+                          title: type
+                          description: The fulfillment set's type.
+                        location:
+                          type: object
+                          description: The fulfillment set's location details.
+                          required:
+                          - id
+                          - address
+                          properties:
+                            id:
+                              type: string
+                              title: id
+                              description: The location's ID.
+                            address:
+                              $ref: '#/components/schemas/StoreFulfillmentAddress'
+            description: The shipping option's details.
+    StoreCartShippingOption:
       type: object
       description: The shipping option's details.
-      x-schemaName: StoreShippingOptionResponse
+      x-schemaName: StoreCartShippingOption
       required:
-      - shipping_option
+      - id
+      - name
+      - price_type
+      - service_zone_id
+      - shipping_profile_id
+      - provider_id
+      - data
+      - type
+      - provider
+      - amount
+      - prices
+      - calculated_price
+      - insufficient_inventory
       properties:
-        shipping_option:
-          $ref: '#/components/schemas/StoreCartShippingOption'
+        id:
+          type: string
+          title: id
+          description: The shipping option's ID.
+        name:
+          type: string
+          title: name
+          description: The shipping option's name.
+        price_type:
+          type: string
+          description: The shipping option's price type. If it's `flat`, the price is fixed and is set in the `prices` property. If it's `calculated`, the price is calculated on checkout by the associated fulfillment provider.
+          enum:
+          - flat
+          - calculated
+        service_zone_id:
+          type: string
+          title: service_zone_id
+          description: The ID of the service zone the shipping option belongs to.
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the fulfillment provider handling this option.
+        provider:
+          type: object
+          description: The fulfillment provider's details.
+          required:
+          - id
+          - is_enabled
+          properties:
+            id:
+              type: string
+              title: id
+              description: The provider's ID.
+            is_enabled:
+              type: boolean
+              title: is_enabled
+              description: Whether the provider is enabled.
+        type:
+          type: object
+          description: The shipping option type's details.
+          required:
+          - id
+          - label
+          - description
+          - code
+          properties:
+            id:
+              type: string
+              title: id
+              description: The type's ID.
+            label:
+              type: string
+              title: label
+              description: The type's label.
+            description:
+              type: string
+              title: description
+              description: The type's description.
+            code:
+              type: string
+              title: code
+              description: The type's code.
+        shipping_profile_id:
+          type: string
+          title: shipping_profile_id
+          description: The ID of the associated shipping profile.
+        amount:
+          type: number
+          title: amount
+          description: The shipping option's amount for the cart. For a shipping option whose `price_type` is `calculated`, this amount is computed on the fly by the fulfillment provider against the cart.
+        data:
+          type: object
+          description: The shipping option's data, useful for the provider handling fulfillment.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property
+        prices:
+          type: array
+          description: The shipping option's prices.
+          items:
+            $ref: '#/components/schemas/StorePrice'
+        calculated_price:
+          $ref: '#/components/schemas/StoreCalculatedPrice'
+        insufficient_inventory:
+          type: boolean
+          title: insufficient_inventory
+          description: Whether the shipping option's location doesn't have sufficient quantity for any of the cart's items.
+  examples:
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   responses:
-    invalid_request_error:
-      description: Invalid Request Error
+    unauthorized:
+      description: User is not authorized. Must log in first
       content:
-        application/json:
+        text/plain:
           schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+            type: string
+            default: Unauthorized
+            example: Unauthorized
     500_error:
       description: Server Error
       content:
@@ -2657,14 +2670,6 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
     400_error:
       description: Client Error
       content:
@@ -2685,39 +2690,26 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
-  examples:
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

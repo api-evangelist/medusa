@@ -1,15 +1,13 @@
 openapi: 3.2.0
 info:
   version: 2.19.0
-  title: Medusa Storefront Multi-Factor Authentication (MFA) Factors API
+  title: Medusa Storefront Multi-Factor Authentication (MFA) Factors…
   license:
     name: MIT
     url: https://github.com/medusajs/medusa/blob/master/LICENSE
   description: 'Multi-factor authentication (MFA) factors are additional ways to verify a customer''s identity during login, in addition to their password. Examples of MFA factors include authenticator apps, SMS messages, and email.
 
-    These API routes allow customers to manage their MFA factors, such as enabling an authenticator app or generating recovery codes.
-
-    '
+    These API routes allow customers to manage their MFA factors, such as enabling an authenticator app or generating recovery codes.'
 servers:
 - url: http://localhost:9000
 - url: https://api.medusajs.com
@@ -17,9 +15,7 @@ tags:
 - name: Multi-Factor Authentication (MFA) Factors
   description: 'Multi-factor authentication (MFA) factors are additional ways to verify a customer''s identity during login, in addition to their password. Examples of MFA factors include authenticator apps, SMS messages, and email.
 
-    These API routes allow customers to manage their MFA factors, such as enabling an authenticator app or generating recovery codes.
-
-    '
+    These API routes allow customers to manage their MFA factors, such as enabling an authenticator app or generating recovery codes.'
   externalDocs:
     description: Learn more about MFA in Medusa
     url: https://docs.medusajs.com/resources/commerce-modules/auth/mfa
@@ -33,9 +29,7 @@ paths:
 
         completes the authentication flow and returns a JWT token that can be used to authenticate
 
-        subsequent requests.
-
-        '
+        subsequent requests.'
       x-authenticated: false
       externalDocs:
         description: Learn more about MFA in Medusa
@@ -97,9 +91,7 @@ paths:
       x-sidebar-summary: List MFA Factors
       description: 'Retrieve the list of multi-factor authentication (MFA) factors registered for the authenticated user,
 
-        including both pending (not yet verified) and enabled factors.
-
-        '
+        including both pending (not yet verified) and enabled factors.'
       x-authenticated: true
       parameters: []
       x-codeSamples:
@@ -137,9 +129,7 @@ paths:
 
         secret and an `otpauth_url` for TOTP) that can be used to display a QR code. The factor must
 
-        then be verified via the verify endpoint before it can be used.
-
-        '
+        then be verified via the verify endpoint before it can be used.'
       x-authenticated: true
       externalDocs:
         description: Learn more about MFA in Medusa
@@ -203,9 +193,7 @@ paths:
 
         the factor can no longer be used to verify MFA challenges. When disabling a recovery-code
 
-        factor, a valid recovery code must be provided in the request body.
-
-        '
+        factor, a valid recovery code must be provided in the request body.'
       x-authenticated: true
       parameters:
       - name: id
@@ -263,9 +251,7 @@ paths:
 
         it. A successful verification enables the factor, after which it can be used to verify MFA
 
-        challenges during login.
-
-        '
+        challenges during login.'
       x-authenticated: true
       externalDocs:
         description: Learn more about MFA in Medusa
@@ -326,9 +312,7 @@ paths:
 
         factor. Generating new codes replaces any previously issued codes, so they should be stored in
 
-        a safe place. At least one enabled MFA factor is required to generate recovery codes.
-
-        '
+        a safe place. At least one enabled MFA factor is required to generate recovery codes.'
       x-authenticated: true
       externalDocs:
         description: Learn more about MFA in Medusa
@@ -371,29 +355,71 @@ paths:
           $ref: '#/components/responses/500_error'
       x-since: 2.15.3
 components:
+  responses:
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   examples:
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
     invalid_argument_error:
       summary: Invalid Argument Error
       value:
@@ -404,6 +430,28 @@ components:
       value:
         message: cart.total must be defined
         type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
   schemas:
     Error:
       title: Response Error
@@ -439,70 +487,6 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
-  responses:
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
   securitySchemes:
     jwt_token:
       type: http
