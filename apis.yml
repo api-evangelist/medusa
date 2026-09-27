@@ -1,15 +1,20 @@
 aid: medusa
 deliveryModel:
-  model: saas
-  open_source: false
+  model: unknown
+  license_evidence:
+    repo: medusajs/medusa
+    spdx: NOASSERTION
+    stars: 36459
+  open_source: unknown
   commercial: true
   callable_host: false
-  label: Hosted service · you call their endpoint
-  confidence: medium
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
   source:
   - openapi
   - pricing
-  generated: '2026-08-28'
+  - repository-unlicensed
+  generated: '2026-09-25'
   method: derived
 specificationVersion: '0.23'
 accessModel:
@@ -36,7 +41,7 @@ type: Index
 tags:
 - E-Commerce
 - Headless Commerce
-- Open-Source
+- Open Source
 - Commerce
 - Storefront
 - Order Management
@@ -55,6 +60,7 @@ tags_raw:
 - GraphQL
 - Agentic Commerce
 - MCP
+- Open-Source
 description: 'Medusa is an open-source, MIT-licensed digital commerce platform built around a modular architecture:
   a suite of Commerce Modules (cart, products, orders, pricing, promotions, tax, inventory, fulfillment, payment),
   a Framework for building custom API routes, data models, workflows and integrations, and a customizable Medusa
@@ -2396,13 +2402,14 @@ apis:
   humanURL: https://github.com/medusajs/medusa
   baseURL: https://github.com/medusajs/medusa
   tags:
-  - Open-Source
+  - Open Source
   - Repository
   - Monorepo
   tags_raw:
   - Open Source
   - Repository
   - Monorepo
+  - Open-Source
   properties:
   - type: Repository
     url: https://github.com/medusajs/medusa

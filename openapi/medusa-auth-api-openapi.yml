@@ -633,7 +633,7 @@ paths:
     - url: https://api.medusajs.com
   /auth/customer/{auth_provider}:
     post:
-      operationId: PostActor_typeAuth_provider
+      operationId: postAuthCustomerByAuthProvider
       summary: Authenticate Customer
       description: 'Authenticate a customer and receive the JWT token to be used in the header of subsequent requests.
 
@@ -688,12 +688,14 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
+      x-operation-id-source: normalized
+      x-operation-id-original: PostActor_typeAuth_provider
     servers:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
   /auth/customer/{auth_provider}/callback:
     post:
-      operationId: PostActor_typeAuth_providerCallback
+      operationId: postAuthCustomerByAuthProviderCallback
       summary: Validate Authentication Callback
       description: 'This API route is used by your storefront or frontend application when a third-party provider redirects to it after authentication. It validates the authentication with the third-party provider and, if successful, returns an authentication token. All query parameters received from the third-party provider, such as `code`, `state`, and `error`, must be passed as query parameters to this route.
 
@@ -738,12 +740,14 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
+      x-operation-id-source: normalized
+      x-operation-id-original: PostActor_typeAuth_providerCallback
     servers:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
   /auth/customer/{auth_provider}/register:
     post:
-      operationId: PostActor_typeAuth_provider_register
+      operationId: postAuthCustomerByAuthProviderRegister
       summary: Retrieve Registration JWT Token
       description: This API route retrieves a registration JWT token of a customer that hasn't been registered yet. The token is used in the header of requests that create a customer.
       externalDocs:
@@ -796,12 +800,14 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
+      x-operation-id-source: normalized
+      x-operation-id-original: PostActor_typeAuth_provider_register
     servers:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
   /auth/customer/{auth_provider}/reset-password:
     post:
-      operationId: PostActor_typeAuth_providerResetPassword
+      operationId: postAuthCustomerByAuthProviderResetPassword
       summary: Generate Reset Password Token for Customer
       x-sidebar-summary: Generate Reset Password Token
       description: 'Generate a reset password token for a customer. This API route doesn''t reset the customer password or send them the reset instructions in a notification.
@@ -878,12 +884,14 @@ paths:
 
           to send a reset password email to the user or customer, for example.'
         deprecated: false
+      x-operation-id-source: normalized
+      x-operation-id-original: PostActor_typeAuth_providerResetPassword
     servers:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
   /auth/customer/{auth_provider}/update:
     post:
-      operationId: PostActor_typeAuth_providerUpdate
+      operationId: postAuthCustomerByAuthProviderUpdate
       summary: Reset a Customer's Password
       x-sidebar-summary: Reset Password
       description: Reset a customer's password using a reset-password token generated with the Generate Reset Password Token API route. You pass the token as a bearer token in the request's Authorization header.
@@ -947,6 +955,8 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
+      x-operation-id-source: normalized
+      x-operation-id-original: PostActor_typeAuth_providerUpdate
     servers:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
@@ -1082,18 +1092,82 @@ paths:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
 components:
+  responses:
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
   schemas:
-    AuthResponse:
+    AuthCallbackResponse:
       type: object
       description: The authentication's details.
-      x-schemaName: AuthResponse
+      x-schemaName: AuthCallbackResponse
       required:
-      - token
+      - location
       properties:
-        token:
+        location:
           type: string
-          title: token
-          description: The JWT token used for registration or authentication.
+          title: location
+          description: The location to redirect the user to for further authentication with the third-party provider.
     AuthProvider:
       type: object
       description: 'The public information of a registered auth provider instance. This is safe
@@ -1142,6 +1216,63 @@ components:
           enum:
           - credentials
           - redirect
+    AuthProvidersListResponse:
+      type: object
+      description: The response of listing the auth providers available.
+      x-schemaName: AuthProvidersListResponse
+      required:
+      - providers
+      properties:
+        providers:
+          type: array
+          description: The list of auth providers.
+          items:
+            $ref: '#/components/schemas/AuthProvider'
+    AuthResponse:
+      type: object
+      description: The authentication's details.
+      x-schemaName: AuthResponse
+      required:
+      - token
+      properties:
+        token:
+          type: string
+          title: token
+          description: The JWT token used for registration or authentication.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     AdminUser:
       type: object
       description: The user's details.
@@ -1199,18 +1330,6 @@ components:
           format: date-time
           title: deleted_at
           description: The date the user was deleted.
-    AuthProvidersListResponse:
-      type: object
-      description: The response of listing the auth providers available.
-      x-schemaName: AuthProvidersListResponse
-      required:
-      - providers
-      properties:
-        providers:
-          type: array
-          description: The list of auth providers.
-          items:
-            $ref: '#/components/schemas/AuthProvider'
     AuthAdminSessionResponse:
       type: object
       description: The authenticated user's details.
@@ -1222,51 +1341,6 @@ components:
           title: user
           description: The logged-in user.
           $ref: '#/components/schemas/AdminUser'
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AuthCallbackResponse:
-      type: object
-      description: The authentication's details.
-      x-schemaName: AuthCallbackResponse
-      required:
-      - location
-      properties:
-        location:
-          type: string
-          title: location
-          description: The location to redirect the user to for further authentication with the third-party provider.
     StoreCustomerAddress:
       type: object
       description: The customer address's details
@@ -1457,102 +1531,38 @@ components:
           title: deleted_at
           description: The date the customer was deleted.
   examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
     database_error:
       summary: Database Error
       value:
         code: api_error
         message: An error occured while hashing password
         type: database_error
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
     invalid_data_error:
       summary: Invalid Data Error
       value:
         message: first_name must be a string
         type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
     default_error:
       summary: Default Error
       value:
         code: unknown_error
         message: An unknown error occurred.
         type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
+    unexpected_state_error:
+      summary: Unexpected State Error
       value:
         message: cart.total must be defined
         type: unexpected_state
-  responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
   securitySchemes:
     api_token:
       type: http

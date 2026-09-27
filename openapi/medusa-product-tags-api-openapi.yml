@@ -777,7 +777,7 @@ paths:
     - url: https://api.medusajs.com
   /store/product-tags:
     get:
-      operationId: GetProductTags
+      operationId: getStoreProductTags
       summary: List Product Tags
       description: Retrieve a list of product tags. The product tags can be filtered by fields such as `id`. The product tags can also be sorted or paginated.
       x-authenticated: false
@@ -1423,12 +1423,14 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
+      x-operation-id-source: normalized
+      x-operation-id-original: GetProductTags
     servers:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
   /store/product-tags/{id}:
     get:
-      operationId: GetProductTagsId
+      operationId: getStoreProductTagsById
       summary: Get a Product Tag
       description: Retrieve a product tag by its ID. You can expand the product tag's relations or select the fields that should be returned.
       x-authenticated: false
@@ -1508,11 +1510,153 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
+      x-operation-id-source: normalized
+      x-operation-id-original: GetProductTagsId
     servers:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
 components:
+  responses:
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
   schemas:
+    AdminUpdateProductTag:
+      type: object
+      description: The properties to update in the product tag.
+      properties:
+        value:
+          type: string
+          title: value
+          description: The product tag's value.
+        metadata:
+          type: object
+          description: The product tag's metadata. Can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        external_id:
+          type: string
+          title: external_id
+          description: The product tag's external ID used to link it with external systems.
+      x-schemaName: AdminUpdateProductTag
+    AdminProductTagResponse:
+      type: object
+      description: The product tag's details.
+      x-schemaName: AdminProductTagResponse
+      required:
+      - product_tag
+      properties:
+        product_tag:
+          $ref: '#/components/schemas/AdminProductTag'
+    AdminProductTag:
+      type: object
+      description: The product tag's details.
+      x-schemaName: AdminProductTag
+      required:
+      - id
+      - value
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The tag's ID.
+        value:
+          type: string
+          title: value
+          description: The tag's value.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the tag was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the tag was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the tag was deleted.
+        metadata:
+          type: object
+          description: The tag's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        translations:
+          type: array
+          description: The tag's translations.
+          items:
+            $ref: '#/components/schemas/AdminTranslation'
+        external_id:
+          type: string
+          title: external_id
+          description: The tag's external ID used for integration with third-party systems.
     AdminTranslation:
       type: object
       description: The translation's details.
@@ -1567,15 +1711,27 @@ components:
           format: date-time
           title: deleted_at
           description: The date that the translation was deleted.
-    AdminProductTagResponse:
+    AdminCreateProductTag:
       type: object
       description: The product tag's details.
-      x-schemaName: AdminProductTagResponse
+      x-schemaName: AdminCreateProductTag
       required:
-      - product_tag
+      - value
       properties:
-        product_tag:
-          $ref: '#/components/schemas/AdminProductTag'
+        value:
+          type: string
+          title: value
+          description: The product tag's value.
+        metadata:
+          type: object
+          description: The product tag's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        external_id:
+          type: string
+          title: external_id
+          description: The ID of the product tag in an external or third-party system.
     AdminProductTagListResponse:
       type: object
       description: The paginated list of product tags.
@@ -1608,75 +1764,6 @@ components:
           title: estimate_count
           description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
           x-featureFlag: index_engine
-    AdminCreateProductTag:
-      type: object
-      description: The product tag's details.
-      x-schemaName: AdminCreateProductTag
-      required:
-      - value
-      properties:
-        value:
-          type: string
-          title: value
-          description: The product tag's value.
-        metadata:
-          type: object
-          description: The product tag's metadata, used to store custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        external_id:
-          type: string
-          title: external_id
-          description: The ID of the product tag in an external or third-party system.
-    AdminProductTag:
-      type: object
-      description: The product tag's details.
-      x-schemaName: AdminProductTag
-      required:
-      - id
-      - value
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The tag's ID.
-        value:
-          type: string
-          title: value
-          description: The tag's value.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the tag was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the tag was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the tag was deleted.
-        metadata:
-          type: object
-          description: The tag's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        translations:
-          type: array
-          description: The tag's translations.
-          items:
-            $ref: '#/components/schemas/AdminTranslation'
-        external_id:
-          type: string
-          title: external_id
-          description: The tag's external ID used for integration with third-party systems.
     Error:
       title: Response Error
       type: object
@@ -1733,25 +1820,47 @@ components:
           type: boolean
           title: deleted
           description: Whether the product tag was deleted.
-    AdminUpdateProductTag:
+    StoreProductTagListResponse:
       type: object
-      description: The properties to update in the product tag.
+      description: The paginated list of product tags.
+      x-schemaName: StoreProductTagListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - product_tags
       properties:
-        value:
-          type: string
-          title: value
-          description: The product tag's value.
-        metadata:
-          type: object
-          description: The product tag's metadata. Can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        external_id:
-          type: string
-          title: external_id
-          description: The product tag's external ID used to link it with external systems.
-      x-schemaName: AdminUpdateProductTag
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items to skip before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items available.
+        product_tags:
+          type: array
+          description: The list of product tags.
+          items:
+            $ref: '#/components/schemas/StoreProductTag'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    StoreProductTagResponse:
+      type: object
+      description: The product tag's details.
+      x-schemaName: StoreProductTagResponse
+      required:
+      - product_tag
+      properties:
+        product_tag:
+          $ref: '#/components/schemas/StoreProductTag'
     StoreProductTag:
       type: object
       description: The tag's details.
@@ -1795,69 +1904,7 @@ components:
       - value
       - created_at
       - updated_at
-    StoreProductTagListResponse:
-      type: object
-      description: The paginated list of product tags.
-      x-schemaName: StoreProductTagListResponse
-      required:
-      - limit
-      - offset
-      - count
-      - product_tags
-      properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned.
-        offset:
-          type: number
-          title: offset
-          description: The number of items to skip before retrieving the returned items.
-        count:
-          type: number
-          title: count
-          description: The total number of items available.
-        product_tags:
-          type: array
-          description: The list of product tags.
-          items:
-            $ref: '#/components/schemas/StoreProductTag'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
-          x-featureFlag: index_engine
-    StoreProductTagResponse:
-      type: object
-      description: The product tag's details.
-      x-schemaName: StoreProductTagResponse
-      required:
-      - product_tag
-      properties:
-        product_tag:
-          $ref: '#/components/schemas/StoreProductTag'
   examples:
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
     invalid_argument_error:
       summary: Invalid Argument Error
       value:
@@ -1869,70 +1916,27 @@ components:
         code: api_error
         message: An error occured while hashing password
         type: database_error
-  responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
   securitySchemes:
     api_token:
       type: http

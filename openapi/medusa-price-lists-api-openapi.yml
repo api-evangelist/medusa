@@ -1262,124 +1262,6 @@ paths:
       x-events: []
 components:
   schemas:
-    AdminPriceListPriceListResponse:
-      type: object
-      description: The list of prices associated with a price list.
-      x-schemaName: AdminPriceListPriceListResponse
-      required:
-      - limit
-      - offset
-      - count
-      - prices
-      properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of prices to return.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the prices.
-        count:
-          type: number
-          title: count
-          description: The maximum number of prices available.
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
-          x-featureFlag: index_engine
-        prices:
-          type: array
-          description: The list of prices associated with the price list.
-          items:
-            $ref: '#/components/schemas/AdminPrice'
-    AdminPriceListResponse:
-      type: object
-      description: The price list's details.
-      x-schemaName: AdminPriceListResponse
-      required:
-      - price_list
-      properties:
-        price_list:
-          $ref: '#/components/schemas/AdminPriceList'
-    AdminPriceList:
-      type: object
-      description: The price list's details.
-      x-schemaName: AdminPriceList
-      required:
-      - id
-      - title
-      - description
-      - rules
-      - starts_at
-      - ends_at
-      - status
-      - type
-      - prices
-      - created_at
-      - updated_at
-      - deleted_at
-      - metadata
-      properties:
-        id:
-          type: string
-          title: id
-          description: The price list's ID.
-        title:
-          type: string
-          title: title
-          description: The price list's title.
-        description:
-          type: string
-          title: description
-          description: The price list's description.
-        rules:
-          type: object
-          description: The price list's rules.
-        starts_at:
-          type: string
-          title: starts_at
-          description: The date the price list starts.
-        ends_at:
-          type: string
-          title: ends_at
-          description: The date the price list ends.
-        status:
-          type: string
-          description: The price list's status.
-          enum:
-          - draft
-          - active
-        type:
-          type: string
-          description: The price list's type.
-          enum:
-          - sale
-          - override
-        prices:
-          type: array
-          description: The price list's prices.
-          items:
-            $ref: '#/components/schemas/AdminPriceListPrice'
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the price list was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the price list was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the price list was deleted.
-        metadata:
-          type: object
-          description: Key-value pairs of custom data.
     AdminPrice:
       type: object
       description: The price's details.
@@ -1444,89 +1326,6 @@ components:
           format: date-time
           title: deleted_at
           description: The date the price was deleted.
-    AdminCreatePriceList:
-      type: object
-      description: The price list's details.
-      x-schemaName: AdminCreatePriceList
-      required:
-      - title
-      - description
-      properties:
-        title:
-          type: string
-          title: title
-          description: The price list's title.
-        description:
-          type: string
-          title: description
-          description: The price list's description.
-        starts_at:
-          type: string
-          title: starts_at
-          description: The date and time the price list starts at.
-          format: date-time
-        ends_at:
-          type: string
-          title: ends_at
-          description: The date and time the price list ends at.
-          format: date-time
-        status:
-          type: string
-          description: The price list's status.
-          enum:
-          - active
-          - draft
-        type:
-          type: string
-          description: The price list's type.
-          enum:
-          - sale
-          - override
-        rules:
-          type: object
-          description: The price list's rules.
-          example:
-            product_category_id: pcat_123
-        prices:
-          type: array
-          description: The price list's prices.
-          items:
-            $ref: '#/components/schemas/AdminCreatePriceListPrice'
-        metadata:
-          type: object
-          description: Key-value pairs of custom data.
-    AdminPriceListListResponse:
-      type: object
-      description: The paginated list of price lists.
-      x-schemaName: AdminPriceListListResponse
-      required:
-      - limit
-      - offset
-      - count
-      - price_lists
-      properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the returned items.
-        count:
-          type: number
-          title: count
-          description: The total number of items.
-        price_lists:
-          type: array
-          description: The list of price lists.
-          items:
-            $ref: '#/components/schemas/AdminPriceList'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
-          x-featureFlag: index_engine
     AdminPriceListBatchResponse:
       type: object
       description: The details of the created, updated, and deleted prices in a price list.
@@ -1612,18 +1411,6 @@ components:
         metadata:
           type: object
           description: Key-value pairs of custom data.
-    AdminLinkPriceListProducts:
-      type: object
-      description: The products removal details.
-      properties:
-        remove:
-          type: array
-          description: The products to remove from the price list.
-          items:
-            type: string
-            title: remove
-            description: The ID of a product.
-      x-schemaName: AdminLinkPriceListProducts
     AdminPriceListDeleteResponse:
       type: object
       description: The details of the deleted price list.
@@ -1646,6 +1433,127 @@ components:
           type: boolean
           title: deleted
           description: Whether the price list was deleted.
+    AdminPriceList:
+      type: object
+      description: The price list's details.
+      x-schemaName: AdminPriceList
+      required:
+      - id
+      - title
+      - description
+      - rules
+      - starts_at
+      - ends_at
+      - status
+      - type
+      - prices
+      - created_at
+      - updated_at
+      - deleted_at
+      - metadata
+      properties:
+        id:
+          type: string
+          title: id
+          description: The price list's ID.
+        title:
+          type: string
+          title: title
+          description: The price list's title.
+        description:
+          type: string
+          title: description
+          description: The price list's description.
+        rules:
+          type: object
+          description: The price list's rules.
+        starts_at:
+          type: string
+          title: starts_at
+          description: The date the price list starts.
+        ends_at:
+          type: string
+          title: ends_at
+          description: The date the price list ends.
+        status:
+          type: string
+          description: The price list's status.
+          enum:
+          - draft
+          - active
+        type:
+          type: string
+          description: The price list's type.
+          enum:
+          - sale
+          - override
+        prices:
+          type: array
+          description: The price list's prices.
+          items:
+            $ref: '#/components/schemas/AdminPriceListPrice'
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the price list was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the price list was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the price list was deleted.
+        metadata:
+          type: object
+          description: Key-value pairs of custom data.
+    AdminLinkPriceListProducts:
+      type: object
+      description: The products removal details.
+      properties:
+        remove:
+          type: array
+          description: The products to remove from the price list.
+          items:
+            type: string
+            title: remove
+            description: The ID of a product.
+      x-schemaName: AdminLinkPriceListProducts
+    AdminPriceListPriceListResponse:
+      type: object
+      description: The list of prices associated with a price list.
+      x-schemaName: AdminPriceListPriceListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - prices
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of prices to return.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the prices.
+        count:
+          type: number
+          title: count
+          description: The maximum number of prices available.
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+        prices:
+          type: array
+          description: The list of prices associated with the price list.
+          items:
+            $ref: '#/components/schemas/AdminPrice'
     AdminCreatePriceListPrice:
       type: object
       description: The details of a price to be created within a price list.
@@ -1680,6 +1588,123 @@ components:
           example:
             region_id: reg_123
       x-schemaName: AdminCreatePriceListPrice
+    AdminPriceListListResponse:
+      type: object
+      description: The paginated list of price lists.
+      x-schemaName: AdminPriceListListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - price_lists
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        price_lists:
+          type: array
+          description: The list of price lists.
+          items:
+            $ref: '#/components/schemas/AdminPriceList'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    AdminCreatePriceList:
+      type: object
+      description: The price list's details.
+      x-schemaName: AdminCreatePriceList
+      required:
+      - title
+      - description
+      properties:
+        title:
+          type: string
+          title: title
+          description: The price list's title.
+        description:
+          type: string
+          title: description
+          description: The price list's description.
+        starts_at:
+          type: string
+          title: starts_at
+          description: The date and time the price list starts at.
+          format: date-time
+        ends_at:
+          type: string
+          title: ends_at
+          description: The date and time the price list ends at.
+          format: date-time
+        status:
+          type: string
+          description: The price list's status.
+          enum:
+          - active
+          - draft
+        type:
+          type: string
+          description: The price list's type.
+          enum:
+          - sale
+          - override
+        rules:
+          type: object
+          description: The price list's rules.
+          example:
+            product_category_id: pcat_123
+        prices:
+          type: array
+          description: The price list's prices.
+          items:
+            $ref: '#/components/schemas/AdminCreatePriceListPrice'
+        metadata:
+          type: object
+          description: Key-value pairs of custom data.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     AdminPriceListPrice:
       type: object
       description: The details of a price list's price.
@@ -1753,82 +1778,25 @@ components:
           format: date-time
           title: deleted_at
           description: The date the price was deleted.
-    Error:
-      title: Response Error
+    AdminPriceListResponse:
       type: object
+      description: The price list's details.
+      x-schemaName: AdminPriceListResponse
+      required:
+      - price_list
       properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-  examples:
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
+        price_list:
+          $ref: '#/components/schemas/AdminPriceList'
   responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
+    not_found_error:
+      description: Not Found Error
       content:
-        text/plain:
+        application/json:
           schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
     500_error:
       description: Server Error
       content:
@@ -1855,15 +1823,6 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
     invalid_state_error:
       description: Invalid State Error
       content:
@@ -1884,6 +1843,47 @@ components:
             code: invalid_request_error
             message: Discount with code TEST already exists.
             type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
   securitySchemes:
     api_token:
       type: http

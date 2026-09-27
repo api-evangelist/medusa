@@ -910,23 +910,100 @@ paths:
         description: Emitted when a payment is refunded.
         deprecated: false
 components:
+  responses:
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
   schemas:
-    AdminPaymentProvider:
+    BaseCapture:
       type: object
-      description: The payment provider's details.
-      x-schemaName: AdminPaymentProvider
+      description: The details of a captured payment.
+      x-schemaName: BaseCapture
       required:
-      - is_enabled
       - id
+      - amount
+      - created_at
+      - payment
       properties:
         id:
           type: string
           title: id
-          description: The payment provider's ID.
-        is_enabled:
-          type: boolean
-          title: is_enabled
-          description: Whether the payment provider is enabled.
+          description: The payment capture's ID.
+        amount:
+          type: number
+          title: amount
+          description: The captured amount.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the capture was created.
+        created_by:
+          type: string
+          title: created_by
+          description: The ID of the user that captured the payment.
+        payment:
+          type: object
     BaseRefund:
       type: object
       description: The refund's details.
@@ -964,6 +1041,45 @@ components:
           description: The ID of the user that created the refund.
         payment:
           type: object
+        refund_reason:
+          $ref: '#/components/schemas/BaseRefundReason'
+    AdminRefund:
+      type: object
+      description: The refund's details.
+      x-schemaName: AdminRefund
+      required:
+      - id
+      - amount
+      - created_at
+      - payment
+      properties:
+        id:
+          type: string
+          title: id
+          description: The refund's ID.
+        amount:
+          type: number
+          title: amount
+          description: The refund's amount.
+        refund_reason_id:
+          type: string
+          title: refund_reason_id
+          description: The ID of the refund reason.
+        note:
+          type: string
+          title: note
+          description: More details about the refund.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the refund was created.
+        created_by:
+          type: string
+          title: created_by
+          description: The ID of the user that created the refund.
+        payment:
+          $ref: '#/components/schemas/BasePayment'
         refund_reason:
           $ref: '#/components/schemas/BaseRefundReason'
     BaseRefundReason:
@@ -1009,113 +1125,10 @@ components:
           type: string
           title: code
           description: The refund reason's code.
-    BaseCapture:
-      type: object
-      description: The details of a captured payment.
-      x-schemaName: BaseCapture
-      required:
-      - id
-      - amount
-      - created_at
-      - payment
-      properties:
-        id:
-          type: string
-          title: id
-          description: The payment capture's ID.
-        amount:
-          type: number
-          title: amount
-          description: The captured amount.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the capture was created.
-        created_by:
-          type: string
-          title: created_by
-          description: The ID of the user that captured the payment.
-        payment:
-          type: object
-    AdminRefundPayment:
-      type: object
-      description: The refund's details.
-      properties:
-        amount:
-          type: number
-          title: amount
-          description: The amount to refund.
-        refund_reason_id:
-          type: string
-          title: refund_reason_id
-          description: The ID of a refund reason.
-        note:
-          type: string
-          title: note
-          description: A note to attach to the refund.
-      x-schemaName: AdminRefundPayment
-    AdminPaymentResponse:
+    BasePayment:
       type: object
       description: The payment's details.
-      x-schemaName: AdminPaymentResponse
-      required:
-      - payment
-      properties:
-        payment:
-          $ref: '#/components/schemas/AdminPayment'
-    AdminCapturePayment:
-      type: object
-      description: The payment's details.
-      properties:
-        amount:
-          type: number
-          title: amount
-          description: The amount to capture.
-      x-schemaName: AdminCapturePayment
-    AdminRefund:
-      type: object
-      description: The refund's details.
-      x-schemaName: AdminRefund
-      required:
-      - id
-      - amount
-      - created_at
-      - payment
-      properties:
-        id:
-          type: string
-          title: id
-          description: The refund's ID.
-        amount:
-          type: number
-          title: amount
-          description: The refund's amount.
-        refund_reason_id:
-          type: string
-          title: refund_reason_id
-          description: The ID of the refund reason.
-        note:
-          type: string
-          title: note
-          description: More details about the refund.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the refund was created.
-        created_by:
-          type: string
-          title: created_by
-          description: The ID of the user that created the refund.
-        payment:
-          $ref: '#/components/schemas/BasePayment'
-        refund_reason:
-          $ref: '#/components/schemas/BaseRefundReason'
-    AdminPayment:
-      type: object
-      description: The payment's details.
-      x-schemaName: AdminPayment
+      x-schemaName: BasePayment
       required:
       - id
       - amount
@@ -1184,11 +1197,20 @@ components:
           type: array
           description: The details of payment refunds.
           items:
-            $ref: '#/components/schemas/AdminRefund'
+            $ref: '#/components/schemas/BaseRefund'
         payment_collection:
           type: object
         payment_session:
-          $ref: '#/components/schemas/AdminPaymentSession'
+          type: object
+    AdminCapturePayment:
+      type: object
+      description: The payment's details.
+      properties:
+        amount:
+          type: number
+          title: amount
+          description: The amount to capture.
+      x-schemaName: AdminCapturePayment
     AdminPaymentSession:
       type: object
       description: The payment session's details.
@@ -1282,10 +1304,43 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
-    BasePayment:
+    AdminRefundPayment:
+      type: object
+      description: The refund's details.
+      properties:
+        amount:
+          type: number
+          title: amount
+          description: The amount to refund.
+        refund_reason_id:
+          type: string
+          title: refund_reason_id
+          description: The ID of a refund reason.
+        note:
+          type: string
+          title: note
+          description: A note to attach to the refund.
+      x-schemaName: AdminRefundPayment
+    AdminPaymentProvider:
+      type: object
+      description: The payment provider's details.
+      x-schemaName: AdminPaymentProvider
+      required:
+      - is_enabled
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment provider's ID.
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: Whether the payment provider is enabled.
+    AdminPayment:
       type: object
       description: The payment's details.
-      x-schemaName: BasePayment
+      x-schemaName: AdminPayment
       required:
       - id
       - amount
@@ -1354,33 +1409,21 @@ components:
           type: array
           description: The details of payment refunds.
           items:
-            $ref: '#/components/schemas/BaseRefund'
+            $ref: '#/components/schemas/AdminRefund'
         payment_collection:
           type: object
         payment_session:
-          type: object
+          $ref: '#/components/schemas/AdminPaymentSession'
+    AdminPaymentResponse:
+      type: object
+      description: The payment's details.
+      x-schemaName: AdminPaymentResponse
+      required:
+      - payment
+      properties:
+        payment:
+          $ref: '#/components/schemas/AdminPayment'
   examples:
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
     invalid_argument_error:
       summary: Invalid Argument Error
       value:
@@ -1392,70 +1435,27 @@ components:
         code: api_error
         message: An error occured while hashing password
         type: database_error
-  responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
   securitySchemes:
     api_token:
       type: http

@@ -914,25 +914,71 @@ paths:
           for example.'
         deprecated: false
 components:
+  responses:
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
   schemas:
-    AdminGetInviteAcceptParams:
-      type: object
-      description: The details of the user to be created.
-      properties:
-        email:
-          type: string
-          title: email
-          description: The invite's email.
-          format: email
-        first_name:
-          type: string
-          title: first_name
-          description: The invited user's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The invited user's last name.
-      x-schemaName: AdminGetInviteAcceptParams
     AdminInviteResponse:
       type: object
       description: The invite's details.
@@ -942,63 +988,6 @@ components:
       properties:
         invite:
           $ref: '#/components/schemas/AdminInvite'
-    AdminUser:
-      type: object
-      description: The user's details.
-      x-schemaName: AdminUser
-      required:
-      - id
-      - email
-      - first_name
-      - last_name
-      - avatar_url
-      - metadata
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The user's ID.
-        email:
-          type: string
-          title: email
-          description: The user's email.
-          format: email
-        first_name:
-          type: string
-          title: first_name
-          description: The user's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The user's last name.
-        avatar_url:
-          type: string
-          title: avatar_url
-          description: The URL of the user's avatar.
-        metadata:
-          type: object
-          description: The user's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the user was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the user was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the user was deleted.
     AdminInvite:
       type: object
       description: The invite's details.
@@ -1056,6 +1045,168 @@ components:
           x-featureFlag: rbac
           items:
             $ref: '#/components/schemas/AdminRbacRole'
+    AdminRbacRole:
+      type: object
+      description: The details of an RBAC role.
+      x-schemaName: AdminRbacRole
+      required:
+      - id
+      - name
+      - description
+      - parent_id
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The ID of the RBAC role.
+        name:
+          type: string
+          title: name
+          description: The name of the RBAC role.
+        description:
+          type: string
+          title: description
+          description: The description of the RBAC role.
+        parent_id:
+          type: string
+          title: parent_id
+          description: The ID of the parent RBAC role.
+        metadata:
+          type: object
+          description: Key-value pairs that hold additional information about the RBAC role.
+        policies:
+          type: array
+          description: The RBAC role's policies.
+          items:
+            $ref: '#/components/schemas/AdminRbacPolicy'
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the RBAC role was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the RBAC role was last updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the RBAC role was deleted.
+    AdminGetInviteAcceptParams:
+      type: object
+      description: The details of the user to be created.
+      properties:
+        email:
+          type: string
+          title: email
+          description: The invite's email.
+          format: email
+        first_name:
+          type: string
+          title: first_name
+          description: The invited user's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The invited user's last name.
+      x-schemaName: AdminGetInviteAcceptParams
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminUser:
+      type: object
+      description: The user's details.
+      x-schemaName: AdminUser
+      required:
+      - id
+      - email
+      - first_name
+      - last_name
+      - avatar_url
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The user's ID.
+        email:
+          type: string
+          title: email
+          description: The user's email.
+          format: email
+        first_name:
+          type: string
+          title: first_name
+          description: The user's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The user's last name.
+        avatar_url:
+          type: string
+          title: avatar_url
+          description: The URL of the user's avatar.
+        metadata:
+          type: object
+          description: The user's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the user was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the user was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the user was deleted.
     AdminRbacPolicy:
       type: object
       description: The details of an RBAC policy.
@@ -1120,115 +1271,7 @@ components:
           format: date-time
           title: deleted_at
           description: The date the policy was deleted.
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminRbacRole:
-      type: object
-      description: The details of an RBAC role.
-      x-schemaName: AdminRbacRole
-      required:
-      - id
-      - name
-      - description
-      - parent_id
-      - metadata
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The ID of the RBAC role.
-        name:
-          type: string
-          title: name
-          description: The name of the RBAC role.
-        description:
-          type: string
-          title: description
-          description: The description of the RBAC role.
-        parent_id:
-          type: string
-          title: parent_id
-          description: The ID of the parent RBAC role.
-        metadata:
-          type: object
-          description: Key-value pairs that hold additional information about the RBAC role.
-        policies:
-          type: array
-          description: The RBAC role's policies.
-          items:
-            $ref: '#/components/schemas/AdminRbacPolicy'
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the RBAC role was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the RBAC role was last updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the RBAC role was deleted.
   examples:
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
     invalid_argument_error:
       summary: Invalid Argument Error
       value:
@@ -1240,70 +1283,27 @@ components:
         code: api_error
         message: An error occured while hashing password
         type: database_error
-  responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
   securitySchemes:
     api_token:
       type: http

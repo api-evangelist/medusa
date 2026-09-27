@@ -1934,190 +1934,6 @@ paths:
         since: 2.18.0
 components:
   schemas:
-    AdminBatchUpdateInventoryItemLocationLevels:
-      type: object
-      description: The inventory level's details.
-      properties:
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The inventory level's stocked quantity.
-        incoming_quantity:
-          type: number
-          title: incoming_quantity
-          description: The inventory level's incoming quantity.
-        location_id:
-          type: string
-          title: location_id
-          description: The associated stock location's ID.
-        id:
-          type: string
-          title: id
-          description: The ID of the location level.
-      required:
-      - location_id
-      x-schemaName: AdminBatchUpdateInventoryItemLocationLevels
-    AdminExportInventoryItemResponse:
-      type: object
-      description: The response for initiating an export inventory items workflow.
-      x-schemaName: AdminExportInventoryItemResponse
-      required:
-      - transaction_id
-      properties:
-        transaction_id:
-          type: string
-          title: transaction_id
-          description: The ID of the workflow execution's transaction. Use it to check the status of the export by sending a GET request to `/admin/workflows-executions/export-inventory-items/:transaction-id`
-    AdminBatchInventoryItemLocationLevels:
-      type: object
-      description: The inventory levels to create, update, or delete.
-      properties:
-        create:
-          type: array
-          description: The inventory levels to create.
-          items:
-            $ref: '#/components/schemas/AdminBatchCreateInventoryItemLocationLevels'
-        update:
-          type: array
-          description: The inventory levels to update.
-          items:
-            $ref: '#/components/schemas/AdminBatchUpdateInventoryItemLocationLevels'
-        delete:
-          type: array
-          description: The inventory levels to delete.
-          items:
-            type: string
-            title: delete
-            description: The ID of the inventory level to delete.
-        force:
-          type: boolean
-          title: force
-          description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
-      x-schemaName: AdminBatchInventoryItemLocationLevels
-    InventoryLevel:
-      type: object
-      description: The inventory level's details
-      x-schemaName: InventoryLevel
-      required:
-      - id
-      - inventory_item_id
-      - location_id
-      - stocked_quantity
-      - reserved_quantity
-      - available_quantity
-      - incoming_quantity
-      properties:
-        id:
-          type: string
-          title: id
-          description: The inventory level's ID.
-        inventory_item_id:
-          type: string
-          title: inventory_item_id
-          description: The ID of the associated inventory item.
-        location_id:
-          type: string
-          title: location_id
-          description: The ID of the associated location.
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The inventory level's stocked quantity.
-        reserved_quantity:
-          type: number
-          title: reserved_quantity
-          description: The inventory level's reserved quantity.
-        available_quantity:
-          type: number
-          title: available_quantity
-          description: The inventory level's available quantity.
-        incoming_quantity:
-          type: number
-          title: incoming_quantity
-          description: The inventory level's incoming quantity.
-        metadata:
-          type: object
-          description: The inventory level's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-    AdminCreateInventoryItem:
-      type: object
-      description: The inventory item's details.
-      x-schemaName: AdminCreateInventoryItem
-      properties:
-        sku:
-          type: string
-          title: sku
-          description: The inventory item's SKU.
-        hs_code:
-          type: string
-          title: hs_code
-          description: The inventory item's HS code.
-        weight:
-          type: number
-          title: weight
-          description: The inventory item's weight.
-        length:
-          type: number
-          title: length
-          description: The inventory item's length.
-        height:
-          type: number
-          title: height
-          description: The inventory item's height.
-        width:
-          type: number
-          title: width
-          description: The inventory item's width.
-        origin_country:
-          type: string
-          title: origin_country
-          description: The inventory item's origin country.
-        mid_code:
-          type: string
-          title: mid_code
-          description: The inventory item's mid code.
-        material:
-          type: string
-          title: material
-          description: The inventory item's material.
-        title:
-          type: string
-          title: title
-          description: The inventory item's title.
-        description:
-          type: string
-          title: description
-          description: The description of the variant associated with the inventory item.
-        requires_shipping:
-          type: boolean
-          title: requires_shipping
-          description: Whether the item requires shipping.
-        thumbnail:
-          type: string
-          title: thumbnail
-          description: The inventory item's thumbnail.
-        metadata:
-          type: object
-          description: The inventory item's metadata, used to store custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        location_levels:
-          type: array
-          description: The inventory item's location levels.
-          items:
-            $ref: '#/components/schemas/AdminBatchCreateInventoryItemLocationLevels'
-    AdminInventoryItemResponse:
-      type: object
-      description: The inventory item's details.
-      x-schemaName: AdminInventoryItemResponse
-      required:
-      - inventory_item
-      properties:
-        inventory_item:
-          $ref: '#/components/schemas/AdminInventoryItem'
     AdminUpdateInventoryItem:
       type: object
       description: The properties to update in the inventory item.
@@ -2181,6 +1997,94 @@ components:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
       x-schemaName: AdminUpdateInventoryItem
+    AdminInventoryItemResponse:
+      type: object
+      description: The inventory item's details.
+      x-schemaName: AdminInventoryItemResponse
+      required:
+      - inventory_item
+      properties:
+        inventory_item:
+          $ref: '#/components/schemas/AdminInventoryItem'
+    AdminInventoryLevel:
+      type: object
+      description: The location level's location levels.
+      x-schemaName: AdminInventoryLevel
+      required:
+      - id
+      - created_at
+      - updated_at
+      - deleted_at
+      - inventory_item_id
+      - location_id
+      - stocked_quantity
+      - reserved_quantity
+      - incoming_quantity
+      - metadata
+      - available_quantity
+      properties:
+        id:
+          type: string
+          title: id
+          description: The location level's ID.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The location level's created at.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The location level's updated at.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The location level's deleted at.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The location level's inventory item id.
+        location_id:
+          type: string
+          title: location_id
+          description: The location level's location id.
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The location level's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The location level's reserved quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The location level's incoming quantity.
+        metadata:
+          type: object
+          description: The location level's metadata.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        inventory_item:
+          type: object
+        available_quantity:
+          type: number
+          title: available_quantity
+          description: The location level's available quantity.
+    AdminExportInventoryItemResponse:
+      type: object
+      description: The response for initiating an export inventory items workflow.
+      x-schemaName: AdminExportInventoryItemResponse
+      required:
+      - transaction_id
+      properties:
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The ID of the workflow execution's transaction. Use it to check the status of the export by sending a GET request to `/admin/workflows-executions/export-inventory-items/:transaction-id`
     AdminInventoryItem:
       type: object
       description: The inventory item's details.
@@ -2263,25 +2167,34 @@ components:
           type: number
           title: reserved_quantity
           description: The inventory item's reserved quantity.
-    AdminBatchCreateInventoryItemLocationLevels:
+    AdminBatchUpdateInventoryItemsLocationLevels:
       type: object
-      description: The inventory level's details.
+      description: The details of an inventory level to update.
       required:
       - location_id
+      - inventory_item_id
       properties:
         location_id:
           type: string
           title: location_id
-          description: The ID of the associated location.
+          description: The ID of the associated stock location.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The ID of the associated inventory item.
         stocked_quantity:
           type: number
           title: stocked_quantity
-          description: The inventory level's stocked quantity.
+          description: The stocked quantity.
         incoming_quantity:
           type: number
           title: incoming_quantity
-          description: The inventory level's incoming quantity.
-      x-schemaName: AdminBatchCreateInventoryItemLocationLevels
+          description: The incoming quantity to be added to stock.
+        id:
+          type: string
+          title: id
+          description: The update's ID.
+      x-schemaName: AdminBatchUpdateInventoryItemsLocationLevels
     AdminBatchInventoryItemsLocationLevelsResponse:
       type: object
       description: The result of managing inventory levels.
@@ -2304,23 +2217,23 @@ components:
             type: string
             title: deleted
             description: The ID of a deleted inventory level.
-    AdminBatchInventoryItemsLocationLevels:
+    AdminBatchInventoryItemLocationLevels:
       type: object
-      description: The inventory levels to manage.
+      description: The inventory levels to create, update, or delete.
       properties:
         create:
           type: array
           description: The inventory levels to create.
           items:
-            $ref: '#/components/schemas/AdminBatchCreateInventoryItemsLocationLevels'
+            $ref: '#/components/schemas/AdminBatchCreateInventoryItemLocationLevels'
         update:
           type: array
           description: The inventory levels to update.
           items:
-            $ref: '#/components/schemas/AdminBatchUpdateInventoryItemsLocationLevels'
+            $ref: '#/components/schemas/AdminBatchUpdateInventoryItemLocationLevels'
         delete:
           type: array
-          description: The IDs of the inventory levels to delete.
+          description: The inventory levels to delete.
           items:
             type: string
             title: delete
@@ -2329,7 +2242,7 @@ components:
           type: boolean
           title: force
           description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
-      x-schemaName: AdminBatchInventoryItemsLocationLevels
+      x-schemaName: AdminBatchInventoryItemLocationLevels
     Error:
       title: Response Error
       type: object
@@ -2364,34 +2277,202 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
-    AdminBatchUpdateInventoryItemsLocationLevels:
+    AdminCreateInventoryItem:
       type: object
-      description: The details of an inventory level to update.
-      required:
-      - location_id
-      - inventory_item_id
+      description: The inventory item's details.
+      x-schemaName: AdminCreateInventoryItem
       properties:
+        sku:
+          type: string
+          title: sku
+          description: The inventory item's SKU.
+        hs_code:
+          type: string
+          title: hs_code
+          description: The inventory item's HS code.
+        weight:
+          type: number
+          title: weight
+          description: The inventory item's weight.
+        length:
+          type: number
+          title: length
+          description: The inventory item's length.
+        height:
+          type: number
+          title: height
+          description: The inventory item's height.
+        width:
+          type: number
+          title: width
+          description: The inventory item's width.
+        origin_country:
+          type: string
+          title: origin_country
+          description: The inventory item's origin country.
+        mid_code:
+          type: string
+          title: mid_code
+          description: The inventory item's mid code.
+        material:
+          type: string
+          title: material
+          description: The inventory item's material.
+        title:
+          type: string
+          title: title
+          description: The inventory item's title.
+        description:
+          type: string
+          title: description
+          description: The description of the variant associated with the inventory item.
+        requires_shipping:
+          type: boolean
+          title: requires_shipping
+          description: Whether the item requires shipping.
+        thumbnail:
+          type: string
+          title: thumbnail
+          description: The inventory item's thumbnail.
+        metadata:
+          type: object
+          description: The inventory item's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        location_levels:
+          type: array
+          description: The inventory item's location levels.
+          items:
+            $ref: '#/components/schemas/AdminBatchCreateInventoryItemLocationLevels'
+    AdminUpdateInventoryLevel:
+      type: object
+      description: The properties to update in the inventory level.
+      properties:
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory level's stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The inventory level's incoming quantity.
+      x-schemaName: AdminUpdateInventoryLevel
+    AdminBatchInventoryItemsLocationLevels:
+      type: object
+      description: The inventory levels to manage.
+      properties:
+        create:
+          type: array
+          description: The inventory levels to create.
+          items:
+            $ref: '#/components/schemas/AdminBatchCreateInventoryItemsLocationLevels'
+        update:
+          type: array
+          description: The inventory levels to update.
+          items:
+            $ref: '#/components/schemas/AdminBatchUpdateInventoryItemsLocationLevels'
+        delete:
+          type: array
+          description: The IDs of the inventory levels to delete.
+          items:
+            type: string
+            title: delete
+            description: The ID of the inventory level to delete.
+        force:
+          type: boolean
+          title: force
+          description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
+      x-schemaName: AdminBatchInventoryItemsLocationLevels
+    AdminBatchUpdateInventoryItemLocationLevels:
+      type: object
+      description: The inventory level's details.
+      properties:
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory level's stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The inventory level's incoming quantity.
         location_id:
           type: string
           title: location_id
-          description: The ID of the associated stock location.
+          description: The associated stock location's ID.
+        id:
+          type: string
+          title: id
+          description: The ID of the location level.
+      required:
+      - location_id
+      x-schemaName: AdminBatchUpdateInventoryItemLocationLevels
+    InventoryLevel:
+      type: object
+      description: The inventory level's details
+      x-schemaName: InventoryLevel
+      required:
+      - id
+      - inventory_item_id
+      - location_id
+      - stocked_quantity
+      - reserved_quantity
+      - available_quantity
+      - incoming_quantity
+      properties:
+        id:
+          type: string
+          title: id
+          description: The inventory level's ID.
         inventory_item_id:
           type: string
           title: inventory_item_id
           description: The ID of the associated inventory item.
+        location_id:
+          type: string
+          title: location_id
+          description: The ID of the associated location.
         stocked_quantity:
           type: number
           title: stocked_quantity
-          description: The stocked quantity.
+          description: The inventory level's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The inventory level's reserved quantity.
+        available_quantity:
+          type: number
+          title: available_quantity
+          description: The inventory level's available quantity.
         incoming_quantity:
           type: number
           title: incoming_quantity
-          description: The incoming quantity to be added to stock.
-        id:
+          description: The inventory level's incoming quantity.
+        metadata:
+          type: object
+          description: The inventory level's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+    AdminBatchCreateInventoryItemLocationLevels:
+      type: object
+      description: The inventory level's details.
+      required:
+      - location_id
+      properties:
+        location_id:
           type: string
-          title: id
-          description: The update's ID.
-      x-schemaName: AdminBatchUpdateInventoryItemsLocationLevels
+          title: location_id
+          description: The ID of the associated location.
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory level's stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The inventory level's incoming quantity.
+      x-schemaName: AdminBatchCreateInventoryItemLocationLevels
     AdminBatchCreateInventoryItemsLocationLevels:
       type: object
       description: The details of an inventory level to create.
@@ -2416,129 +2497,16 @@ components:
           title: incoming_quantity
           description: The incoming quantity to be added to stock.
       x-schemaName: AdminBatchCreateInventoryItemsLocationLevels
-    AdminUpdateInventoryLevel:
-      type: object
-      description: The properties to update in the inventory level.
-      properties:
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The inventory level's stocked quantity.
-        incoming_quantity:
-          type: number
-          title: incoming_quantity
-          description: The inventory level's incoming quantity.
-      x-schemaName: AdminUpdateInventoryLevel
-    AdminInventoryLevel:
-      type: object
-      description: The location level's location levels.
-      x-schemaName: AdminInventoryLevel
-      required:
-      - id
-      - created_at
-      - updated_at
-      - deleted_at
-      - inventory_item_id
-      - location_id
-      - stocked_quantity
-      - reserved_quantity
-      - incoming_quantity
-      - metadata
-      - available_quantity
-      properties:
-        id:
-          type: string
-          title: id
-          description: The location level's ID.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The location level's created at.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The location level's updated at.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The location level's deleted at.
-        inventory_item_id:
-          type: string
-          title: inventory_item_id
-          description: The location level's inventory item id.
-        location_id:
-          type: string
-          title: location_id
-          description: The location level's location id.
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The location level's stocked quantity.
-        reserved_quantity:
-          type: number
-          title: reserved_quantity
-          description: The location level's reserved quantity.
-        incoming_quantity:
-          type: number
-          title: incoming_quantity
-          description: The location level's incoming quantity.
-        metadata:
-          type: object
-          description: The location level's metadata.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        inventory_item:
-          type: object
-        available_quantity:
-          type: number
-          title: available_quantity
-          description: The location level's available quantity.
-  examples:
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
   responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
+    not_found_error:
+      description: Not Found Error
       content:
-        text/plain:
+        application/json:
           schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
     500_error:
       description: Server Error
       content:
@@ -2565,15 +2533,6 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
     invalid_state_error:
       description: Invalid State Error
       content:
@@ -2594,6 +2553,47 @@ components:
             code: invalid_request_error
             message: Discount with code TEST already exists.
             type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
   securitySchemes:
     api_token:
       type: http

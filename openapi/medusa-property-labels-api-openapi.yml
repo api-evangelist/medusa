@@ -360,28 +360,71 @@ paths:
       x-since: 2.10.3
       x-featureFlag: view_configurations
 components:
+  responses:
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
   schemas:
-    AdminPropertyLabelDeleteResponse:
-      type: object
-      description: The details of deleting a property label.
-      x-schemaName: AdminPropertyLabelDeleteResponse
-      required:
-      - id
-      - object
-      - deleted
-      properties:
-        id:
-          type: string
-          title: id
-          description: The ID of the deleted property label.
-        object:
-          type: string
-          title: object
-          description: The type of the deleted object, which is `property_label`.
-        deleted:
-          type: boolean
-          title: deleted
-          description: Whether the property label was successfully deleted.
     AdminBatchPropertyLabels:
       type: object
       description: The property labels to manage.
@@ -442,95 +485,27 @@ components:
             type: string
             title: delete
             description: The ID of the property label to delete.
-    AdminUpdatePropertyLabel:
+    AdminPropertyLabelDeleteResponse:
       type: object
-      description: The details to update in a property label.
-      x-schemaName: AdminUpdatePropertyLabel
-      properties:
-        label:
-          type: string
-          title: label
-          description: The label of the property.
-        description:
-          type: string
-          title: description
-          description: The property label's description.
-    AdminCreatePropertyLabel:
-      type: object
-      description: The details of a property label to create.
-      x-schemaName: AdminCreatePropertyLabel
+      description: The details of deleting a property label.
+      x-schemaName: AdminPropertyLabelDeleteResponse
       required:
-      - entity
-      - property
-      - label
-      properties:
-        entity:
-          type: string
-          title: entity
-          description: The name of the entity the property label belongs to.
-        property:
-          type: string
-          title: property
-          description: The property the label is for.
-        label:
-          type: string
-          title: label
-          description: The label to use for the property.
-        description:
-          type: string
-          title: description
-          description: The description of the property label.
-    AdminBatchPropertyLabelResponse:
-      type: object
-      description: The response of managing property labels.
-      x-schemaName: AdminBatchPropertyLabelResponse
-      required:
-      - created
-      - updated
+      - id
+      - object
       - deleted
       properties:
-        created:
-          type: array
-          description: The created property labels.
-          items:
-            $ref: '#/components/schemas/AdminPropertyLabel'
-        updated:
-          type: array
-          description: The updated property labels.
-          items:
-            $ref: '#/components/schemas/AdminPropertyLabel'
+        id:
+          type: string
+          title: id
+          description: The ID of the deleted property label.
+        object:
+          type: string
+          title: object
+          description: The type of the deleted object, which is `property_label`.
         deleted:
-          type: array
-          description: The deleted property labels.
-          items:
-            type: object
-            description: Details of a deleted property label.
-            required:
-            - id
-            - object
-            - deleted
-            properties:
-              id:
-                type: string
-                title: id
-                description: The ID of the deleted property label.
-              object:
-                type: string
-                title: object
-                description: The type of the deleted object.
-              deleted:
-                type: boolean
-                title: deleted
-                description: Indicates if the property label was deleted.
-    AdminPropertyLabelResponse:
-      type: object
-      description: The details of a property label.
-      x-schemaName: AdminPropertyLabelResponse
-      required:
-      - property_label
-      properties:
-        property_label:
-          $ref: '#/components/schemas/AdminPropertyLabel'
+          type: boolean
+          title: deleted
+          description: Whether the property label was successfully deleted.
     AdminPropertyLabel:
       type: object
       description: The property label's details.
@@ -573,33 +548,19 @@ components:
           format: date-time
           title: updated_at
           description: The date the property label was last updated.
-    AdminPropertyLabelListResponse:
+    AdminUpdatePropertyLabel:
       type: object
-      description: The paginated list of property labels.
-      x-schemaName: AdminPropertyLabelListResponse
-      required:
-      - property_labels
-      - count
-      - offset
-      - limit
+      description: The details to update in a property label.
+      x-schemaName: AdminUpdatePropertyLabel
       properties:
-        property_labels:
-          type: array
-          description: TThe list of property labels.
-          items:
-            $ref: '#/components/schemas/AdminPropertyLabel'
-        count:
-          type: number
-          title: count
-          description: The total number of property labels.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the returned items.
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned.
+        label:
+          type: string
+          title: label
+          description: The label of the property.
+        description:
+          type: string
+          title: description
+          description: The property label's description.
     Error:
       title: Response Error
       type: object
@@ -634,28 +595,110 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
+    AdminPropertyLabelResponse:
+      type: object
+      description: The details of a property label.
+      x-schemaName: AdminPropertyLabelResponse
+      required:
+      - property_label
+      properties:
+        property_label:
+          $ref: '#/components/schemas/AdminPropertyLabel'
+    AdminPropertyLabelListResponse:
+      type: object
+      description: The paginated list of property labels.
+      x-schemaName: AdminPropertyLabelListResponse
+      required:
+      - property_labels
+      - count
+      - offset
+      - limit
+      properties:
+        property_labels:
+          type: array
+          description: TThe list of property labels.
+          items:
+            $ref: '#/components/schemas/AdminPropertyLabel'
+        count:
+          type: number
+          title: count
+          description: The total number of property labels.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+    AdminBatchPropertyLabelResponse:
+      type: object
+      description: The response of managing property labels.
+      x-schemaName: AdminBatchPropertyLabelResponse
+      required:
+      - created
+      - updated
+      - deleted
+      properties:
+        created:
+          type: array
+          description: The created property labels.
+          items:
+            $ref: '#/components/schemas/AdminPropertyLabel'
+        updated:
+          type: array
+          description: The updated property labels.
+          items:
+            $ref: '#/components/schemas/AdminPropertyLabel'
+        deleted:
+          type: array
+          description: The deleted property labels.
+          items:
+            type: object
+            description: Details of a deleted property label.
+            required:
+            - id
+            - object
+            - deleted
+            properties:
+              id:
+                type: string
+                title: id
+                description: The ID of the deleted property label.
+              object:
+                type: string
+                title: object
+                description: The type of the deleted object.
+              deleted:
+                type: boolean
+                title: deleted
+                description: Indicates if the property label was deleted.
+    AdminCreatePropertyLabel:
+      type: object
+      description: The details of a property label to create.
+      x-schemaName: AdminCreatePropertyLabel
+      required:
+      - entity
+      - property
+      - label
+      properties:
+        entity:
+          type: string
+          title: entity
+          description: The name of the entity the property label belongs to.
+        property:
+          type: string
+          title: property
+          description: The property the label is for.
+        label:
+          type: string
+          title: label
+          description: The label to use for the property.
+        description:
+          type: string
+          title: description
+          description: The description of the property label.
   examples:
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
     invalid_argument_error:
       summary: Invalid Argument Error
       value:
@@ -667,70 +710,27 @@ components:
         code: api_error
         message: An error occured while hashing password
         type: database_error
-  responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
   securitySchemes:
     api_token:
       type: http

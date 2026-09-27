@@ -952,50 +952,189 @@ paths:
       x-since: 2.10.3
       x-featureFlag: view_configurations
 components:
+  responses:
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
   schemas:
-    AdminEntityInfo:
+    AdminSetActiveViewConfiguration:
       type: object
-      description: The details of an entity.
-      x-schemaName: AdminEntityInfo
+      description: The details of a view configuration to set as active for the given entity.
+      x-schemaName: AdminSetActiveViewConfiguration
       required:
-      - name
-      - pluralName
-      - module
-      - propertyCount
-      - hasOverrides
+      - view_configuration_id
       properties:
+        view_configuration_id:
+          type: string
+          title: view_configuration_id
+          description: The ID of the view configuration to set as active. If `null`, the active view configuration will be cleared, and the `code` or system default view configuration will be used as the active view.
+    AdminUpdateViewConfiguration:
+      type: object
+      description: The details to update in a view configuration.
+      x-schemaName: AdminUpdateViewConfiguration
+      properties:
+        set_active:
+          type: boolean
+          title: set_active
+          description: Whether the view is set as active.
         name:
           type: string
           title: name
-          description: The entity's name.
-        pluralName:
-          type: string
-          title: pluralName
-          description: The entity's plural name.
-        module:
-          type: string
-          title: module
-          description: The module the entity belongs to.
-        propertyCount:
-          type: number
-          title: propertyCount
-          description: The number of properties the entity has.
-        hasOverrides:
+          description: The view's name.
+        is_system_default:
           type: boolean
-          title: hasOverrides
-          description: Whether the entity has overrides.
-    AdminViewsEntityColumnsResponse:
+          title: is_system_default
+          description: Whether the view is the system default.
+        configuration:
+          type: object
+          description: The view's configuration.
+          properties:
+            search:
+              type: string
+              title: search
+              description: The search query used in the view.
+            visible_columns:
+              type: array
+              description: The configuration's visible columns.
+              items:
+                type: string
+                title: visible_columns
+                description: The visible column's name.
+            column_order:
+              type: array
+              description: The columns in the order they should be displayed.
+              items:
+                type: string
+                title: column_order
+                description: The column's name.
+            column_widths:
+              type: object
+              description: The column widths in the view.
+            filters:
+              type: object
+              description: The filters applied to the view.
+            sorting:
+              type: object
+              description: The sorting applied to the view.
+              required:
+              - id
+              - desc
+              properties:
+                id:
+                  type: string
+                  title: id
+                  description: The ID of the sorting column.
+                desc:
+                  type: boolean
+                  title: desc
+                  description: Whether the sorting is descending.
+    RelationshipFilterConfig:
       type: object
-      description: The view's columns.
-      x-schemaName: AdminViewsEntityColumnsResponse
+      description: The filter's relationship details. Only available if the filter is a relationship filter.
+      x-schemaName: RelationshipFilterConfig
       required:
-      - columns
+      - entity
+      - value_field
+      - display_field
+      - multiple
+      - endpoint
       properties:
-        columns:
+        entity:
+          type: string
+          title: entity
+          description: The entity the relationship filter is for.
+        value_field:
+          type: string
+          title: value_field
+          description: The relationship filter's value field.
+        display_field:
+          type: string
+          title: display_field
+          description: The relationship filter's display field.
+        multiple:
+          type: boolean
+          title: multiple
+          description: Whether the relationship filter allows multiple selections.
+        endpoint:
+          type: string
+          title: endpoint
+          description: The relationship filter's endpoint.
+        filter_key:
+          type: string
+          title: filter_key
+          description: The relationship's filter key.
+    AdminEntityListResponse:
+      type: object
+      description: The list of entities in the view.
+      x-schemaName: AdminEntityListResponse
+      required:
+      - entities
+      properties:
+        entities:
           type: array
-          description: The view's columns.
+          description: The list of entities.
           items:
-            $ref: '#/components/schemas/AdminColumn'
+            $ref: '#/components/schemas/AdminEntityInfo'
     AdminViewConfiguration:
       type: object
       description: The details of a view configuration.
@@ -1085,133 +1224,18 @@ components:
           format: date-time
           title: updated_at
           description: The date the view configuration was updated.
-    AdminViewConfigurationResponse:
+    AdminViewsEntityColumnsResponse:
       type: object
-      description: The details of a view configuration.
-      x-schemaName: AdminViewConfigurationResponse
+      description: The view's columns.
+      x-schemaName: AdminViewsEntityColumnsResponse
       required:
-      - view_configuration
+      - columns
       properties:
-        view_configuration:
-          $ref: '#/components/schemas/AdminViewConfiguration'
-    RelationshipFilterConfig:
-      type: object
-      description: The filter's relationship details. Only available if the filter is a relationship filter.
-      x-schemaName: RelationshipFilterConfig
-      required:
-      - entity
-      - value_field
-      - display_field
-      - multiple
-      - endpoint
-      properties:
-        entity:
-          type: string
-          title: entity
-          description: The entity the relationship filter is for.
-        value_field:
-          type: string
-          title: value_field
-          description: The relationship filter's value field.
-        display_field:
-          type: string
-          title: display_field
-          description: The relationship filter's display field.
-        multiple:
-          type: boolean
-          title: multiple
-          description: Whether the relationship filter allows multiple selections.
-        endpoint:
-          type: string
-          title: endpoint
-          description: The relationship filter's endpoint.
-        filter_key:
-          type: string
-          title: filter_key
-          description: The relationship's filter key.
-    AdminUpdateViewConfiguration:
-      type: object
-      description: The details to update in a view configuration.
-      x-schemaName: AdminUpdateViewConfiguration
-      properties:
-        set_active:
-          type: boolean
-          title: set_active
-          description: Whether the view is set as active.
-        name:
-          type: string
-          title: name
-          description: The view's name.
-        is_system_default:
-          type: boolean
-          title: is_system_default
-          description: Whether the view is the system default.
-        configuration:
-          type: object
-          description: The view's configuration.
-          properties:
-            search:
-              type: string
-              title: search
-              description: The search query used in the view.
-            visible_columns:
-              type: array
-              description: The configuration's visible columns.
-              items:
-                type: string
-                title: visible_columns
-                description: The visible column's name.
-            column_order:
-              type: array
-              description: The columns in the order they should be displayed.
-              items:
-                type: string
-                title: column_order
-                description: The column's name.
-            column_widths:
-              type: object
-              description: The column widths in the view.
-            filters:
-              type: object
-              description: The filters applied to the view.
-            sorting:
-              type: object
-              description: The sorting applied to the view.
-              required:
-              - id
-              - desc
-              properties:
-                id:
-                  type: string
-                  title: id
-                  description: The ID of the sorting column.
-                desc:
-                  type: boolean
-                  title: desc
-                  description: Whether the sorting is descending.
-    AdminSetActiveViewConfiguration:
-      type: object
-      description: The details of a view configuration to set as active for the given entity.
-      x-schemaName: AdminSetActiveViewConfiguration
-      required:
-      - view_configuration_id
-      properties:
-        view_configuration_id:
-          type: string
-          title: view_configuration_id
-          description: The ID of the view configuration to set as active. If `null`, the active view configuration will be cleared, and the `code` or system default view configuration will be used as the active view.
-    AdminEntityListResponse:
-      type: object
-      description: The list of entities in the view.
-      x-schemaName: AdminEntityListResponse
-      required:
-      - entities
-      properties:
-        entities:
+        columns:
           type: array
-          description: The list of entities.
+          description: The view's columns.
           items:
-            $ref: '#/components/schemas/AdminEntityInfo'
+            $ref: '#/components/schemas/AdminColumn'
     Error:
       title: Response Error
       type: object
@@ -1246,69 +1270,6 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
-    AdminCreateViewConfiguration:
-      type: object
-      description: The details of a view configuration to create.
-      x-schemaName: AdminCreateViewConfiguration
-      properties:
-        is_system_default:
-          type: boolean
-          title: is_system_default
-          description: Whether the view is the system default. If so, it will be used as the default view for all users that don't have a custom active view set.
-        set_active:
-          type: boolean
-          title: set_active
-          description: Whether the view is set as active.
-        configuration:
-          type: object
-          description: The view's configuration.
-          required:
-          - visible_columns
-          - column_order
-          properties:
-            visible_columns:
-              type: array
-              description: The configuration's visible columns.
-              items:
-                type: string
-                title: visible_columns
-                description: The visible column's name.
-            column_order:
-              type: array
-              description: The columns in the order they should be displayed.
-              items:
-                type: string
-                title: column_order
-                description: The column's name.
-            search:
-              type: string
-              title: search
-              description: The search query used in the view.
-            column_widths:
-              type: object
-              description: The column widths in the view.
-            filters:
-              type: object
-              description: The filters applied to the view.
-            sorting:
-              type: object
-              description: The sorting applied to the view.
-              required:
-              - id
-              - desc
-              properties:
-                id:
-                  type: string
-                  title: id
-                  description: The ID of the sorting column.
-                desc:
-                  type: boolean
-                  title: desc
-                  description: Whether the sorting is descending.
-        name:
-          type: string
-          title: name
-          description: The view's name.
     AdminColumn:
       type: object
       description: The details of a column in a view configuration.
@@ -1480,28 +1441,110 @@ components:
         metadata:
           type: object
           description: The column's metadata.
+    AdminViewConfigurationResponse:
+      type: object
+      description: The details of a view configuration.
+      x-schemaName: AdminViewConfigurationResponse
+      required:
+      - view_configuration
+      properties:
+        view_configuration:
+          $ref: '#/components/schemas/AdminViewConfiguration'
+    AdminEntityInfo:
+      type: object
+      description: The details of an entity.
+      x-schemaName: AdminEntityInfo
+      required:
+      - name
+      - pluralName
+      - module
+      - propertyCount
+      - hasOverrides
+      properties:
+        name:
+          type: string
+          title: name
+          description: The entity's name.
+        pluralName:
+          type: string
+          title: pluralName
+          description: The entity's plural name.
+        module:
+          type: string
+          title: module
+          description: The module the entity belongs to.
+        propertyCount:
+          type: number
+          title: propertyCount
+          description: The number of properties the entity has.
+        hasOverrides:
+          type: boolean
+          title: hasOverrides
+          description: Whether the entity has overrides.
+    AdminCreateViewConfiguration:
+      type: object
+      description: The details of a view configuration to create.
+      x-schemaName: AdminCreateViewConfiguration
+      properties:
+        is_system_default:
+          type: boolean
+          title: is_system_default
+          description: Whether the view is the system default. If so, it will be used as the default view for all users that don't have a custom active view set.
+        set_active:
+          type: boolean
+          title: set_active
+          description: Whether the view is set as active.
+        configuration:
+          type: object
+          description: The view's configuration.
+          required:
+          - visible_columns
+          - column_order
+          properties:
+            visible_columns:
+              type: array
+              description: The configuration's visible columns.
+              items:
+                type: string
+                title: visible_columns
+                description: The visible column's name.
+            column_order:
+              type: array
+              description: The columns in the order they should be displayed.
+              items:
+                type: string
+                title: column_order
+                description: The column's name.
+            search:
+              type: string
+              title: search
+              description: The search query used in the view.
+            column_widths:
+              type: object
+              description: The column widths in the view.
+            filters:
+              type: object
+              description: The filters applied to the view.
+            sorting:
+              type: object
+              description: The sorting applied to the view.
+              required:
+              - id
+              - desc
+              properties:
+                id:
+                  type: string
+                  title: id
+                  description: The ID of the sorting column.
+                desc:
+                  type: boolean
+                  title: desc
+                  description: Whether the sorting is descending.
+        name:
+          type: string
+          title: name
+          description: The view's name.
   examples:
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
     invalid_argument_error:
       summary: Invalid Argument Error
       value:
@@ -1513,70 +1556,27 @@ components:
         code: api_error
         message: An error occured while hashing password
         type: database_error
-  responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
   securitySchemes:
     api_token:
       type: http
