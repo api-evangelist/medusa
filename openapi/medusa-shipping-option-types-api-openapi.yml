@@ -793,15 +793,16 @@ paths:
       x-since: 2.10.0
 components:
   responses:
-    not_found_error:
-      description: Not Found Error
+    invalid_state_error:
+      description: Invalid State Error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
-            message: Entity with id 1 was not found
-            type: not_found
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
     500_error:
       description: Server Error
       content:
@@ -817,6 +818,14 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
     400_error:
       description: Client Error
       content:
@@ -828,16 +837,15 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    invalid_state_error:
-      description: Invalid State Error
+    not_found_error:
+      description: Not Found Error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+            message: Entity with id 1 was not found
+            type: not_found
     invalid_request_error:
       description: Invalid Request Error
       content:
@@ -848,15 +856,27 @@ components:
             code: invalid_request_error
             message: Discount with code TEST already exists.
             type: duplicate_error
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
   schemas:
+    AdminCreateShippingOptionType:
+      type: object
+      description: The shipping option type's details.
+      x-schemaName: AdminCreateShippingOptionType
+      required:
+      - code
+      - label
+      properties:
+        label:
+          type: string
+          title: label
+          description: The type's label.
+        description:
+          type: string
+          title: description
+          description: The type's description.
+        code:
+          type: string
+          title: code
+          description: The type's code.
     AdminUpdateShippingOptionType:
       type: object
       description: The properties to update in the shipping option type.
@@ -906,35 +926,6 @@ components:
           description: The list of shipping option types.
           items:
             $ref: '#/components/schemas/AdminShippingOptionType'
-    AdminCreateShippingOptionType:
-      type: object
-      description: The shipping option type's details.
-      x-schemaName: AdminCreateShippingOptionType
-      required:
-      - code
-      - label
-      properties:
-        label:
-          type: string
-          title: label
-          description: The type's label.
-        description:
-          type: string
-          title: description
-          description: The type's description.
-        code:
-          type: string
-          title: code
-          description: The type's code.
-    AdminShippingOptionTypeResponse:
-      type: object
-      description: The shipping option type's details.
-      x-schemaName: AdminShippingOptionTypeResponse
-      required:
-      - shipping_option_type
-      properties:
-        shipping_option_type:
-          $ref: '#/components/schemas/AdminShippingOptionType'
     Error:
       title: Response Error
       type: object
@@ -1018,6 +1009,15 @@ components:
           type: string
           title: shipping_option_id
           description: The type's shipping option id.
+    AdminShippingOptionTypeResponse:
+      type: object
+      description: The shipping option type's details.
+      x-schemaName: AdminShippingOptionTypeResponse
+      required:
+      - shipping_option_type
+      properties:
+        shipping_option_type:
+          $ref: '#/components/schemas/AdminShippingOptionType'
     AdminShippingOptionTypeDeleteResponse:
       type: object
       description: The response returned after deleting a shipping option type.
@@ -1046,33 +1046,33 @@ components:
       value:
         message: cart.total must be defined
         type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
     database_error:
       summary: Database Error
       value:
         code: api_error
         message: An error occured while hashing password
         type: database_error
-    invalid_data_error:
-      summary: Invalid Data Error
+    unexpected_state_error:
+      summary: Unexpected State Error
       value:
-        message: first_name must be a string
-        type: invalid_data
+        message: cart.total must be defined
+        type: unexpected_state
     default_error:
       summary: Default Error
       value:
         code: unknown_error
         message: An unknown error occurred.
         type: unknown_error
-    unexpected_state_error:
-      summary: Unexpected State Error
+    invalid_data_error:
+      summary: Invalid Data Error
       value:
-        message: cart.total must be defined
-        type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http

@@ -709,15 +709,16 @@ paths:
           $ref: '#/components/responses/500_error'
 components:
   responses:
-    not_found_error:
-      description: Not Found Error
+    invalid_state_error:
+      description: Invalid State Error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
-            message: Entity with id 1 was not found
-            type: not_found
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
     500_error:
       description: Server Error
       content:
@@ -733,6 +734,14 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
     400_error:
       description: Client Error
       content:
@@ -744,16 +753,15 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    invalid_state_error:
-      description: Invalid State Error
+    not_found_error:
+      description: Not Found Error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+            message: Entity with id 1 was not found
+            type: not_found
     invalid_request_error:
       description: Invalid Request Error
       content:
@@ -764,46 +772,7 @@ components:
             code: invalid_request_error
             message: Discount with code TEST already exists.
             type: duplicate_error
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
   schemas:
-    WorkflowExecutionFn:
-      type: object
-      description: The state of the step's invokation function.
-      x-schemaName: WorkflowExecutionFn
-      required:
-      - state
-      - status
-      properties:
-        state:
-          type: string
-          description: The invokation step's state.
-          enum:
-          - failed
-          - not_started
-          - invoking
-          - compensating
-          - done
-          - reverted
-          - dormant
-          - skipped
-          - skipped_failure
-          - timeout
-        status:
-          type: string
-          description: The invokation step's state.
-          enum:
-          - idle
-          - ok
-          - waiting_response
-          - temp_failure
-          - permanent_failure
     AdminWorkflowExecution:
       type: object
       description: The workflows execution's details.
@@ -860,6 +829,48 @@ components:
           format: date-time
           title: deleted_at
           description: The date the workflow execution was deleted.
+    AdminCreateWorkflowsRun:
+      type: object
+      description: The details of the workflow to execute.
+      x-schemaName: AdminCreateWorkflowsRun
+      properties:
+        input:
+          description: The input to pass to the workflow. Can be of any type.
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The ID of the workflow execution's transaction.
+    WorkflowExecutionFn:
+      type: object
+      description: The state of the step's invokation function.
+      x-schemaName: WorkflowExecutionFn
+      required:
+      - state
+      - status
+      properties:
+        state:
+          type: string
+          description: The invokation step's state.
+          enum:
+          - failed
+          - not_started
+          - invoking
+          - compensating
+          - done
+          - reverted
+          - dormant
+          - skipped
+          - skipped_failure
+          - timeout
+        status:
+          type: string
+          description: The invokation step's state.
+          enum:
+          - idle
+          - ok
+          - waiting_response
+          - temp_failure
+          - permanent_failure
     WorkflowExecutionContext:
       type: object
       description: The workflow execution's context.
@@ -963,17 +974,6 @@ components:
       properties:
         workflow_execution:
           $ref: '#/components/schemas/AdminWorkflowExecution'
-    AdminCreateWorkflowsRun:
-      type: object
-      description: The details of the workflow to execute.
-      x-schemaName: AdminCreateWorkflowsRun
-      properties:
-        input:
-          description: The input to pass to the workflow. Can be of any type.
-        transaction_id:
-          type: string
-          title: transaction_id
-          description: The ID of the workflow execution's transaction.
     AdminWorkflowExecutionExecution:
       type: object
       description: The workflow execution's steps details.
@@ -1012,32 +1012,6 @@ components:
                 type: number
                 title: startedAt
                 description: The timestamp the step started executing.
-    AdminCreateWorkflowsAsyncResponse:
-      type: object
-      description: The details of changing a workflow execution's step status.
-      x-schemaName: AdminCreateWorkflowsAsyncResponse
-      required:
-      - transaction_id
-      - step_id
-      properties:
-        transaction_id:
-          type: string
-          title: transaction_id
-          description: The workflows execution's transaction ID.
-        step_id:
-          type: string
-          title: step_id
-          description: The ID of the step whose status was changed.
-        response:
-          description: Sets the step's response. It accepts any type.
-        compensate_input:
-          description: Sets the compensation function's input. It accepts any response.
-        action:
-          type: string
-          description: Whether to invoke or compensate the step.
-          enum:
-          - invoke
-          - compensate
     WorkflowExecutionDefinition:
       type: object
       description: The step's definition details.
@@ -1100,31 +1074,35 @@ components:
           type: number
           title: maxAwaitingRetries
           description: The maximum number of times to retry the step while it's in the `waiting_response` state.
+    AdminCreateWorkflowsAsyncResponse:
+      type: object
+      description: The details of changing a workflow execution's step status.
+      x-schemaName: AdminCreateWorkflowsAsyncResponse
+      required:
+      - transaction_id
+      - step_id
+      properties:
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The workflows execution's transaction ID.
+        step_id:
+          type: string
+          title: step_id
+          description: The ID of the step whose status was changed.
+        response:
+          description: Sets the step's response. It accepts any type.
+        compensate_input:
+          description: Sets the compensation function's input. It accepts any response.
+        action:
+          type: string
+          description: Whether to invoke or compensate the step.
+          enum:
+          - invoke
+          - compensate
   examples:
     invalid_argument_error:
       summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    unexpected_state_error:
-      summary: Unexpected State Error
       value:
         message: cart.total must be defined
         type: unexpected_state
@@ -1133,6 +1111,28 @@ components:
       value:
         message: Discount must be set to dynamic
         type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http

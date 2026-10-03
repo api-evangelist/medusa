@@ -1917,71 +1917,133 @@ paths:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
 components:
-  responses:
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
   schemas:
+    AdminStoreCreditAccountsResponse:
+      type: object
+      description: The paginated list of store credit accounts.
+      x-schemaName: AdminStoreCreditAccountsResponse
+      required:
+      - limit
+      - offset
+      - count
+      - store_credit_accounts
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of store credit accounts to return.
+        offset:
+          type: number
+          title: offset
+          description: The number of store credit accounts to skip before retrieving the results.
+        count:
+          type: number
+          title: count
+          description: The total number of store credit accounts available.
+        store_credit_accounts:
+          type: array
+          description: The list of store credit accounts.
+          items:
+            $ref: '#/components/schemas/AdminStoreCreditAccount'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The store credit account's estimate count.
+          x-featureFlag: index_engine
+    AdminTransactionsResponse:
+      type: object
+      description: The paginated list of transactions.
+      x-schemaName: AdminTransactionsResponse
+      required:
+      - limit
+      - offset
+      - count
+      - transactions
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of transactions to return.
+        offset:
+          type: number
+          title: offset
+          description: The number of transactions to skip before retrieving the results.
+        count:
+          type: number
+          title: count
+          description: The total number of transactions available.
+        transactions:
+          type: array
+          description: The list of transactions.
+          items:
+            $ref: '#/components/schemas/AdminTransaction'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The store credit account's estimate count.
+          x-featureFlag: index_engine
+    AdminTransaction:
+      type: object
+      description: The transaction's details.
+      x-schemaName: AdminTransaction
+      required:
+      - account
+      - id
+      - account_id
+      - type
+      - amount
+      - metadata
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The transaction's ID.
+        account_id:
+          type: string
+          title: account_id
+          description: The ID of the store credit account that the transaction belongs to.
+        type:
+          type: string
+          description: The transaction's type.
+          enum:
+          - credit
+          - debit
+        amount:
+          type: number
+          title: amount
+          description: The transaction's amount.
+        account:
+          $ref: '#/components/schemas/AdminStoreCreditAccount'
+        note:
+          type: string
+          title: note
+          description: The transaction's note.
+        reference:
+          type: string
+          title: reference
+          description: The transaction's reference.
+        reference_id:
+          type: string
+          title: reference_id
+          description: The transaction's reference ID.
+        metadata:
+          type: object
+          description: The transaction's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the transaction was created at.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the transaction was updated at.
     AdminCustomerGroup:
       type: object
       description: The customer group's details.
@@ -2023,38 +2085,6 @@ components:
           format: date-time
           title: updated_at
           description: The customer group's update date.
-    AdminStoreCreditAccountsResponse:
-      type: object
-      description: The paginated list of store credit accounts.
-      x-schemaName: AdminStoreCreditAccountsResponse
-      required:
-      - limit
-      - offset
-      - count
-      - store_credit_accounts
-      properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of store credit accounts to return.
-        offset:
-          type: number
-          title: offset
-          description: The number of store credit accounts to skip before retrieving the results.
-        count:
-          type: number
-          title: count
-          description: The total number of store credit accounts available.
-        store_credit_accounts:
-          type: array
-          description: The list of store credit accounts.
-          items:
-            $ref: '#/components/schemas/AdminStoreCreditAccount'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The store credit account's estimate count.
-          x-featureFlag: index_engine
     AdminStoreCreditAccountResponse:
       type: object
       description: The store credit account's details.
@@ -2064,68 +2094,77 @@ components:
       properties:
         store_credit_account:
           $ref: '#/components/schemas/AdminStoreCreditAccount'
-    AdminStoreCreditAccount:
+    AdminCreateStoreCreditAccount:
       type: object
-      description: The store credit account's details.
-      x-schemaName: AdminStoreCreditAccount
+      description: The details of the store credit account to create.
+      x-schemaName: AdminCreateStoreCreditAccount
       required:
-      - customer
-      - id
       - currency_code
-      - credits
-      - debits
-      - balance
-      - metadata
-      - created_at
-      - updated_at
       properties:
-        customer:
-          $ref: '#/components/schemas/AdminCustomer'
-        id:
-          type: string
-          title: id
-          description: The store credit account's ID.
-        customer_id:
-          type: string
-          title: customer_id
-          description: The ID of the customer that the store credit account belongs to.
         currency_code:
           type: string
           title: currency_code
           description: The store credit account's currency code.
           example: usd
-        credits:
-          type: number
-          title: credits
-          description: The account's credits.
-        debits:
-          type: number
-          title: debits
-          description: The account's debits.
-        balance:
-          type: number
-          title: balance
-          description: The account's balance.
+        customer_id:
+          type: string
+          title: customer_id
+          description: The ID of the customer that the store credit account belongs to.
         metadata:
           type: object
           description: The store credit account's metadata, can hold custom key-value pairs.
           externalDocs:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the store credit account was created at.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the store credit account was updated at.
+    Error:
+      title: Response Error
+      type: object
+      properties:
         code:
           type: string
-          title: code
-          description: The store credit account's code.
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminCreditStoreCreditAccountParams:
+      type: object
+      description: The details of crediting a store credit account.
+      x-schemaName: AdminCreditStoreCreditAccountParams
+      required:
+      - amount
+      properties:
+        amount:
+          type: number
+          title: amount
+          description: The amount to credit the store credit account with.
+        note:
+          type: string
+          title: note
+          description: An additional note to add to the store credit transaction.
     AdminCustomer:
       type: object
       description: The customer's details.
@@ -2213,139 +2252,6 @@ components:
           format: date-time
           title: deleted_at
           description: The customer's deletion date.
-    AdminCreditStoreCreditAccountParams:
-      type: object
-      description: The details of crediting a store credit account.
-      x-schemaName: AdminCreditStoreCreditAccountParams
-      required:
-      - amount
-      properties:
-        amount:
-          type: number
-          title: amount
-          description: The amount to credit the store credit account with.
-        note:
-          type: string
-          title: note
-          description: An additional note to add to the store credit transaction.
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminTransaction:
-      type: object
-      description: The transaction's details.
-      x-schemaName: AdminTransaction
-      required:
-      - account
-      - id
-      - account_id
-      - type
-      - amount
-      - metadata
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The transaction's ID.
-        account_id:
-          type: string
-          title: account_id
-          description: The ID of the store credit account that the transaction belongs to.
-        type:
-          type: string
-          description: The transaction's type.
-          enum:
-          - credit
-          - debit
-        amount:
-          type: number
-          title: amount
-          description: The transaction's amount.
-        account:
-          $ref: '#/components/schemas/AdminStoreCreditAccount'
-        note:
-          type: string
-          title: note
-          description: The transaction's note.
-        reference:
-          type: string
-          title: reference
-          description: The transaction's reference.
-        reference_id:
-          type: string
-          title: reference_id
-          description: The transaction's reference ID.
-        metadata:
-          type: object
-          description: The transaction's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the transaction was created at.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the transaction was updated at.
-    AdminCreateStoreCreditAccount:
-      type: object
-      description: The details of the store credit account to create.
-      x-schemaName: AdminCreateStoreCreditAccount
-      required:
-      - currency_code
-      properties:
-        currency_code:
-          type: string
-          title: currency_code
-          description: The store credit account's currency code.
-          example: usd
-        customer_id:
-          type: string
-          title: customer_id
-          description: The ID of the customer that the store credit account belongs to.
-        metadata:
-          type: object
-          description: The store credit account's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
     AdminCustomerAddress:
       type: object
       description: The customer's address.
@@ -2451,38 +2357,191 @@ components:
           format: date-time
           title: updated_at
           description: The address's update date.
-    AdminTransactionsResponse:
+    AdminStoreCreditAccount:
       type: object
-      description: The paginated list of transactions.
-      x-schemaName: AdminTransactionsResponse
+      description: The store credit account's details.
+      x-schemaName: AdminStoreCreditAccount
+      required:
+      - customer
+      - id
+      - currency_code
+      - credits
+      - debits
+      - balance
+      - metadata
+      - created_at
+      - updated_at
+      properties:
+        customer:
+          $ref: '#/components/schemas/AdminCustomer'
+        id:
+          type: string
+          title: id
+          description: The store credit account's ID.
+        customer_id:
+          type: string
+          title: customer_id
+          description: The ID of the customer that the store credit account belongs to.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The store credit account's currency code.
+          example: usd
+        credits:
+          type: number
+          title: credits
+          description: The account's credits.
+        debits:
+          type: number
+          title: debits
+          description: The account's debits.
+        balance:
+          type: number
+          title: balance
+          description: The account's balance.
+        metadata:
+          type: object
+          description: The store credit account's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the store credit account was created at.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the store credit account was updated at.
+        code:
+          type: string
+          title: code
+          description: The store credit account's code.
+    StoreClaimStoreCreditAccountParams:
+      type: object
+      description: The parameters required to claim a store credit account.
+      x-schemaName: StoreClaimStoreCreditAccountParams
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          title: code
+          description: The store credit account's code.
+    StoreStoreCreditAccountsResponse:
+      type: object
+      description: The paginated list of store credit accounts.
+      x-schemaName: StoreStoreCreditAccountsResponse
       required:
       - limit
       - offset
       - count
-      - transactions
+      - store_credit_accounts
       properties:
         limit:
           type: number
           title: limit
-          description: The maximum number of transactions to return.
+          description: The maximum number of store credit accounts to return.
         offset:
           type: number
           title: offset
-          description: The number of transactions to skip before retrieving the results.
+          description: The number of store credit accounts to skip before retrieving the results.
         count:
           type: number
           title: count
-          description: The total number of transactions available.
-        transactions:
+          description: The total number of store credit accounts available.
+        store_credit_accounts:
           type: array
-          description: The list of transactions.
+          description: The list of store credit accounts.
           items:
-            $ref: '#/components/schemas/AdminTransaction'
+            $ref: '#/components/schemas/StoreStoreCreditAccount'
         estimate_count:
           type: number
           title: estimate_count
           description: The store credit account's estimate count.
           x-featureFlag: index_engine
+    StoreStoreCreditAccountResponse:
+      type: object
+      description: The store credit account's details.
+      x-schemaName: StoreStoreCreditAccountResponse
+      required:
+      - store_credit_account
+      properties:
+        store_credit_account:
+          $ref: '#/components/schemas/StoreStoreCreditAccount'
+    StoreClaimStoreCreditAccountResponse:
+      type: object
+      description: The details of the claimed store credit account.
+      x-schemaName: StoreClaimStoreCreditAccountResponse
+      required:
+      - store_credit_account
+      properties:
+        store_credit_account:
+          $ref: '#/components/schemas/StoreStoreCreditAccount'
+    StoreStoreCreditAccount:
+      type: object
+      description: The store credit account's details.
+      x-schemaName: StoreStoreCreditAccount
+      required:
+      - customer
+      - id
+      - currency_code
+      - credits
+      - debits
+      - balance
+      - metadata
+      - created_at
+      - updated_at
+      properties:
+        customer:
+          $ref: '#/components/schemas/StoreCustomer'
+        id:
+          type: string
+          title: id
+          description: The store credit account's ID.
+        customer_id:
+          type: string
+          title: customer_id
+          description: The ID of the customer that the store credit account belongs to.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The store credit account's currency code.
+          example: usd
+        credits:
+          type: number
+          title: credits
+          description: The account's credits.
+        debits:
+          type: number
+          title: debits
+          description: The account's debits.
+        balance:
+          type: number
+          title: balance
+          description: The store credit account's balance.
+        metadata:
+          type: object
+          description: The store credit account's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the store credit account was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the store credit account was updated.
+        code:
+          type: string
+          title: code
+          description: The store credit account's code.
     StoreCustomerAddress:
       type: object
       description: The customer address's details
@@ -2588,129 +2647,6 @@ components:
           format: date-time
           title: updated_at
           description: The date the address was updated.
-    StoreClaimStoreCreditAccountResponse:
-      type: object
-      description: The details of the claimed store credit account.
-      x-schemaName: StoreClaimStoreCreditAccountResponse
-      required:
-      - store_credit_account
-      properties:
-        store_credit_account:
-          $ref: '#/components/schemas/StoreStoreCreditAccount'
-    StoreStoreCreditAccount:
-      type: object
-      description: The store credit account's details.
-      x-schemaName: StoreStoreCreditAccount
-      required:
-      - customer
-      - id
-      - currency_code
-      - credits
-      - debits
-      - balance
-      - metadata
-      - created_at
-      - updated_at
-      properties:
-        customer:
-          $ref: '#/components/schemas/StoreCustomer'
-        id:
-          type: string
-          title: id
-          description: The store credit account's ID.
-        customer_id:
-          type: string
-          title: customer_id
-          description: The ID of the customer that the store credit account belongs to.
-        currency_code:
-          type: string
-          title: currency_code
-          description: The store credit account's currency code.
-          example: usd
-        credits:
-          type: number
-          title: credits
-          description: The account's credits.
-        debits:
-          type: number
-          title: debits
-          description: The account's debits.
-        balance:
-          type: number
-          title: balance
-          description: The store credit account's balance.
-        metadata:
-          type: object
-          description: The store credit account's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the store credit account was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the store credit account was updated.
-        code:
-          type: string
-          title: code
-          description: The store credit account's code.
-    StoreStoreCreditAccountResponse:
-      type: object
-      description: The store credit account's details.
-      x-schemaName: StoreStoreCreditAccountResponse
-      required:
-      - store_credit_account
-      properties:
-        store_credit_account:
-          $ref: '#/components/schemas/StoreStoreCreditAccount'
-    StoreStoreCreditAccountsResponse:
-      type: object
-      description: The paginated list of store credit accounts.
-      x-schemaName: StoreStoreCreditAccountsResponse
-      required:
-      - limit
-      - offset
-      - count
-      - store_credit_accounts
-      properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of store credit accounts to return.
-        offset:
-          type: number
-          title: offset
-          description: The number of store credit accounts to skip before retrieving the results.
-        count:
-          type: number
-          title: count
-          description: The total number of store credit accounts available.
-        store_credit_accounts:
-          type: array
-          description: The list of store credit accounts.
-          items:
-            $ref: '#/components/schemas/StoreStoreCreditAccount'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The store credit account's estimate count.
-          x-featureFlag: index_engine
-    StoreClaimStoreCreditAccountParams:
-      type: object
-      description: The parameters required to claim a store credit account.
-      x-schemaName: StoreClaimStoreCreditAccountParams
-      required:
-      - code
-      properties:
-        code:
-          type: string
-          title: code
-          description: The store credit account's code.
     StoreCustomer:
       type: object
       description: The customer's details.
@@ -2784,31 +2720,73 @@ components:
           format: date-time
           title: deleted_at
           description: The date the customer was deleted.
+  responses:
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   examples:
     invalid_argument_error:
       summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    unexpected_state_error:
-      summary: Unexpected State Error
       value:
         message: cart.total must be defined
         type: unexpected_state
@@ -2817,6 +2795,28 @@ components:
       value:
         message: Discount must be set to dynamic
         type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http

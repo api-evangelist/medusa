@@ -449,39 +449,6 @@ paths:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
 components:
-  examples:
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
   schemas:
     AdminCurrencyListResponse:
       type: object
@@ -549,6 +516,15 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
+    AdminCurrencyResponse:
+      type: object
+      description: The currency's details.
+      x-schemaName: AdminCurrencyResponse
+      required:
+      - currency
+      properties:
+        currency:
+          $ref: '#/components/schemas/AdminCurrency'
     AdminCurrency:
       type: object
       description: The currency's currencies.
@@ -606,15 +582,38 @@ components:
           format: date-time
           title: deleted_at
           description: The currency's deletion date.
-    AdminCurrencyResponse:
+    StoreCurrencyListResponse:
       type: object
-      description: The currency's details.
-      x-schemaName: AdminCurrencyResponse
+      description: The paginated list of currencies.
+      x-schemaName: StoreCurrencyListResponse
       required:
-      - currency
+      - limit
+      - offset
+      - count
+      - currencies
       properties:
-        currency:
-          $ref: '#/components/schemas/AdminCurrency'
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total count of items.
+        currencies:
+          type: array
+          description: The list of currencies.
+          items:
+            $ref: '#/components/schemas/StoreCurrency'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     StoreCurrency:
       type: object
       description: The currency's details.
@@ -670,38 +669,6 @@ components:
           format: date-time
           title: deleted_at
           description: The date the currency was deleted.
-    StoreCurrencyListResponse:
-      type: object
-      description: The paginated list of currencies.
-      x-schemaName: StoreCurrencyListResponse
-      required:
-      - limit
-      - offset
-      - count
-      - currencies
-      properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the returned items.
-        count:
-          type: number
-          title: count
-          description: The total count of items.
-        currencies:
-          type: array
-          description: The list of currencies.
-          items:
-            $ref: '#/components/schemas/StoreCurrency'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
-          x-featureFlag: index_engine
     StoreCurrencyResponse:
       type: object
       description: The currency's details.
@@ -712,6 +679,16 @@ components:
         currency:
           $ref: '#/components/schemas/StoreCurrency'
   responses:
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
     not_found_error:
       description: Not Found Error
       content:
@@ -736,34 +713,6 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
     400_error:
       description: Client Error
       content:
@@ -775,6 +724,57 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http

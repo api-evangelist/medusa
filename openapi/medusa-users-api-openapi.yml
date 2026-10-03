@@ -737,40 +737,17 @@ paths:
         description: Emitted when users are deleted.
         deprecated: false
 components:
-  examples:
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
   responses:
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
     not_found_error:
       description: Not Found Error
       content:
@@ -795,34 +772,6 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
     400_error:
       description: Client Error
       content:
@@ -834,95 +783,81 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   schemas:
-    AdminUserDeleteResponse:
+    AdminUpdateUser:
       type: object
-      description: The details of the deleted user.
-      x-schemaName: AdminUserDeleteResponse
-      required:
-      - id
-      - object
-      - deleted
+      description: The properties to update in a user.
+      x-schemaName: AdminUpdateUser
       properties:
-        id:
+        first_name:
           type: string
-          title: id
-          description: The user's ID.
-        object:
+          title: first_name
+          description: The user's first name.
+        last_name:
           type: string
-          title: object
-          description: The name of the deleted object.
-          default: user
-        deleted:
-          type: boolean
-          title: deleted
-          description: Whether the user was deleted.
-    AdminUserListResponse:
-      type: object
-      description: The paginated list of users.
-      x-schemaName: AdminUserListResponse
-      required:
-      - limit
-      - offset
-      - count
-      - users
-      properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the returned items.
-        count:
-          type: number
-          title: count
-          description: The total number of items.
-        users:
-          type: array
-          description: The list of users.
-          items:
-            $ref: '#/components/schemas/AdminUser'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
-          x-featureFlag: index_engine
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
+          title: last_name
+          description: The user's last name.
+        avatar_url:
           type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
+          title: avatar_url
+          description: The URL of the user's avatar.
+        metadata:
+          type: object
+          description: The user's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
     AdminUser:
       type: object
       description: The user's details.
@@ -980,29 +915,40 @@ components:
           format: date-time
           title: deleted_at
           description: The date the user was deleted.
-    AdminUpdateUser:
+    Error:
+      title: Response Error
       type: object
-      description: The properties to update in a user.
-      x-schemaName: AdminUpdateUser
       properties:
-        first_name:
+        code:
           type: string
-          title: first_name
-          description: The user's first name.
-        last_name:
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
           type: string
-          title: last_name
-          description: The user's last name.
-        avatar_url:
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
           type: string
-          title: avatar_url
-          description: The URL of the user's avatar.
-        metadata:
-          type: object
-          description: The user's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     AdminUserResponse:
       type: object
       description: The user's details.
@@ -1012,6 +958,60 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/AdminUser'
+    AdminUserListResponse:
+      type: object
+      description: The paginated list of users.
+      x-schemaName: AdminUserListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - users
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total number of items.
+        users:
+          type: array
+          description: The list of users.
+          items:
+            $ref: '#/components/schemas/AdminUser'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
+    AdminUserDeleteResponse:
+      type: object
+      description: The details of the deleted user.
+      x-schemaName: AdminUserDeleteResponse
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The user's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: user
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the user was deleted.
   securitySchemes:
     api_token:
       type: http

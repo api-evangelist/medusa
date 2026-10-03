@@ -915,15 +915,16 @@ paths:
         deprecated: false
 components:
   responses:
-    not_found_error:
-      description: Not Found Error
+    invalid_state_error:
+      description: Invalid State Error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
-            message: Entity with id 1 was not found
-            type: not_found
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
     500_error:
       description: Server Error
       content:
@@ -939,6 +940,14 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
     400_error:
       description: Client Error
       content:
@@ -950,16 +959,15 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    invalid_state_error:
-      description: Invalid State Error
+    not_found_error:
+      description: Not Found Error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+            message: Entity with id 1 was not found
+            type: not_found
     invalid_request_error:
       description: Invalid Request Error
       content:
@@ -970,14 +978,6 @@ components:
             code: invalid_request_error
             message: Discount with code TEST already exists.
             type: duplicate_error
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
   schemas:
     AdminInviteResponse:
       type: object
@@ -988,63 +988,24 @@ components:
       properties:
         invite:
           $ref: '#/components/schemas/AdminInvite'
-    AdminInvite:
+    AdminGetInviteAcceptParams:
       type: object
-      description: The invite's details.
-      x-schemaName: AdminInvite
-      required:
-      - id
-      - email
-      - accepted
-      - token
-      - expires_at
-      - created_at
-      - updated_at
+      description: The details of the user to be created.
       properties:
-        id:
-          type: string
-          title: id
-          description: The invite's ID.
         email:
           type: string
           title: email
           description: The invite's email.
           format: email
-        accepted:
-          type: boolean
-          title: accepted
-          description: Whether the invite has been accepted.
-        token:
+        first_name:
           type: string
-          title: token
-          description: The invite's token.
-        expires_at:
+          title: first_name
+          description: The invited user's first name.
+        last_name:
           type: string
-          title: expires_at
-          description: The invite's expiry date.
-          format: date-time
-        metadata:
-          type: object
-          description: The invite's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the invite was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the invite was updated.
-        rbac_roles:
-          type: array
-          description: The roles of the invited user.
-          x-featureFlag: rbac
-          items:
-            $ref: '#/components/schemas/AdminRbacRole'
+          title: last_name
+          description: The invited user's last name.
+      x-schemaName: AdminGetInviteAcceptParams
     AdminRbacRole:
       type: object
       description: The details of an RBAC role.
@@ -1098,24 +1059,6 @@ components:
           format: date-time
           title: deleted_at
           description: The date the RBAC role was deleted.
-    AdminGetInviteAcceptParams:
-      type: object
-      description: The details of the user to be created.
-      properties:
-        email:
-          type: string
-          title: email
-          description: The invite's email.
-          format: email
-        first_name:
-          type: string
-          title: first_name
-          description: The invited user's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The invited user's last name.
-      x-schemaName: AdminGetInviteAcceptParams
     Error:
       title: Response Error
       type: object
@@ -1150,63 +1093,6 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
-    AdminUser:
-      type: object
-      description: The user's details.
-      x-schemaName: AdminUser
-      required:
-      - id
-      - email
-      - first_name
-      - last_name
-      - avatar_url
-      - metadata
-      - created_at
-      - updated_at
-      - deleted_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The user's ID.
-        email:
-          type: string
-          title: email
-          description: The user's email.
-          format: email
-        first_name:
-          type: string
-          title: first_name
-          description: The user's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The user's last name.
-        avatar_url:
-          type: string
-          title: avatar_url
-          description: The URL of the user's avatar.
-        metadata:
-          type: object
-          description: The user's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the user was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the user was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the user was deleted.
     AdminRbacPolicy:
       type: object
       description: The details of an RBAC policy.
@@ -1271,31 +1157,123 @@ components:
           format: date-time
           title: deleted_at
           description: The date the policy was deleted.
+    AdminInvite:
+      type: object
+      description: The invite's details.
+      x-schemaName: AdminInvite
+      required:
+      - id
+      - email
+      - accepted
+      - token
+      - expires_at
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The invite's ID.
+        email:
+          type: string
+          title: email
+          description: The invite's email.
+          format: email
+        accepted:
+          type: boolean
+          title: accepted
+          description: Whether the invite has been accepted.
+        token:
+          type: string
+          title: token
+          description: The invite's token.
+        expires_at:
+          type: string
+          title: expires_at
+          description: The invite's expiry date.
+          format: date-time
+        metadata:
+          type: object
+          description: The invite's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the invite was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the invite was updated.
+        rbac_roles:
+          type: array
+          description: The roles of the invited user.
+          x-featureFlag: rbac
+          items:
+            $ref: '#/components/schemas/AdminRbacRole'
+    AdminUser:
+      type: object
+      description: The user's details.
+      x-schemaName: AdminUser
+      required:
+      - id
+      - email
+      - first_name
+      - last_name
+      - avatar_url
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The user's ID.
+        email:
+          type: string
+          title: email
+          description: The user's email.
+          format: email
+        first_name:
+          type: string
+          title: first_name
+          description: The user's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The user's last name.
+        avatar_url:
+          type: string
+          title: avatar_url
+          description: The URL of the user's avatar.
+        metadata:
+          type: object
+          description: The user's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the user was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the user was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the user was deleted.
   examples:
     invalid_argument_error:
       summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    unexpected_state_error:
-      summary: Unexpected State Error
       value:
         message: cart.total must be defined
         type: unexpected_state
@@ -1304,6 +1282,28 @@ components:
       value:
         message: Discount must be set to dynamic
         type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http
