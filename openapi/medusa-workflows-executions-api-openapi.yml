@@ -708,200 +708,40 @@ paths:
         '500':
           $ref: '#/components/responses/500_error'
 components:
+  examples:
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
   schemas:
-    WorkflowExecutionFn:
-      type: object
-      description: The state of the step's invokation function.
-      x-schemaName: WorkflowExecutionFn
-      required:
-      - state
-      - status
-      properties:
-        state:
-          type: string
-          description: The invokation step's state.
-          enum:
-          - failed
-          - not_started
-          - invoking
-          - compensating
-          - done
-          - reverted
-          - dormant
-          - skipped
-          - skipped_failure
-          - timeout
-        status:
-          type: string
-          description: The invokation step's state.
-          enum:
-          - idle
-          - ok
-          - waiting_response
-          - temp_failure
-          - permanent_failure
-    AdminCreateWorkflowsRun:
-      type: object
-      description: The details of the workflow to execute.
-      x-schemaName: AdminCreateWorkflowsRun
-      properties:
-        input:
-          description: The input to pass to the workflow. Can be of any type.
-        transaction_id:
-          type: string
-          title: transaction_id
-          description: The ID of the workflow execution's transaction.
-    AdminCreateWorkflowsAsyncResponse:
-      type: object
-      description: The details of changing a workflow execution's step status.
-      x-schemaName: AdminCreateWorkflowsAsyncResponse
-      required:
-      - transaction_id
-      - step_id
-      properties:
-        transaction_id:
-          type: string
-          title: transaction_id
-          description: The workflows execution's transaction ID.
-        step_id:
-          type: string
-          title: step_id
-          description: The ID of the step whose status was changed.
-        response:
-          description: Sets the step's response. It accepts any type.
-        compensate_input:
-          description: Sets the compensation function's input. It accepts any response.
-        action:
-          type: string
-          description: Whether to invoke or compensate the step.
-          enum:
-          - invoke
-          - compensate
-    AdminWorkflowExecutionResponse:
-      type: object
-      description: The workflow execution's details.
-      x-schemaName: AdminWorkflowExecutionResponse
-      required:
-      - workflow_execution
-      properties:
-        workflow_execution:
-          $ref: '#/components/schemas/AdminWorkflowExecution'
-    AdminWorkflowExecution:
-      type: object
-      description: The workflows execution's details.
-      x-schemaName: AdminWorkflowExecution
-      required:
-      - id
-      - workflow_id
-      - transaction_id
-      - execution
-      - context
-      - state
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The workflow execution's ID.
-        workflow_id:
-          type: string
-          title: workflow_id
-          description: The ID of the workflow.
-        transaction_id:
-          type: string
-          title: transaction_id
-          description: The workflow execution's transaction ID.
-        execution:
-          $ref: '#/components/schemas/AdminWorkflowExecutionExecution'
-        context:
-          $ref: '#/components/schemas/WorkflowExecutionContext'
-        state:
-          type: string
-          description: The workflow execution's state.
-          enum:
-          - not_started
-          - invoking
-          - waiting_to_compensate
-          - compensating
-          - done
-          - reverted
-          - failed
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the workflow execution was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the workflow execution was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the workflow execution was deleted.
-    WorkflowExecutionContext:
-      type: object
-      description: The workflow execution's context.
-      x-schemaName: WorkflowExecutionContext
-      required:
-      - compensate
-      - errors
-      properties:
-        data:
-          type: object
-          description: The context's data.
-          properties:
-            invoke:
-              type: object
-              description: The step's invokation details.
-              required:
-              - output
-              additionalProperties:
-                type: object
-                properties:
-                  output:
-                    type: object
-                    description: The invokation's details.
-                    required:
-                    - output
-                    - compensateInput
-                    properties:
-                      output:
-                        description: the step's output
-                      compensateInput:
-                        description: the compensation function's input.
-            payload:
-              description: the payload of the transaction.
-          required:
-          - invoke
-        compensate:
-          type: object
-          description: The context's compensate.
-        errors:
-          type: array
-          description: The context's errors.
-          items:
-            type: object
-            description: The error's details.
-            properties:
-              error:
-                type: object
-                description: The error's details.
-              action:
-                type: string
-                title: action
-                description: The error's action.
-              handlerType:
-                type: string
-                title: handlerType
-                description: The error's handler type.
-            required:
-            - error
-            - action
-            - handlerType
     WorkflowExecutionDefinition:
       type: object
       description: The step's definition details.
@@ -964,40 +804,6 @@ components:
           type: number
           title: maxAwaitingRetries
           description: The maximum number of times to retry the step while it's in the `waiting_response` state.
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
     AdminWorkflowExecutionExecution:
       type: object
       description: The workflow execution's steps details.
@@ -1036,39 +842,233 @@ components:
                 type: number
                 title: startedAt
                 description: The timestamp the step started executing.
-  examples:
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
+    WorkflowExecutionContext:
+      type: object
+      description: The workflow execution's context.
+      x-schemaName: WorkflowExecutionContext
+      required:
+      - compensate
+      - errors
+      properties:
+        data:
+          type: object
+          description: The context's data.
+          properties:
+            invoke:
+              type: object
+              description: The step's invokation details.
+              required:
+              - output
+              additionalProperties:
+                type: object
+                properties:
+                  output:
+                    type: object
+                    description: The invokation's details.
+                    required:
+                    - output
+                    - compensateInput
+                    properties:
+                      output:
+                        description: the step's output
+                      compensateInput:
+                        description: the compensation function's input.
+            payload:
+              description: the payload of the transaction.
+          required:
+          - invoke
+        compensate:
+          type: object
+          description: The context's compensate.
+        errors:
+          type: array
+          description: The context's errors.
+          items:
+            type: object
+            description: The error's details.
+            properties:
+              error:
+                type: object
+                description: The error's details.
+              action:
+                type: string
+                title: action
+                description: The error's action.
+              handlerType:
+                type: string
+                title: handlerType
+                description: The error's handler type.
+            required:
+            - error
+            - action
+            - handlerType
+    AdminCreateWorkflowsAsyncResponse:
+      type: object
+      description: The details of changing a workflow execution's step status.
+      x-schemaName: AdminCreateWorkflowsAsyncResponse
+      required:
+      - transaction_id
+      - step_id
+      properties:
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The workflows execution's transaction ID.
+        step_id:
+          type: string
+          title: step_id
+          description: The ID of the step whose status was changed.
+        response:
+          description: Sets the step's response. It accepts any type.
+        compensate_input:
+          description: Sets the compensation function's input. It accepts any response.
+        action:
+          type: string
+          description: Whether to invoke or compensate the step.
+          enum:
+          - invoke
+          - compensate
+    WorkflowExecutionFn:
+      type: object
+      description: The state of the step's invokation function.
+      x-schemaName: WorkflowExecutionFn
+      required:
+      - state
+      - status
+      properties:
+        state:
+          type: string
+          description: The invokation step's state.
+          enum:
+          - failed
+          - not_started
+          - invoking
+          - compensating
+          - done
+          - reverted
+          - dormant
+          - skipped
+          - skipped_failure
+          - timeout
+        status:
+          type: string
+          description: The invokation step's state.
+          enum:
+          - idle
+          - ok
+          - waiting_response
+          - temp_failure
+          - permanent_failure
+    AdminCreateWorkflowsRun:
+      type: object
+      description: The details of the workflow to execute.
+      x-schemaName: AdminCreateWorkflowsRun
+      properties:
+        input:
+          description: The input to pass to the workflow. Can be of any type.
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The ID of the workflow execution's transaction.
+    AdminWorkflowExecution:
+      type: object
+      description: The workflows execution's details.
+      x-schemaName: AdminWorkflowExecution
+      required:
+      - id
+      - workflow_id
+      - transaction_id
+      - execution
+      - context
+      - state
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The workflow execution's ID.
+        workflow_id:
+          type: string
+          title: workflow_id
+          description: The ID of the workflow.
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The workflow execution's transaction ID.
+        execution:
+          $ref: '#/components/schemas/AdminWorkflowExecutionExecution'
+        context:
+          $ref: '#/components/schemas/WorkflowExecutionContext'
+        state:
+          type: string
+          description: The workflow execution's state.
+          enum:
+          - not_started
+          - invoking
+          - waiting_to_compensate
+          - compensating
+          - done
+          - reverted
+          - failed
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the workflow execution was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the workflow execution was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the workflow execution was deleted.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminWorkflowExecutionResponse:
+      type: object
+      description: The workflow execution's details.
+      x-schemaName: AdminWorkflowExecutionResponse
+      required:
+      - workflow_execution
+      properties:
+        workflow_execution:
+          $ref: '#/components/schemas/AdminWorkflowExecution'
   responses:
     unauthorized:
       description: User is not authorized. Must log in first
@@ -1093,6 +1093,25 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
     400_error:
       description: Client Error
       content:
@@ -1104,15 +1123,6 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
     invalid_state_error:
       description: Invalid State Error
       content:
@@ -1123,16 +1133,6 @@ components:
             code: unknown_error
             message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
             type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

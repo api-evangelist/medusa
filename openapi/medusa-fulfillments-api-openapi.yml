@@ -207,101 +207,99 @@ paths:
       x-events: []
 components:
   schemas:
-    AdminFulfillmentAddress:
+    AdminCreateFulfillment:
       type: object
-      description: An address's details.
-      x-schemaName: AdminFulfillmentAddress
+      description: The filfillment's details.
+      x-schemaName: AdminCreateFulfillment
       required:
-      - id
-      - fulfillment_id
-      - company
-      - first_name
-      - last_name
-      - address_1
-      - address_2
-      - city
-      - country_code
-      - province
-      - postal_code
-      - phone
-      - metadata
-      - created_at
-      - updated_at
-      - deleted_at
+      - location_id
+      - provider_id
+      - delivery_address
+      - items
+      - labels
+      - order_id
       properties:
-        id:
+        location_id:
           type: string
-          title: id
-          description: The address's ID.
-        fulfillment_id:
+          title: location_id
+          description: The ID of the location the items are fulfilled from.
+        provider_id:
           type: string
-          title: fulfillment_id
-          description: The ID of the fulfillment that the address belongs to.
-        company:
+          title: provider_id
+          description: The ID of the provider handling this fulfillment.
+        delivery_address:
+          $ref: '#/components/schemas/AdminFulfillmentDeliveryAddress'
+        items:
+          type: array
+          description: The items to fulfill.
+          items:
+            $ref: '#/components/schemas/AdminCreateFulfillmentItem'
+        labels:
+          type: array
+          description: The labels for the fulfillment's shipments.
+          items:
+            $ref: '#/components/schemas/AdminCreateFulfillmentLabel'
+        order_id:
           type: string
-          title: company
-          description: The address's company.
-        first_name:
+          title: order_id
+          description: The ID of the order this fulfillment is created for.
+        shipping_option_id:
           type: string
-          title: first_name
-          description: The address's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The address's last name.
-        address_1:
-          type: string
-          title: address_1
-          description: The address's first line.
-        address_2:
-          type: string
-          title: address_2
-          description: The address's second line.
-        city:
-          type: string
-          title: city
-          description: The address's city.
-        country_code:
-          type: string
-          title: country_code
-          description: The address's country code.
-        province:
-          type: string
-          title: province
-          description: The address's lower-case ISO 3166-2 province code.
-          example: us-ca
+          title: shipping_option_id
+          description: The ID of the shipping option used in the order.
+        data:
+          type: object
+          description: Any data useful for the fulfillment provider to handle the fulfillment.
           externalDocs:
-            url: https://en.wikipedia.org/wiki/ISO_3166-2
-            description: Learn more about ISO 3166-2
-        postal_code:
+            url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property
+            description: Learn more about the data property.
+        packed_at:
           type: string
-          title: postal_code
-          description: The address's postal code.
-        phone:
+          title: packed_at
+          description: The date and time the fulfillment was packed.
+          format: date-time
+        shipped_at:
           type: string
-          title: phone
-          description: The address's phone.
+          title: shipped_at
+          description: The date and time the fulfillment was shipped.
+          format: date-time
+        delivered_at:
+          type: string
+          title: delivered_at
+          description: The date and time the fulfillment was delivered.
+          format: date-time
+        canceled_at:
+          type: string
+          title: canceled_at
+          description: The date and time the fulfillment was canceled.
+          format: date-time
         metadata:
           type: object
-          description: The address's metadata, can hold custom key-value pairs.
+          description: The fulfillment's metadata, used to store custom key-value pairs.
           externalDocs:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
-        created_at:
+    AdminCreateFulfillmentLabel:
+      type: object
+      description: Details of the fulfillment label to create.
+      required:
+      - tracking_number
+      - tracking_url
+      - label_url
+      properties:
+        tracking_number:
           type: string
-          format: date-time
-          title: created_at
-          description: The date the address was created.
-        updated_at:
+          title: tracking_number
+          description: The label's tracking number.
+        tracking_url:
           type: string
-          format: date-time
-          title: updated_at
-          description: The date the address was updated.
-        deleted_at:
+          title: tracking_url
+          description: The label's tracking URL.
+        label_url:
           type: string
-          format: date-time
-          title: deleted_at
-          description: The date the address was deleted.
+          title: label_url
+          description: The label's URL.
+      x-schemaName: AdminCreateFulfillmentLabel
     AdminFulfillmentLabel:
       type: object
       description: The details of a fulfillmet's shipment label.
@@ -351,6 +349,18 @@ components:
           format: date-time
           title: deleted_at
           description: The date the label was deleted.
+    AdminCreateFulfillmentShipment:
+      type: object
+      description: Details of the shipment to create for a fulfillment.
+      x-schemaName: AdminCreateFulfillmentShipment
+      required:
+      - labels
+      properties:
+        labels:
+          type: array
+          description: The shipment's labels.
+          items:
+            $ref: '#/components/schemas/AdminCreateFulfillmentLabel'
     AdminCreateFulfillmentItem:
       type: object
       description: An item to fulfill.
@@ -385,98 +395,113 @@ components:
           title: inventory_item_id
           description: The ID of the inventory item associated with the underlying variant.
       x-schemaName: AdminCreateFulfillmentItem
-    AdminFulfillmentProvider:
+    AdminFulfillmentResponse:
       type: object
-      description: The fulfillment provider's details.
-      x-schemaName: AdminFulfillmentProvider
+      description: A fulfillment's details.
+      x-schemaName: AdminFulfillmentResponse
+      required:
+      - fulfillment
+      properties:
+        fulfillment:
+          $ref: '#/components/schemas/AdminFulfillment'
+    AdminFulfillmentItem:
+      type: object
+      description: The details of a fulfillment's item.
+      x-schemaName: AdminFulfillmentItem
       required:
       - id
-      - is_enabled
+      - title
+      - quantity
+      - sku
+      - barcode
+      - line_item_id
+      - inventory_item_id
+      - fulfillment_id
+      - created_at
+      - updated_at
+      - deleted_at
       properties:
         id:
           type: string
           title: id
-          description: The provider's ID.
-        is_enabled:
-          type: boolean
-          title: is_enabled
-          description: The provider's is enabled.
-    AdminFulfillmentDeliveryAddress:
+          description: The item's ID.
+        title:
+          type: string
+          title: title
+          description: The item's title.
+        quantity:
+          type: number
+          title: quantity
+          description: The item's quantity to be fulfilled.
+        sku:
+          type: string
+          title: sku
+          description: The item's SKU.
+        barcode:
+          type: string
+          title: barcode
+          description: The item's barcode.
+        line_item_id:
+          type: string
+          title: line_item_id
+          description: The ID of the order's line item to be fulfilled.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The ID of the inventory item of the underlying product variant.
+        fulfillment_id:
+          type: string
+          title: fulfillment_id
+          description: The ID of the fulfillment the item belongs to.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the item was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the item was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the item was deleted.
+    Error:
+      title: Response Error
       type: object
-      description: The address to deliver the items to.
       properties:
-        first_name:
+        code:
           type: string
-          title: first_name
-          description: The customer's first name.
-        last_name:
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
           type: string
-          title: last_name
-          description: The customer's last name.
-        phone:
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
           type: string
-          title: phone
-          description: The customer's phone.
-        company:
-          type: string
-          title: company
-          description: The delivery address's company.
-        address_1:
-          type: string
-          title: address_1
-          description: The delivery address's first line.
-        address_2:
-          type: string
-          title: address_2
-          description: The delivery address's second line.
-        city:
-          type: string
-          title: city
-          description: The delivery address's city.
-        country_code:
-          type: string
-          title: country_code
-          description: The delivery address's country code.
-        province:
-          type: string
-          title: province
-          description: The delivery address's ISO 3166-2 province code. Must be lower-case.
-          example: us-ca
-          externalDocs:
-            url: https://en.wikipedia.org/wiki/ISO_3166-2
-            description: Learn more about ISO 3166-2
-        postal_code:
-          type: string
-          title: postal_code
-          description: The delivery address's postal code.
-        metadata:
-          type: object
-          description: The delivery address's metadata, used to store custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-      x-schemaName: AdminFulfillmentDeliveryAddress
-    AdminCreateFulfillmentLabel:
-      type: object
-      description: Details of the fulfillment label to create.
-      required:
-      - tracking_number
-      - tracking_url
-      - label_url
-      properties:
-        tracking_number:
-          type: string
-          title: tracking_number
-          description: The label's tracking number.
-        tracking_url:
-          type: string
-          title: tracking_url
-          description: The label's tracking URL.
-        label_url:
-          type: string
-          title: label_url
-          description: The label's URL.
-      x-schemaName: AdminCreateFulfillmentLabel
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     AdminFulfillment:
       type: object
       description: The fulfillment's details.
@@ -572,137 +597,24 @@ components:
           format: date-time
           title: deleted_at
           description: The date the fulfillment was deleted at.
-    AdminCreateFulfillment:
+    AdminFulfillmentAddress:
       type: object
-      description: The filfillment's details.
-      x-schemaName: AdminCreateFulfillment
-      required:
-      - location_id
-      - provider_id
-      - delivery_address
-      - items
-      - labels
-      - order_id
-      properties:
-        location_id:
-          type: string
-          title: location_id
-          description: The ID of the location the items are fulfilled from.
-        provider_id:
-          type: string
-          title: provider_id
-          description: The ID of the provider handling this fulfillment.
-        delivery_address:
-          $ref: '#/components/schemas/AdminFulfillmentDeliveryAddress'
-        items:
-          type: array
-          description: The items to fulfill.
-          items:
-            $ref: '#/components/schemas/AdminCreateFulfillmentItem'
-        labels:
-          type: array
-          description: The labels for the fulfillment's shipments.
-          items:
-            $ref: '#/components/schemas/AdminCreateFulfillmentLabel'
-        order_id:
-          type: string
-          title: order_id
-          description: The ID of the order this fulfillment is created for.
-        shipping_option_id:
-          type: string
-          title: shipping_option_id
-          description: The ID of the shipping option used in the order.
-        data:
-          type: object
-          description: Any data useful for the fulfillment provider to handle the fulfillment.
-          externalDocs:
-            url: https://docs.medusajs.com/resources/commerce-modules/fulfillment/shipping-option#data-property
-            description: Learn more about the data property.
-        packed_at:
-          type: string
-          title: packed_at
-          description: The date and time the fulfillment was packed.
-          format: date-time
-        shipped_at:
-          type: string
-          title: shipped_at
-          description: The date and time the fulfillment was shipped.
-          format: date-time
-        delivered_at:
-          type: string
-          title: delivered_at
-          description: The date and time the fulfillment was delivered.
-          format: date-time
-        canceled_at:
-          type: string
-          title: canceled_at
-          description: The date and time the fulfillment was canceled.
-          format: date-time
-        metadata:
-          type: object
-          description: The fulfillment's metadata, used to store custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-    AdminCreateFulfillmentShipment:
-      type: object
-      description: Details of the shipment to create for a fulfillment.
-      x-schemaName: AdminCreateFulfillmentShipment
-      required:
-      - labels
-      properties:
-        labels:
-          type: array
-          description: The shipment's labels.
-          items:
-            $ref: '#/components/schemas/AdminCreateFulfillmentLabel'
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminFulfillmentItem:
-      type: object
-      description: The details of a fulfillment's item.
-      x-schemaName: AdminFulfillmentItem
+      description: An address's details.
+      x-schemaName: AdminFulfillmentAddress
       required:
       - id
-      - title
-      - quantity
-      - sku
-      - barcode
-      - line_item_id
-      - inventory_item_id
       - fulfillment_id
+      - company
+      - first_name
+      - last_name
+      - address_1
+      - address_2
+      - city
+      - country_code
+      - province
+      - postal_code
+      - phone
+      - metadata
       - created_at
       - updated_at
       - deleted_at
@@ -710,60 +622,154 @@ components:
         id:
           type: string
           title: id
-          description: The item's ID.
-        title:
-          type: string
-          title: title
-          description: The item's title.
-        quantity:
-          type: number
-          title: quantity
-          description: The item's quantity to be fulfilled.
-        sku:
-          type: string
-          title: sku
-          description: The item's SKU.
-        barcode:
-          type: string
-          title: barcode
-          description: The item's barcode.
-        line_item_id:
-          type: string
-          title: line_item_id
-          description: The ID of the order's line item to be fulfilled.
-        inventory_item_id:
-          type: string
-          title: inventory_item_id
-          description: The ID of the inventory item of the underlying product variant.
+          description: The address's ID.
         fulfillment_id:
           type: string
           title: fulfillment_id
-          description: The ID of the fulfillment the item belongs to.
+          description: The ID of the fulfillment that the address belongs to.
+        company:
+          type: string
+          title: company
+          description: The address's company.
+        first_name:
+          type: string
+          title: first_name
+          description: The address's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The address's last name.
+        address_1:
+          type: string
+          title: address_1
+          description: The address's first line.
+        address_2:
+          type: string
+          title: address_2
+          description: The address's second line.
+        city:
+          type: string
+          title: city
+          description: The address's city.
+        country_code:
+          type: string
+          title: country_code
+          description: The address's country code.
+        province:
+          type: string
+          title: province
+          description: The address's lower-case ISO 3166-2 province code.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
+        postal_code:
+          type: string
+          title: postal_code
+          description: The address's postal code.
+        phone:
+          type: string
+          title: phone
+          description: The address's phone.
+        metadata:
+          type: object
+          description: The address's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
         created_at:
           type: string
           format: date-time
           title: created_at
-          description: The date the item was created.
+          description: The date the address was created.
         updated_at:
           type: string
           format: date-time
           title: updated_at
-          description: The date the item was updated.
+          description: The date the address was updated.
         deleted_at:
           type: string
           format: date-time
           title: deleted_at
-          description: The date the item was deleted.
-    AdminFulfillmentResponse:
+          description: The date the address was deleted.
+    AdminFulfillmentDeliveryAddress:
       type: object
-      description: A fulfillment's details.
-      x-schemaName: AdminFulfillmentResponse
-      required:
-      - fulfillment
+      description: The address to deliver the items to.
       properties:
-        fulfillment:
-          $ref: '#/components/schemas/AdminFulfillment'
+        first_name:
+          type: string
+          title: first_name
+          description: The customer's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The customer's last name.
+        phone:
+          type: string
+          title: phone
+          description: The customer's phone.
+        company:
+          type: string
+          title: company
+          description: The delivery address's company.
+        address_1:
+          type: string
+          title: address_1
+          description: The delivery address's first line.
+        address_2:
+          type: string
+          title: address_2
+          description: The delivery address's second line.
+        city:
+          type: string
+          title: city
+          description: The delivery address's city.
+        country_code:
+          type: string
+          title: country_code
+          description: The delivery address's country code.
+        province:
+          type: string
+          title: province
+          description: The delivery address's ISO 3166-2 province code. Must be lower-case.
+          example: us-ca
+          externalDocs:
+            url: https://en.wikipedia.org/wiki/ISO_3166-2
+            description: Learn more about ISO 3166-2
+        postal_code:
+          type: string
+          title: postal_code
+          description: The delivery address's postal code.
+        metadata:
+          type: object
+          description: The delivery address's metadata, used to store custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+      x-schemaName: AdminFulfillmentDeliveryAddress
+    AdminFulfillmentProvider:
+      type: object
+      description: The fulfillment provider's details.
+      x-schemaName: AdminFulfillmentProvider
+      required:
+      - id
+      - is_enabled
+      properties:
+        id:
+          type: string
+          title: id
+          description: The provider's ID.
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: The provider's is enabled.
   examples:
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
     not_allowed_error:
       summary: Not Allowed Error
       value:
@@ -790,12 +796,6 @@ components:
       value:
         message: cart.total must be defined
         type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
   responses:
     unauthorized:
       description: User is not authorized. Must log in first
@@ -820,6 +820,25 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
     400_error:
       description: Client Error
       content:
@@ -831,15 +850,6 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
     invalid_state_error:
       description: Invalid State Error
       content:
@@ -850,16 +860,6 @@ components:
             code: unknown_error
             message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
             type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

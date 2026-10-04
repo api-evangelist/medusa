@@ -1933,67 +1933,40 @@ paths:
         deprecated: false
         since: 2.18.0
 components:
+  examples:
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
   schemas:
-    AdminBatchUpdateInventoryItemLocationLevels:
-      type: object
-      description: The inventory level's details.
-      properties:
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The inventory level's stocked quantity.
-        incoming_quantity:
-          type: number
-          title: incoming_quantity
-          description: The inventory level's incoming quantity.
-        location_id:
-          type: string
-          title: location_id
-          description: The associated stock location's ID.
-        id:
-          type: string
-          title: id
-          description: The ID of the location level.
-      required:
-      - location_id
-      x-schemaName: AdminBatchUpdateInventoryItemLocationLevels
-    AdminExportInventoryItemResponse:
-      type: object
-      description: The response for initiating an export inventory items workflow.
-      x-schemaName: AdminExportInventoryItemResponse
-      required:
-      - transaction_id
-      properties:
-        transaction_id:
-          type: string
-          title: transaction_id
-          description: The ID of the workflow execution's transaction. Use it to check the status of the export by sending a GET request to `/admin/workflows-executions/export-inventory-items/:transaction-id`
-    AdminBatchInventoryItemLocationLevels:
-      type: object
-      description: The inventory levels to create, update, or delete.
-      properties:
-        create:
-          type: array
-          description: The inventory levels to create.
-          items:
-            $ref: '#/components/schemas/AdminBatchCreateInventoryItemLocationLevels'
-        update:
-          type: array
-          description: The inventory levels to update.
-          items:
-            $ref: '#/components/schemas/AdminBatchUpdateInventoryItemLocationLevels'
-        delete:
-          type: array
-          description: The inventory levels to delete.
-          items:
-            type: string
-            title: delete
-            description: The ID of the inventory level to delete.
-        force:
-          type: boolean
-          title: force
-          description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
-      x-schemaName: AdminBatchInventoryItemLocationLevels
     InventoryLevel:
       type: object
       description: The inventory level's details
@@ -2109,6 +2082,106 @@ components:
           description: The inventory item's location levels.
           items:
             $ref: '#/components/schemas/AdminBatchCreateInventoryItemLocationLevels'
+    AdminBatchInventoryItemsLocationLevels:
+      type: object
+      description: The inventory levels to manage.
+      properties:
+        create:
+          type: array
+          description: The inventory levels to create.
+          items:
+            $ref: '#/components/schemas/AdminBatchCreateInventoryItemsLocationLevels'
+        update:
+          type: array
+          description: The inventory levels to update.
+          items:
+            $ref: '#/components/schemas/AdminBatchUpdateInventoryItemsLocationLevels'
+        delete:
+          type: array
+          description: The IDs of the inventory levels to delete.
+          items:
+            type: string
+            title: delete
+            description: The ID of the inventory level to delete.
+        force:
+          type: boolean
+          title: force
+          description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
+      x-schemaName: AdminBatchInventoryItemsLocationLevels
+    AdminBatchInventoryItemsLocationLevelsResponse:
+      type: object
+      description: The result of managing inventory levels.
+      x-schemaName: AdminBatchInventoryItemsLocationLevelsResponse
+      properties:
+        created:
+          type: array
+          description: The created inventory levels.
+          items:
+            $ref: '#/components/schemas/AdminInventoryLevel'
+        updated:
+          type: array
+          description: The updated inventory levels.
+          items:
+            $ref: '#/components/schemas/AdminInventoryLevel'
+        deleted:
+          type: array
+          description: The IDs of deleted inventory levels.
+          items:
+            type: string
+            title: deleted
+            description: The ID of a deleted inventory level.
+    AdminBatchUpdateInventoryItemsLocationLevels:
+      type: object
+      description: The details of an inventory level to update.
+      required:
+      - location_id
+      - inventory_item_id
+      properties:
+        location_id:
+          type: string
+          title: location_id
+          description: The ID of the associated stock location.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The ID of the associated inventory item.
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The incoming quantity to be added to stock.
+        id:
+          type: string
+          title: id
+          description: The update's ID.
+      x-schemaName: AdminBatchUpdateInventoryItemsLocationLevels
+    AdminExportInventoryItemResponse:
+      type: object
+      description: The response for initiating an export inventory items workflow.
+      x-schemaName: AdminExportInventoryItemResponse
+      required:
+      - transaction_id
+      properties:
+        transaction_id:
+          type: string
+          title: transaction_id
+          description: The ID of the workflow execution's transaction. Use it to check the status of the export by sending a GET request to `/admin/workflows-executions/export-inventory-items/:transaction-id`
+    AdminUpdateInventoryLevel:
+      type: object
+      description: The properties to update in the inventory level.
+      properties:
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory level's stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The inventory level's incoming quantity.
+      x-schemaName: AdminUpdateInventoryLevel
     AdminInventoryItemResponse:
       type: object
       description: The inventory item's details.
@@ -2118,6 +2191,63 @@ components:
       properties:
         inventory_item:
           $ref: '#/components/schemas/AdminInventoryItem'
+    AdminBatchUpdateInventoryItemLocationLevels:
+      type: object
+      description: The inventory level's details.
+      properties:
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory level's stocked quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The inventory level's incoming quantity.
+        location_id:
+          type: string
+          title: location_id
+          description: The associated stock location's ID.
+        id:
+          type: string
+          title: id
+          description: The ID of the location level.
+      required:
+      - location_id
+      x-schemaName: AdminBatchUpdateInventoryItemLocationLevels
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     AdminUpdateInventoryItem:
       type: object
       description: The properties to update in the inventory item.
@@ -2282,116 +2412,6 @@ components:
           title: incoming_quantity
           description: The inventory level's incoming quantity.
       x-schemaName: AdminBatchCreateInventoryItemLocationLevels
-    AdminBatchInventoryItemsLocationLevelsResponse:
-      type: object
-      description: The result of managing inventory levels.
-      x-schemaName: AdminBatchInventoryItemsLocationLevelsResponse
-      properties:
-        created:
-          type: array
-          description: The created inventory levels.
-          items:
-            $ref: '#/components/schemas/AdminInventoryLevel'
-        updated:
-          type: array
-          description: The updated inventory levels.
-          items:
-            $ref: '#/components/schemas/AdminInventoryLevel'
-        deleted:
-          type: array
-          description: The IDs of deleted inventory levels.
-          items:
-            type: string
-            title: deleted
-            description: The ID of a deleted inventory level.
-    AdminBatchInventoryItemsLocationLevels:
-      type: object
-      description: The inventory levels to manage.
-      properties:
-        create:
-          type: array
-          description: The inventory levels to create.
-          items:
-            $ref: '#/components/schemas/AdminBatchCreateInventoryItemsLocationLevels'
-        update:
-          type: array
-          description: The inventory levels to update.
-          items:
-            $ref: '#/components/schemas/AdminBatchUpdateInventoryItemsLocationLevels'
-        delete:
-          type: array
-          description: The IDs of the inventory levels to delete.
-          items:
-            type: string
-            title: delete
-            description: The ID of the inventory level to delete.
-        force:
-          type: boolean
-          title: force
-          description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
-      x-schemaName: AdminBatchInventoryItemsLocationLevels
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminBatchUpdateInventoryItemsLocationLevels:
-      type: object
-      description: The details of an inventory level to update.
-      required:
-      - location_id
-      - inventory_item_id
-      properties:
-        location_id:
-          type: string
-          title: location_id
-          description: The ID of the associated stock location.
-        inventory_item_id:
-          type: string
-          title: inventory_item_id
-          description: The ID of the associated inventory item.
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The stocked quantity.
-        incoming_quantity:
-          type: number
-          title: incoming_quantity
-          description: The incoming quantity to be added to stock.
-        id:
-          type: string
-          title: id
-          description: The update's ID.
-      x-schemaName: AdminBatchUpdateInventoryItemsLocationLevels
     AdminBatchCreateInventoryItemsLocationLevels:
       type: object
       description: The details of an inventory level to create.
@@ -2416,19 +2436,32 @@ components:
           title: incoming_quantity
           description: The incoming quantity to be added to stock.
       x-schemaName: AdminBatchCreateInventoryItemsLocationLevels
-    AdminUpdateInventoryLevel:
+    AdminBatchInventoryItemLocationLevels:
       type: object
-      description: The properties to update in the inventory level.
+      description: The inventory levels to create, update, or delete.
       properties:
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The inventory level's stocked quantity.
-        incoming_quantity:
-          type: number
-          title: incoming_quantity
-          description: The inventory level's incoming quantity.
-      x-schemaName: AdminUpdateInventoryLevel
+        create:
+          type: array
+          description: The inventory levels to create.
+          items:
+            $ref: '#/components/schemas/AdminBatchCreateInventoryItemLocationLevels'
+        update:
+          type: array
+          description: The inventory levels to update.
+          items:
+            $ref: '#/components/schemas/AdminBatchUpdateInventoryItemLocationLevels'
+        delete:
+          type: array
+          description: The inventory levels to delete.
+          items:
+            type: string
+            title: delete
+            description: The ID of the inventory level to delete.
+        force:
+          type: boolean
+          title: force
+          description: Whether to delete specified inventory levels even if they have a non-zero stocked quantity.
+      x-schemaName: AdminBatchInventoryItemLocationLevels
     AdminInventoryLevel:
       type: object
       description: The location level's location levels.
@@ -2497,39 +2530,6 @@ components:
           type: number
           title: available_quantity
           description: The location level's available quantity.
-  examples:
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
   responses:
     unauthorized:
       description: User is not authorized. Must log in first
@@ -2554,6 +2554,25 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
     400_error:
       description: Client Error
       content:
@@ -2565,15 +2584,6 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
     invalid_state_error:
       description: Invalid State Error
       content:
@@ -2584,16 +2594,6 @@ components:
             code: unknown_error
             message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
             type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

@@ -407,6 +407,39 @@ paths:
       x-workflow: deletePricePreferencesWorkflow
       x-events: []
 components:
+  examples:
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
   schemas:
     AdminPricePreferenceDeleteResponse:
       type: object
@@ -430,6 +463,15 @@ components:
           type: boolean
           title: deleted
           description: Whether the price preference was deleted.
+    AdminPricePreferenceResponse:
+      type: object
+      description: The price preference's details.
+      x-schemaName: AdminPricePreferenceResponse
+      required:
+      - price_preference
+      properties:
+        price_preference:
+          $ref: '#/components/schemas/AdminPricePreference'
     AdminUpdatePricePreference:
       type: object
       description: The details to update in the price preference.
@@ -449,6 +491,38 @@ components:
           type: boolean
           title: is_tax_inclusive
           description: Whether prices are tax inclusive for this price preference.
+    AdminPricePreferenceListResponse:
+      type: object
+      description: The paginated list of price preferences.
+      x-schemaName: AdminPricePreferenceListResponse
+      required:
+      - limit
+      - offset
+      - count
+      - price_preferences
+      properties:
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        count:
+          type: number
+          title: count
+          description: The total count of items.
+        price_preferences:
+          type: array
+          description: The list of price preferences.
+          items:
+            $ref: '#/components/schemas/AdminPricePreference'
+        estimate_count:
+          type: number
+          title: estimate_count
+          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
+          x-featureFlag: index_engine
     AdminPricePreference:
       type: object
       description: The price preference's details.
@@ -495,37 +569,6 @@ components:
           format: date-time
           title: deleted_at
           description: The date the price preference was deleted.
-    AdminPricePreferenceResponse:
-      type: object
-      description: The price preference's details.
-      x-schemaName: AdminPricePreferenceResponse
-      required:
-      - price_preference
-      properties:
-        price_preference:
-          $ref: '#/components/schemas/AdminPricePreference'
-    AdminCreatePricePreference:
-      type: object
-      description: The price preference's details.
-      x-schemaName: AdminCreatePricePreference
-      properties:
-        attribute:
-          type: string
-          title: attribute
-          description: The name of the attribute the price preference applies on.
-          example: currency_code
-        value:
-          type: string
-          title: value
-          description: The attribute's value.
-          example: usd
-        is_tax_inclusive:
-          type: boolean
-          title: is_tax_inclusive
-          description: Whether the price is tax inclusive if the value of the specified attribute matches the specified value.
-      required:
-      - value
-      - attribute
     Error:
       title: Response Error
       type: object
@@ -560,71 +603,28 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
-    AdminPricePreferenceListResponse:
+    AdminCreatePricePreference:
       type: object
-      description: The paginated list of price preferences.
-      x-schemaName: AdminPricePreferenceListResponse
-      required:
-      - limit
-      - offset
-      - count
-      - price_preferences
+      description: The price preference's details.
+      x-schemaName: AdminCreatePricePreference
       properties:
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the returned items.
-        count:
-          type: number
-          title: count
-          description: The total count of items.
-        price_preferences:
-          type: array
-          description: The list of price preferences.
-          items:
-            $ref: '#/components/schemas/AdminPricePreference'
-        estimate_count:
-          type: number
-          title: estimate_count
-          description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
-          x-featureFlag: index_engine
-  examples:
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
+        attribute:
+          type: string
+          title: attribute
+          description: The name of the attribute the price preference applies on.
+          example: currency_code
+        value:
+          type: string
+          title: value
+          description: The attribute's value.
+          example: usd
+        is_tax_inclusive:
+          type: boolean
+          title: is_tax_inclusive
+          description: Whether the price is tax inclusive if the value of the specified attribute matches the specified value.
+      required:
+      - value
+      - attribute
   responses:
     unauthorized:
       description: User is not authorized. Must log in first
@@ -649,6 +649,25 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
     400_error:
       description: Client Error
       content:
@@ -660,15 +679,6 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
     invalid_state_error:
       description: Invalid State Error
       content:
@@ -679,16 +689,6 @@ components:
             code: unknown_error
             message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
             type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
   securitySchemes:
     api_token:
       type: http

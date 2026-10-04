@@ -791,7 +791,7 @@ paths:
     - url: https://api.medusajs.com
   /store/return-reasons:
     get:
-      operationId: GetReturnReasons
+      operationId: getStoreReturnReasons
       summary: List Return Reasons
       description: Retrieve a list of return reasons. The return reasons can be sorted or paginated.
       x-authenticated: false
@@ -926,12 +926,14 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
+      x-operation-id-source: normalized
+      x-operation-id-original: GetReturnReasons
     servers:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
   /store/return-reasons/{id}:
     get:
-      operationId: GetReturnReasonsId
+      operationId: getStoreReturnReasonsById
       summary: Get a Return Reason
       description: Retrieve a return reason by its ID. You can expand the return reason's relations or select the fields that should be returned.
       x-authenticated: false
@@ -1007,11 +1009,22 @@ paths:
           $ref: '#/components/responses/invalid_request_error'
         '500':
           $ref: '#/components/responses/500_error'
+      x-operation-id-source: normalized
+      x-operation-id-original: GetReturnReasonsId
     servers:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
 components:
   schemas:
+    AdminReturnReasonResponse:
+      type: object
+      description: The return reason's details.
+      x-schemaName: AdminReturnReasonResponse
+      required:
+      - return_reason
+      properties:
+        return_reason:
+          $ref: '#/components/schemas/AdminReturnReason'
     AdminReturnReasonListResponse:
       type: object
       description: The paginated list of return reasons.
@@ -1044,36 +1057,88 @@ components:
           title: estimate_count
           description: The estimated count retrieved from the PostgreSQL query planner, which may be inaccurate.
           x-featureFlag: index_engine
-    AdminCreateReturnReason:
+    AdminReturnReasonDeleteResponse:
       type: object
-      description: The details of the return reason to create.
-      x-schemaName: AdminCreateReturnReason
+      description: The details of the return reason deletion.
+      x-schemaName: AdminReturnReasonDeleteResponse
       required:
-      - value
-      - label
+      - id
+      - object
+      - deleted
       properties:
-        value:
+        id:
           type: string
-          title: value
-          description: The return reason's value.
+          title: id
+          description: The return reason's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: return_reason
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the return reason was deleted.
+    AdminUpdateReturnReason:
+      type: object
+      description: The details to update in a return reason.
+      x-schemaName: AdminUpdateReturnReason
+      properties:
         label:
           type: string
           title: label
           description: The return reason's label.
+        value:
+          type: string
+          title: value
+          description: The return reason's value.
         description:
           type: string
           title: description
           description: The return reason's description.
-        parent_return_reason_id:
-          type: string
-          title: parent_return_reason_id
-          description: The ID of the parent return reason.
         metadata:
           type: object
           description: The return reason's metadata, can hold custom key-value pairs.
           externalDocs:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
+      required:
+      - value
+      - label
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     AdminReturnReason:
       type: object
       description: The return reason's details.
@@ -1117,97 +1182,36 @@ components:
           format: date-time
           title: updated_at
           description: The date the return reason was updated.
-    AdminUpdateReturnReason:
+    AdminCreateReturnReason:
       type: object
-      description: The details to update in a return reason.
-      x-schemaName: AdminUpdateReturnReason
+      description: The details of the return reason to create.
+      x-schemaName: AdminCreateReturnReason
+      required:
+      - value
+      - label
       properties:
-        label:
-          type: string
-          title: label
-          description: The return reason's label.
         value:
           type: string
           title: value
           description: The return reason's value.
+        label:
+          type: string
+          title: label
+          description: The return reason's label.
         description:
           type: string
           title: description
           description: The return reason's description.
+        parent_return_reason_id:
+          type: string
+          title: parent_return_reason_id
+          description: The ID of the parent return reason.
         metadata:
           type: object
           description: The return reason's metadata, can hold custom key-value pairs.
           externalDocs:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
-      required:
-      - value
-      - label
-    AdminReturnReasonDeleteResponse:
-      type: object
-      description: The details of the return reason deletion.
-      x-schemaName: AdminReturnReasonDeleteResponse
-      required:
-      - id
-      - object
-      - deleted
-      properties:
-        id:
-          type: string
-          title: id
-          description: The return reason's ID.
-        object:
-          type: string
-          title: object
-          description: The name of the deleted object.
-          default: return_reason
-        deleted:
-          type: boolean
-          title: deleted
-          description: Whether the return reason was deleted.
-    AdminReturnReasonResponse:
-      type: object
-      description: The return reason's details.
-      x-schemaName: AdminReturnReasonResponse
-      required:
-      - return_reason
-      properties:
-        return_reason:
-          $ref: '#/components/schemas/AdminReturnReason'
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
     StoreReturnReason:
       type: object
       description: The return reason's details.
@@ -1261,11 +1265,22 @@ components:
         return_reason:
           $ref: '#/components/schemas/StoreReturnReason'
   examples:
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
     not_allowed_error:
       summary: Not Allowed Error
       value:
         message: Discount must be set to dynamic
         type: not_allowed
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
     invalid_data_error:
       summary: Invalid Data Error
       value:
@@ -1282,26 +1297,7 @@ components:
         code: unknown_error
         message: An unknown error occurred.
         type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
   responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
     500_error:
       description: Server Error
       content:
@@ -1317,6 +1313,25 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
     400_error:
       description: Client Error
       content:
@@ -1328,15 +1343,6 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
     invalid_state_error:
       description: Invalid State Error
       content:
@@ -1347,16 +1353,14 @@ components:
             code: unknown_error
             message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
             type: QueryRunnerAlreadyReleasedError
-    invalid_request_error:
-      description: Invalid Request Error
+    unauthorized:
+      description: User is not authorized. Must log in first
       content:
-        application/json:
+        text/plain:
           schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
+            type: string
+            default: Unauthorized
+            example: Unauthorized
   securitySchemes:
     api_token:
       type: http
