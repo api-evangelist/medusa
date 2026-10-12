@@ -1,0 +1,16 @@
+generated: '2026-10-12'
+method: none
+source:
+- https://zapier.com/apps/medusa/integrations
+- https://n8n.io/integrations/medusa/
+- https://composio.dev/toolkits/medusa
+- https://monid.ai/tools/medusa
+checked:
+- https://composio.dev/toolkits/medusa
+- https://monid.ai/tools/medusa
+- https://n8n.io/integrations/medusa/
+- https://zapier.com/apps/medusa/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []
