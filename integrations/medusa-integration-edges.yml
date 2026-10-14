@@ -1,5 +1,5 @@
 generated: '2026-10-12'
-method: none
+method: searched
 source:
 - https://zapier.com/apps/medusa/integrations
 - https://n8n.io/integrations/medusa/
@@ -9,8 +9,41 @@ checked:
 - https://composio.dev/toolkits/medusa
 - https://monid.ai/tools/medusa
 - https://n8n.io/integrations/medusa/
+- https://registry.modelcontextprotocol.io/v0/servers
 - https://zapier.com/apps/medusa/integrations
 summary: null
 marketplace_apps: []
-edges: []
+edges:
+- partner_name: MCP Registry
+  partner: mcp
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://registry.modelcontextprotocol.io/v0/servers?search=com.medusajs
+  contract_reference:
+    register: registry.modelcontextprotocol.io
+    spec_file: null
+    role: mcp-server-listing
+    registered_name: com.medusajs/cloud
+    register_id: com.medusajs/cloud
+    detected_by: sweep-agent-tools.py
+    detected: '2026-10-14'
+  mcp_registry:
+    servers:
+    - com.medusajs/cloud
+    - com.medusajs/medusa-mcp
+    hosted_remote: 2
+    local_package: 0
+    transports:
+      streamable-http: 2
+    auth_declared: 0
+    catalog_declared: true
+    namespace_domains:
+    - medusajs.com
+  matched_by:
+  - namespace-domain
+  detected_by: sweep-agent-tools.py
+  first_seen: '2026-10-14'
 templates: []
