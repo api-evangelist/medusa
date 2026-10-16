@@ -595,62 +595,71 @@ paths:
       x-since: 2.12.3
       x-featureFlag: translation
 components:
-  examples:
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-  schemas:
-    AdminBatchTranslationSettings:
-      type: object
-      description: The translation settings to create, update, or delete in batch.
-      x-schemaName: AdminBatchTranslationSettings
-      properties:
-        create:
-          type: array
-          description: The translation settings to create.
-          items:
-            $ref: '#/components/schemas/AdminCreateTranslationSettings'
-        update:
-          type: array
-          description: The translation settings to update.
-          items:
-            $ref: '#/components/schemas/AdminUpdateTranslationSettings'
-        delete:
-          type: array
-          description: The translation settings to delete.
-          items:
+  responses:
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
             type: string
-            title: delete
-            description: The IDs of the translation settings to delete.
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+  schemas:
     AdminTranslation:
       type: object
       description: The translation's details.
@@ -705,10 +714,35 @@ components:
           format: date-time
           title: deleted_at
           description: The date that the translation was deleted.
-    AdminBatchTranslationSettingsResponse:
+    AdminCreateTranslationSettings:
       type: object
-      description: The result of managing the translation settings in batch.
-      x-schemaName: AdminBatchTranslationSettingsResponse
+      description: The translation settings to create.
+      x-schemaName: AdminCreateTranslationSettings
+      required:
+      - entity_type
+      - fields
+      properties:
+        entity_type:
+          type: string
+          title: entity_type
+          description: The entity type to create the translation settings for.
+          example: product
+        fields:
+          type: array
+          description: The fields to support translations for.
+          items:
+            type: string
+            title: fields
+            description: A field to support translations for.
+            example: title
+        is_active:
+          type: boolean
+          title: is_active
+          description: Whether translations are active for the given entity type.
+    AdminTranslationsBatchResponse:
+      type: object
+      description: The batch response for managing translations.
+      x-schemaName: AdminTranslationsBatchResponse
       required:
       - created
       - updated
@@ -716,17 +750,17 @@ components:
       properties:
         created:
           type: array
-          description: The created translation settings.
+          description: The created translations.
           items:
-            $ref: '#/components/schemas/AdminTranslationSettings'
+            $ref: '#/components/schemas/AdminTranslation'
         updated:
           type: array
-          description: The updated translation settings.
+          description: The updated translations.
           items:
-            $ref: '#/components/schemas/AdminTranslationSettings'
+            $ref: '#/components/schemas/AdminTranslation'
         deleted:
           type: object
-          description: The deletion result.
+          description: Summary of the deleted translations.
           required:
           - ids
           - object
@@ -734,19 +768,20 @@ components:
           properties:
             ids:
               type: array
-              description: The IDs of the deleted translation settings.
+              description: The IDs of the deleted translations.
               items:
                 type: string
                 title: ids
-                description: The ID of a deleted translation settings.
+                description: A translation ID.
             object:
               type: string
               title: object
               description: The type of object deleted.
+              default: translation
             deleted:
               type: boolean
               title: deleted
-              description: Whether the deletion was successful.
+              description: Whether the translations were successfully deleted.
     AdminCreateTranslation:
       type: object
       description: The translation's details.
@@ -778,6 +813,16 @@ components:
             title: Chaussures
             description: Des chaussures élégantes.
       x-schemaName: AdminCreateTranslation
+    AdminTranslationSettingsResponse:
+      type: object
+      description: The translation settings' details.
+      x-schemaName: AdminTranslationSettingsResponse
+      required:
+      - translation_settings
+      properties:
+        translation_settings:
+          type: object
+          description: The translation settings details.
     AdminUpdateTranslationSettings:
       type: object
       description: The translation settings to update.
@@ -852,137 +897,6 @@ components:
           type: boolean
           title: is_active
           description: Whether translations are active for the given entity type.
-    AdminUpdateTranslation:
-      type: object
-      description: The data for updating a translation.
-      required:
-      - id
-      properties:
-        id:
-          type: string
-          title: id
-          description: The ID of the translation to update.
-        reference:
-          type: string
-          title: reference
-          description: The resource that the translation belongs to.
-          example: product
-        reference_id:
-          type: string
-          title: reference_id
-          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
-          example: prod_123
-        locale_code:
-          type: string
-          title: locale_code
-          description: The translation's locale code in BCP 47 format.
-          example: fr-FR
-        translations:
-          type: object
-          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
-          example:
-            title: Chaussures Modifiées
-            description: Des chaussures élégantes et modifiées.
-      x-schemaName: AdminUpdateTranslation
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminTranslationEntitiesResponse:
-      type: object
-      description: The list of translatable entities.
-      x-schemaName: AdminTranslationEntitiesResponse
-      required:
-      - data
-      - count
-      - offset
-      - limit
-      properties:
-        data:
-          type: array
-          description: The list of translatable entities.
-          items:
-            type: object
-            required:
-            - id
-            - translations
-            properties:
-              id:
-                type: string
-                title: id
-                description: The entity's ID.
-              translations:
-                type: array
-                description: The entity's translations.
-                items:
-                  $ref: '#/components/schemas/AdminTranslation'
-        count:
-          type: number
-          title: count
-          description: The total number of translatable entities.
-        offset:
-          type: number
-          title: offset
-          description: The number of items skipped before retrieving the returned items.
-        limit:
-          type: number
-          title: limit
-          description: The maximum number of items returned in the response.
-    AdminCreateTranslationSettings:
-      type: object
-      description: The translation settings to create.
-      x-schemaName: AdminCreateTranslationSettings
-      required:
-      - entity_type
-      - fields
-      properties:
-        entity_type:
-          type: string
-          title: entity_type
-          description: The entity type to create the translation settings for.
-          example: product
-        fields:
-          type: array
-          description: The fields to support translations for.
-          items:
-            type: string
-            title: fields
-            description: A field to support translations for.
-            example: title
-        is_active:
-          type: boolean
-          title: is_active
-          description: Whether translations are active for the given entity type.
     AdminTranslationStatisticsResponse:
       type: object
       description: The translation statistics details.
@@ -1050,20 +964,98 @@ components:
                 type: number
                 title: missing
                 description: The number of fields that are yet to be translated across specified locales.
-    AdminTranslationSettingsResponse:
+    Error:
+      title: Response Error
       type: object
-      description: The translation settings' details.
-      x-schemaName: AdminTranslationSettingsResponse
-      required:
-      - translation_settings
       properties:
-        translation_settings:
-          type: object
-          description: The translation settings details.
-    AdminTranslationsBatchResponse:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminUpdateTranslation:
       type: object
-      description: The batch response for managing translations.
-      x-schemaName: AdminTranslationsBatchResponse
+      description: The data for updating a translation.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The ID of the translation to update.
+        reference:
+          type: string
+          title: reference
+          description: The resource that the translation belongs to.
+          example: product
+        reference_id:
+          type: string
+          title: reference_id
+          description: The ID of the resource that the translation belongs to. For example, the ID of a product.
+          example: prod_123
+        locale_code:
+          type: string
+          title: locale_code
+          description: The translation's locale code in BCP 47 format.
+          example: fr-FR
+        translations:
+          type: object
+          description: The translation key-value pairs. Each key is a field in the resource, and the value is the translated text.
+          example:
+            title: Chaussures Modifiées
+            description: Des chaussures élégantes et modifiées.
+      x-schemaName: AdminUpdateTranslation
+    AdminBatchTranslationSettings:
+      type: object
+      description: The translation settings to create, update, or delete in batch.
+      x-schemaName: AdminBatchTranslationSettings
+      properties:
+        create:
+          type: array
+          description: The translation settings to create.
+          items:
+            $ref: '#/components/schemas/AdminCreateTranslationSettings'
+        update:
+          type: array
+          description: The translation settings to update.
+          items:
+            $ref: '#/components/schemas/AdminUpdateTranslationSettings'
+        delete:
+          type: array
+          description: The translation settings to delete.
+          items:
+            type: string
+            title: delete
+            description: The IDs of the translation settings to delete.
+    AdminBatchTranslationSettingsResponse:
+      type: object
+      description: The result of managing the translation settings in batch.
+      x-schemaName: AdminBatchTranslationSettingsResponse
       required:
       - created
       - updated
@@ -1071,17 +1063,17 @@ components:
       properties:
         created:
           type: array
-          description: The created translations.
+          description: The created translation settings.
           items:
-            $ref: '#/components/schemas/AdminTranslation'
+            $ref: '#/components/schemas/AdminTranslationSettings'
         updated:
           type: array
-          description: The updated translations.
+          description: The updated translation settings.
           items:
-            $ref: '#/components/schemas/AdminTranslation'
+            $ref: '#/components/schemas/AdminTranslationSettings'
         deleted:
           type: object
-          description: Summary of the deleted translations.
+          description: The deletion result.
           required:
           - ids
           - object
@@ -1089,84 +1081,92 @@ components:
           properties:
             ids:
               type: array
-              description: The IDs of the deleted translations.
+              description: The IDs of the deleted translation settings.
               items:
                 type: string
                 title: ids
-                description: A translation ID.
+                description: The ID of a deleted translation settings.
             object:
               type: string
               title: object
               description: The type of object deleted.
-              default: translation
             deleted:
               type: boolean
               title: deleted
-              description: Whether the translations were successfully deleted.
-  responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+              description: Whether the deletion was successful.
+    AdminTranslationEntitiesResponse:
+      type: object
+      description: The list of translatable entities.
+      x-schemaName: AdminTranslationEntitiesResponse
+      required:
+      - data
+      - count
+      - offset
+      - limit
+      properties:
+        data:
+          type: array
+          description: The list of translatable entities.
+          items:
+            type: object
+            required:
+            - id
+            - translations
+            properties:
+              id:
+                type: string
+                title: id
+                description: The entity's ID.
+              translations:
+                type: array
+                description: The entity's translations.
+                items:
+                  $ref: '#/components/schemas/AdminTranslation'
+        count:
+          type: number
+          title: count
+          description: The total number of translatable entities.
+        offset:
+          type: number
+          title: offset
+          description: The number of items skipped before retrieving the returned items.
+        limit:
+          type: number
+          title: limit
+          description: The maximum number of items returned in the response.
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http

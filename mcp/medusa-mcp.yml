@@ -87,3 +87,18 @@ prompts:
 related:
   agent_skills: skills/_index.yml
   crosswalk: mcp/medusa-tool-crosswalk.yml
+rfc9728:
+  endpoint: https://docs.medusajs.com/mcp
+  metadata_url: https://docs.medusajs.com/.well-known/oauth-protected-resource
+  discovered_via: WWW-Authenticate resource_metadata on an anonymous POST initialize
+  fetched: '2026-09-25'
+  http_status: 200
+  content_type: application/json
+  document:
+    resource: https://docs.medusajs.com
+    authorization_servers:
+    - https://docs.medusajs.com
+    scopes_supported:
+    - openid
+    - email
+    - profile

@@ -769,6 +769,15 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
+    AdminCampaignResponse:
+      type: object
+      description: The campaign's details.
+      x-schemaName: AdminCampaignResponse
+      required:
+      - campaign
+      properties:
+        campaign:
+          $ref: '#/components/schemas/AdminCampaign'
     AdminBatchLink:
       type: object
       description: A batch operation to manage the associations between two entities.
@@ -788,15 +797,6 @@ components:
             title: remove
             description: The entity's ID.
       x-schemaName: AdminBatchLink
-    AdminCampaignResponse:
-      type: object
-      description: The campaign's details.
-      x-schemaName: AdminCampaignResponse
-      required:
-      - campaign
-      properties:
-        campaign:
-          $ref: '#/components/schemas/AdminCampaign'
     CampaignResponse:
       type: object
       description: The campaign's details.
@@ -870,39 +870,6 @@ components:
               type: number
               title: used
               description: The budget's used.
-  examples:
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
   responses:
     invalid_state_error:
       description: Invalid State Error
@@ -923,16 +890,6 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
     400_error:
       description: Client Error
       content:
@@ -944,6 +901,16 @@ components:
               $ref: '#/components/examples/not_allowed_error'
             invalid_data:
               $ref: '#/components/examples/invalid_data_error'
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
     500_error:
       description: Server Error
       content:
@@ -967,6 +934,39 @@ components:
             type: string
             default: Unauthorized
             example: Unauthorized
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http

@@ -1092,51 +1092,71 @@ paths:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
 components:
-  examples:
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
+  responses:
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
   schemas:
-    AuthResponse:
-      type: object
-      description: The authentication's details.
-      x-schemaName: AuthResponse
-      required:
-      - token
-      properties:
-        token:
-          type: string
-          title: token
-          description: The JWT token used for registration or authentication.
     AuthProvidersListResponse:
       type: object
       description: The response of listing the auth providers available.
@@ -1149,6 +1169,17 @@ components:
           description: The list of auth providers.
           items:
             $ref: '#/components/schemas/AuthProvider'
+    AuthResponse:
+      type: object
+      description: The authentication's details.
+      x-schemaName: AuthResponse
+      required:
+      - token
+      properties:
+        token:
+          type: string
+          title: token
+          description: The JWT token used for registration or authentication.
     Error:
       title: Response Error
       type: object
@@ -1183,17 +1214,6 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
-    AuthCallbackResponse:
-      type: object
-      description: The authentication's details.
-      x-schemaName: AuthCallbackResponse
-      required:
-      - location
-      properties:
-        location:
-          type: string
-          title: location
-          description: The location to redirect the user to for further authentication with the third-party provider.
     AdminUser:
       type: object
       description: The user's details.
@@ -1251,17 +1271,6 @@ components:
           format: date-time
           title: deleted_at
           description: The date the user was deleted.
-    AuthAdminSessionResponse:
-      type: object
-      description: The authenticated user's details.
-      x-schemaName: AuthAdminSessionResponse
-      required:
-      - user
-      properties:
-        user:
-          title: user
-          description: The logged-in user.
-          $ref: '#/components/schemas/AdminUser'
     AuthProvider:
       type: object
       description: 'The public information of a registered auth provider instance. This is safe
@@ -1310,79 +1319,28 @@ components:
           enum:
           - credentials
           - redirect
-    StoreCustomer:
+    AuthAdminSessionResponse:
       type: object
-      description: The customer's details.
-      x-schemaName: StoreCustomer
+      description: The authenticated user's details.
+      x-schemaName: AuthAdminSessionResponse
       required:
-      - addresses
-      - id
-      - email
-      - company_name
-      - first_name
-      - last_name
-      - default_billing_address_id
-      - default_shipping_address_id
+      - user
       properties:
-        id:
+        user:
+          title: user
+          description: The logged-in user.
+          $ref: '#/components/schemas/AdminUser'
+    AuthCallbackResponse:
+      type: object
+      description: The authentication's details.
+      x-schemaName: AuthCallbackResponse
+      required:
+      - location
+      properties:
+        location:
           type: string
-          title: id
-          description: The customer's ID.
-        email:
-          type: string
-          title: email
-          description: The customer's email.
-          format: email
-        default_billing_address_id:
-          type: string
-          title: default_billing_address_id
-          description: The ID of the address used for billing by default.
-        default_shipping_address_id:
-          type: string
-          title: default_shipping_address_id
-          description: The ID of the address used for shipping by default.
-        company_name:
-          type: string
-          title: company_name
-          description: The customer's company name.
-        first_name:
-          type: string
-          title: first_name
-          description: The customer's first name.
-        last_name:
-          type: string
-          title: last_name
-          description: The customer's last name.
-        addresses:
-          type: array
-          description: The customer's addresses.
-          items:
-            $ref: '#/components/schemas/StoreCustomerAddress'
-        phone:
-          type: string
-          title: phone
-          description: The customer's phone.
-        metadata:
-          type: object
-          description: The customer's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the customer was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the customer was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the customer was deleted.
+          title: location
+          description: The location to redirect the user to for further authentication with the third-party provider.
     AuthStoreSessionResponse:
       type: object
       description: The authenticated customer's details.
@@ -1499,70 +1457,112 @@ components:
           format: date-time
           title: updated_at
           description: The date the address was updated.
-  responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+    StoreCustomer:
+      type: object
+      description: The customer's details.
+      x-schemaName: StoreCustomer
+      required:
+      - addresses
+      - id
+      - email
+      - company_name
+      - first_name
+      - last_name
+      - default_billing_address_id
+      - default_shipping_address_id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The customer's ID.
+        email:
+          type: string
+          title: email
+          description: The customer's email.
+          format: email
+        default_billing_address_id:
+          type: string
+          title: default_billing_address_id
+          description: The ID of the address used for billing by default.
+        default_shipping_address_id:
+          type: string
+          title: default_shipping_address_id
+          description: The ID of the address used for shipping by default.
+        company_name:
+          type: string
+          title: company_name
+          description: The customer's company name.
+        first_name:
+          type: string
+          title: first_name
+          description: The customer's first name.
+        last_name:
+          type: string
+          title: last_name
+          description: The customer's last name.
+        addresses:
+          type: array
+          description: The customer's addresses.
+          items:
+            $ref: '#/components/schemas/StoreCustomerAddress'
+        phone:
+          type: string
+          title: phone
+          description: The customer's phone.
+        metadata:
+          type: object
+          description: The customer's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the customer was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the customer was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the customer was deleted.
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http

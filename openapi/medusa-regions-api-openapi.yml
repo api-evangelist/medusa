@@ -1129,48 +1129,17 @@ paths:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
 components:
-  examples:
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
   responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
+    invalid_state_error:
+      description: Invalid State Error
       content:
-        text/plain:
+        application/json:
           schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
     500_error:
       description: Server Error
       content:
@@ -1186,6 +1155,25 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
     not_found_error:
       description: Not Found Error
       content:
@@ -1205,28 +1193,98 @@ components:
             code: invalid_request_error
             message: Discount with code TEST already exists.
             type: duplicate_error
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
   schemas:
+    AdminUpdateRegion:
+      type: object
+      description: The propeties to update in the region.
+      properties:
+        name:
+          type: string
+          title: name
+          description: The region's name.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The region's currency code.
+        countries:
+          type: array
+          description: The region's countries.
+          items:
+            type: string
+            title: countries
+            description: A country code.
+        automatic_taxes:
+          type: boolean
+          title: automatic_taxes
+          description: Whether taxes are calculated automatically for carts in the region.
+        payment_providers:
+          type: array
+          description: The payment providers enabled in the region.
+          items:
+            type: string
+            title: payment_providers
+            description: A payment provider's ID.
+        metadata:
+          type: object
+          description: The region's metadata. Can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        is_tax_inclusive:
+          type: boolean
+          title: is_tax_inclusive
+          description: Whether the prices in the region are tax inclusive.
+      x-schemaName: AdminUpdateRegion
+    AdminPaymentProvider:
+      type: object
+      description: The payment provider's details.
+      x-schemaName: AdminPaymentProvider
+      required:
+      - is_enabled
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment provider's ID.
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: Whether the payment provider is enabled.
+    AdminRegionCountry:
+      type: object
+      description: The country's details.
+      x-schemaName: AdminRegionCountry
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The country's ID.
+        iso_2:
+          type: string
+          title: iso_2
+          description: The country's iso 2.
+          example: us
+        iso_3:
+          type: string
+          title: iso_3
+          description: The country's iso 3.
+          example: usa
+        num_code:
+          type: string
+          title: num_code
+          description: The country's num code.
+          example: 840
+        name:
+          type: string
+          title: name
+          description: The country's name.
+        display_name:
+          type: string
+          title: display_name
+          description: The country's display name.
     AdminRegionResponse:
       type: object
       description: The region's details.
@@ -1236,6 +1294,40 @@ components:
       properties:
         region:
           $ref: '#/components/schemas/AdminRegion'
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     AdminRegion:
       type: object
       description: The region's details.
@@ -1288,97 +1380,6 @@ components:
           format: date-time
           title: updated_at
           description: The date the region was updated.
-    AdminPaymentProvider:
-      type: object
-      description: The payment provider's details.
-      x-schemaName: AdminPaymentProvider
-      required:
-      - is_enabled
-      - id
-      properties:
-        id:
-          type: string
-          title: id
-          description: The payment provider's ID.
-        is_enabled:
-          type: boolean
-          title: is_enabled
-          description: Whether the payment provider is enabled.
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminUpdateRegion:
-      type: object
-      description: The propeties to update in the region.
-      properties:
-        name:
-          type: string
-          title: name
-          description: The region's name.
-        currency_code:
-          type: string
-          title: currency_code
-          description: The region's currency code.
-        countries:
-          type: array
-          description: The region's countries.
-          items:
-            type: string
-            title: countries
-            description: A country code.
-        automatic_taxes:
-          type: boolean
-          title: automatic_taxes
-          description: Whether taxes are calculated automatically for carts in the region.
-        payment_providers:
-          type: array
-          description: The payment providers enabled in the region.
-          items:
-            type: string
-            title: payment_providers
-            description: A payment provider's ID.
-        metadata:
-          type: object
-          description: The region's metadata. Can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        is_tax_inclusive:
-          type: boolean
-          title: is_tax_inclusive
-          description: Whether the prices in the region are tax inclusive.
-      x-schemaName: AdminUpdateRegion
     AdminCreateRegion:
       type: object
       description: The region's details.
@@ -1426,74 +1427,6 @@ components:
           externalDocs:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
-    AdminRegionCountry:
-      type: object
-      description: The country's details.
-      x-schemaName: AdminRegionCountry
-      required:
-      - id
-      properties:
-        id:
-          type: string
-          title: id
-          description: The country's ID.
-        iso_2:
-          type: string
-          title: iso_2
-          description: The country's iso 2.
-          example: us
-        iso_3:
-          type: string
-          title: iso_3
-          description: The country's iso 3.
-          example: usa
-        num_code:
-          type: string
-          title: num_code
-          description: The country's num code.
-          example: 840
-        name:
-          type: string
-          title: name
-          description: The country's name.
-        display_name:
-          type: string
-          title: display_name
-          description: The country's display name.
-    BaseRegionCountry:
-      type: object
-      description: The country's details.
-      x-schemaName: BaseRegionCountry
-      properties:
-        id:
-          type: string
-          title: id
-          description: The country's ID.
-        iso_2:
-          type: string
-          title: iso_2
-          description: The country's iso 2.
-          example: us
-        iso_3:
-          type: string
-          title: iso_3
-          description: The country's iso 3.
-          example: usa
-        num_code:
-          type: string
-          title: num_code
-          description: The country's num code.
-          example: 840
-        name:
-          type: string
-          title: name
-          description: The country's name.
-        display_name:
-          type: string
-          title: display_name
-          description: The country's display name.
-      required:
-      - id
     StoreRegion:
       type: object
       description: The region's details.
@@ -1546,6 +1479,73 @@ components:
           format: date-time
           title: updated_at
           description: The date the region was updated.
+    BaseRegionCountry:
+      type: object
+      description: The country's details.
+      x-schemaName: BaseRegionCountry
+      properties:
+        id:
+          type: string
+          title: id
+          description: The country's ID.
+        iso_2:
+          type: string
+          title: iso_2
+          description: The country's iso 2.
+          example: us
+        iso_3:
+          type: string
+          title: iso_3
+          description: The country's iso 3.
+          example: usa
+        num_code:
+          type: string
+          title: num_code
+          description: The country's num code.
+          example: 840
+        name:
+          type: string
+          title: name
+          description: The country's name.
+        display_name:
+          type: string
+          title: display_name
+          description: The country's display name.
+      required:
+      - id
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http

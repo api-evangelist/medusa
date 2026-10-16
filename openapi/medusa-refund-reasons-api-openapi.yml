@@ -402,6 +402,35 @@ paths:
       x-events: []
 components:
   schemas:
+    RefundReasonResponse:
+      type: object
+      description: The refund reason's details.
+      x-schemaName: RefundReasonResponse
+      required:
+      - refund_reason
+      properties:
+        refund_reason:
+          $ref: '#/components/schemas/AdminRefundReason'
+    AdminCreateRefundReason:
+      type: object
+      description: The refund reason's details.
+      x-schemaName: AdminCreateRefundReason
+      required:
+      - label
+      - code
+      properties:
+        label:
+          type: string
+          title: label
+          description: The refund reason's label.
+        description:
+          type: string
+          title: description
+          description: The refund reason's description.
+        code:
+          type: string
+          title: code
+          description: The refund reason's code.
     Error:
       title: Response Error
       type: object
@@ -436,6 +465,45 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
+    AdminRefundReasonDeleteResponse:
+      type: object
+      description: The deletion's details.
+      required:
+      - id
+      - object
+      - deleted
+      properties:
+        id:
+          type: string
+          title: id
+          description: The refund reason's ID.
+        object:
+          type: string
+          title: object
+          description: The name of the deleted object.
+          default: refund_reason
+        deleted:
+          type: boolean
+          title: deleted
+          description: Whether the refund reason was deleted.
+      x-schemaName: AdminRefundReasonDeleteResponse
+    AdminUpdateRefundReason:
+      type: object
+      description: The properties to update in the refund reason.
+      properties:
+        label:
+          type: string
+          title: label
+          description: The refund reason's label.
+        description:
+          type: string
+          title: description
+          description: The refund reason's description.
+        code:
+          type: string
+          title: code
+          description: The refund reason's code.
+      x-schemaName: AdminUpdateRefundReason
     AdminRefundReason:
       type: object
       description: The refund reason's details.
@@ -479,107 +547,6 @@ components:
           type: string
           title: code
           description: The refund reason's code.
-    AdminRefundReasonDeleteResponse:
-      type: object
-      description: The deletion's details.
-      required:
-      - id
-      - object
-      - deleted
-      properties:
-        id:
-          type: string
-          title: id
-          description: The refund reason's ID.
-        object:
-          type: string
-          title: object
-          description: The name of the deleted object.
-          default: refund_reason
-        deleted:
-          type: boolean
-          title: deleted
-          description: Whether the refund reason was deleted.
-      x-schemaName: AdminRefundReasonDeleteResponse
-    AdminCreateRefundReason:
-      type: object
-      description: The refund reason's details.
-      x-schemaName: AdminCreateRefundReason
-      required:
-      - label
-      - code
-      properties:
-        label:
-          type: string
-          title: label
-          description: The refund reason's label.
-        description:
-          type: string
-          title: description
-          description: The refund reason's description.
-        code:
-          type: string
-          title: code
-          description: The refund reason's code.
-    AdminUpdateRefundReason:
-      type: object
-      description: The properties to update in the refund reason.
-      properties:
-        label:
-          type: string
-          title: label
-          description: The refund reason's label.
-        description:
-          type: string
-          title: description
-          description: The refund reason's description.
-        code:
-          type: string
-          title: code
-          description: The refund reason's code.
-      x-schemaName: AdminUpdateRefundReason
-    RefundReasonResponse:
-      type: object
-      description: The refund reason's details.
-      x-schemaName: RefundReasonResponse
-      required:
-      - refund_reason
-      properties:
-        refund_reason:
-          $ref: '#/components/schemas/AdminRefundReason'
-  examples:
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
   responses:
     invalid_state_error:
       description: Invalid State Error
@@ -600,27 +567,6 @@ components:
           example:
             message: Entity with id 1 was not found
             type: not_found
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
     500_error:
       description: Server Error
       content:
@@ -636,6 +582,27 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
     unauthorized:
       description: User is not authorized. Must log in first
       content:
@@ -644,6 +611,39 @@ components:
             type: string
             default: Unauthorized
             example: Unauthorized
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http

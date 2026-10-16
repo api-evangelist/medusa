@@ -1203,139 +1203,75 @@ paths:
     - url: http://localhost:9000
     - url: https://api.medusajs.com
 components:
-  examples:
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
   schemas:
-    AdminProductOptionValue:
+    AdminInventoryLevel:
       type: object
-      description: The product option value's details.
-      x-schemaName: AdminProductOptionValue
+      description: The location level's location levels.
+      x-schemaName: AdminInventoryLevel
       required:
       - id
-      - value
+      - created_at
+      - updated_at
+      - deleted_at
+      - inventory_item_id
+      - location_id
+      - stocked_quantity
+      - reserved_quantity
+      - incoming_quantity
+      - metadata
+      - available_quantity
       properties:
         id:
           type: string
           title: id
-          description: The value's ID.
-        value:
-          type: string
-          title: value
-          description: The value.
-        option:
-          $ref: '#/components/schemas/AdminProductOption'
-        option_id:
-          type: string
-          title: option_id
-          description: The ID of the option this value belongs to.
-        metadata:
-          type: object
-          description: The value's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
+          description: The location level's ID.
         created_at:
           type: string
           format: date-time
           title: created_at
-          description: The date the value was created.
+          description: The location level's created at.
         updated_at:
           type: string
           format: date-time
           title: updated_at
-          description: The date the value was updated.
+          description: The location level's updated at.
         deleted_at:
           type: string
           format: date-time
           title: deleted_at
-          description: The date the value was deleted.
-        rank:
+          description: The location level's deleted at.
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The location level's inventory item id.
+        location_id:
+          type: string
+          title: location_id
+          description: The location level's location id.
+        stocked_quantity:
           type: number
-          title: rank
-          description: The rank of the value among other option values.
-    AdminProductOption:
-      type: object
-      description: The product option's details.
-      x-schemaName: AdminProductOption
-      required:
-      - id
-      - title
-      - is_exclusive
-      properties:
-        id:
-          type: string
-          title: id
-          description: The product option's ID.
-        title:
-          type: string
-          title: title
-          description: The product option's title.
-        values:
-          type: array
-          description: The product option's values.
-          items:
-            type: object
+          title: stocked_quantity
+          description: The location level's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The location level's reserved quantity.
+        incoming_quantity:
+          type: number
+          title: incoming_quantity
+          description: The location level's incoming quantity.
         metadata:
           type: object
-          description: The product option's metadata, can hold custom key-value pairs.
+          description: The location level's metadata.
           externalDocs:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the product option was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the product option was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the product option was deleted.
-        products:
-          type: array
-          description: The products that use the option.
-          items:
-            type: object
-        is_exclusive:
-          type: boolean
-          title: is_exclusive
-          description: Whether the option is exclusive to a product.
+        inventory_item:
+          type: object
+        available_quantity:
+          type: number
+          title: available_quantity
+          description: The location level's available quantity.
     AdminTranslation:
       type: object
       description: The translation's details.
@@ -1390,6 +1326,48 @@ components:
           format: date-time
           title: deleted_at
           description: The date that the translation was deleted.
+    BaseProductImage:
+      type: object
+      description: The image's details.
+      x-schemaName: BaseProductImage
+      properties:
+        id:
+          type: string
+          title: id
+          description: The image's ID.
+        url:
+          type: string
+          title: url
+          description: The image's URL.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the image was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the image was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the image was deleted.
+        metadata:
+          type: object
+          description: The image's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
+        rank:
+          type: number
+          title: rank
+          description: The image's rank among its sibling images.
+      required:
+      - id
+      - url
+      - rank
     BaseCalculatedPriceSet:
       type: object
       description: The calculated price's details.
@@ -1457,6 +1435,151 @@ components:
           type: number
           title: original_amount_without_tax
           description: The amount of the original price without taxes.
+    AdminInventoryItem:
+      type: object
+      description: The inventory item's details.
+      x-schemaName: AdminInventoryItem
+      required:
+      - id
+      - requires_shipping
+      - stocked_quantity
+      - reserved_quantity
+      properties:
+        id:
+          type: string
+          title: id
+          description: The inventory item's ID.
+        sku:
+          type: string
+          title: sku
+          description: The inventory item's sku.
+        origin_country:
+          type: string
+          title: origin_country
+          description: The inventory item's origin country.
+        hs_code:
+          type: string
+          title: hs_code
+          description: The inventory item's HS code.
+        requires_shipping:
+          type: boolean
+          title: requires_shipping
+          description: Whether the inventory item requires shipping.
+        mid_code:
+          type: string
+          title: mid_code
+          description: The inventory item's MID code.
+        material:
+          type: string
+          title: material
+          description: The inventory item's material.
+        weight:
+          type: number
+          title: weight
+          description: The inventory item's weight.
+        length:
+          type: number
+          title: length
+          description: The inventory item's length.
+        height:
+          type: number
+          title: height
+          description: The inventory item's height.
+        width:
+          type: number
+          title: width
+          description: The inventory item's width.
+        title:
+          type: string
+          title: title
+          description: The inventory item's title.
+        description:
+          type: string
+          title: description
+          description: The inventory item's description.
+        thumbnail:
+          type: string
+          title: thumbnail
+          description: The thumbnail URL of the inventory item.
+        metadata:
+          type: object
+          description: Custom key-value pairs, used to store additional information about the inventory item.
+        location_levels:
+          type: array
+          description: The inventory item's location levels.
+          items:
+            $ref: '#/components/schemas/AdminInventoryLevel'
+        stocked_quantity:
+          type: number
+          title: stocked_quantity
+          description: The inventory item's stocked quantity.
+        reserved_quantity:
+          type: number
+          title: reserved_quantity
+          description: The inventory item's reserved quantity.
+    AdminProductVariantInventoryItemLink:
+      type: object
+      description: An association between a product variant and an inventory item.
+      x-schemaName: AdminProductVariantInventoryItemLink
+      required:
+      - id
+      - variant_id
+      - inventory_item_id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The ID of the association.
+        variant_id:
+          type: string
+          title: variant_id
+          description: The associated product variant's ID.
+        variant:
+          type: object
+        inventory_item_id:
+          type: string
+          title: inventory_item_id
+          description: The associated inventory item's ID.
+        inventory:
+          $ref: '#/components/schemas/AdminInventoryItem'
+        required_quantity:
+          type: number
+          title: required_quantity
+          description: The inventory item's required quantity.
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
     AdminPrice:
       type: object
       description: The price's details.
@@ -1679,261 +1802,152 @@ components:
           description: The variant's translations.
           items:
             $ref: '#/components/schemas/AdminTranslation'
-    BaseProductImage:
+    AdminProductOption:
       type: object
-      description: The image's details.
-      x-schemaName: BaseProductImage
+      description: The product option's details.
+      x-schemaName: AdminProductOption
+      required:
+      - id
+      - title
+      - is_exclusive
       properties:
         id:
           type: string
           title: id
-          description: The image's ID.
-        url:
-          type: string
-          title: url
-          description: The image's URL.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the image was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the image was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the image was deleted.
-        metadata:
-          type: object
-          description: The image's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/admin#manage-metadata
-            description: Learn how to manage metadata
-        rank:
-          type: number
-          title: rank
-          description: The image's rank among its sibling images.
-      required:
-      - id
-      - url
-      - rank
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminInventoryItem:
-      type: object
-      description: The inventory item's details.
-      x-schemaName: AdminInventoryItem
-      required:
-      - id
-      - requires_shipping
-      - stocked_quantity
-      - reserved_quantity
-      properties:
-        id:
-          type: string
-          title: id
-          description: The inventory item's ID.
-        sku:
-          type: string
-          title: sku
-          description: The inventory item's sku.
-        origin_country:
-          type: string
-          title: origin_country
-          description: The inventory item's origin country.
-        hs_code:
-          type: string
-          title: hs_code
-          description: The inventory item's HS code.
-        requires_shipping:
-          type: boolean
-          title: requires_shipping
-          description: Whether the inventory item requires shipping.
-        mid_code:
-          type: string
-          title: mid_code
-          description: The inventory item's MID code.
-        material:
-          type: string
-          title: material
-          description: The inventory item's material.
-        weight:
-          type: number
-          title: weight
-          description: The inventory item's weight.
-        length:
-          type: number
-          title: length
-          description: The inventory item's length.
-        height:
-          type: number
-          title: height
-          description: The inventory item's height.
-        width:
-          type: number
-          title: width
-          description: The inventory item's width.
+          description: The product option's ID.
         title:
           type: string
           title: title
-          description: The inventory item's title.
-        description:
-          type: string
-          title: description
-          description: The inventory item's description.
-        thumbnail:
-          type: string
-          title: thumbnail
-          description: The thumbnail URL of the inventory item.
+          description: The product option's title.
+        values:
+          type: array
+          description: The product option's values.
+          items:
+            type: object
         metadata:
           type: object
-          description: Custom key-value pairs, used to store additional information about the inventory item.
-        location_levels:
-          type: array
-          description: The inventory item's location levels.
-          items:
-            $ref: '#/components/schemas/AdminInventoryLevel'
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The inventory item's stocked quantity.
-        reserved_quantity:
-          type: number
-          title: reserved_quantity
-          description: The inventory item's reserved quantity.
-    AdminProductVariantInventoryItemLink:
-      type: object
-      description: An association between a product variant and an inventory item.
-      x-schemaName: AdminProductVariantInventoryItemLink
-      required:
-      - id
-      - variant_id
-      - inventory_item_id
-      properties:
-        id:
-          type: string
-          title: id
-          description: The ID of the association.
-        variant_id:
-          type: string
-          title: variant_id
-          description: The associated product variant's ID.
-        variant:
-          type: object
-        inventory_item_id:
-          type: string
-          title: inventory_item_id
-          description: The associated inventory item's ID.
-        inventory:
-          $ref: '#/components/schemas/AdminInventoryItem'
-        required_quantity:
-          type: number
-          title: required_quantity
-          description: The inventory item's required quantity.
-    AdminInventoryLevel:
-      type: object
-      description: The location level's location levels.
-      x-schemaName: AdminInventoryLevel
-      required:
-      - id
-      - created_at
-      - updated_at
-      - deleted_at
-      - inventory_item_id
-      - location_id
-      - stocked_quantity
-      - reserved_quantity
-      - incoming_quantity
-      - metadata
-      - available_quantity
-      properties:
-        id:
-          type: string
-          title: id
-          description: The location level's ID.
+          description: The product option's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/admin#manage-metadata
+            description: Learn how to manage metadata
         created_at:
           type: string
           format: date-time
           title: created_at
-          description: The location level's created at.
+          description: The date the product option was created.
         updated_at:
           type: string
           format: date-time
           title: updated_at
-          description: The location level's updated at.
+          description: The date the product option was updated.
         deleted_at:
           type: string
           format: date-time
           title: deleted_at
-          description: The location level's deleted at.
-        inventory_item_id:
+          description: The date the product option was deleted.
+        products:
+          type: array
+          description: The products that use the option.
+          items:
+            type: object
+        is_exclusive:
+          type: boolean
+          title: is_exclusive
+          description: Whether the option is exclusive to a product.
+    AdminProductOptionValue:
+      type: object
+      description: The product option value's details.
+      x-schemaName: AdminProductOptionValue
+      required:
+      - id
+      - value
+      properties:
+        id:
           type: string
-          title: inventory_item_id
-          description: The location level's inventory item id.
-        location_id:
+          title: id
+          description: The value's ID.
+        value:
           type: string
-          title: location_id
-          description: The location level's location id.
-        stocked_quantity:
-          type: number
-          title: stocked_quantity
-          description: The location level's stocked quantity.
-        reserved_quantity:
-          type: number
-          title: reserved_quantity
-          description: The location level's reserved quantity.
-        incoming_quantity:
-          type: number
-          title: incoming_quantity
-          description: The location level's incoming quantity.
+          title: value
+          description: The value.
+        option:
+          $ref: '#/components/schemas/AdminProductOption'
+        option_id:
+          type: string
+          title: option_id
+          description: The ID of the option this value belongs to.
         metadata:
           type: object
-          description: The location level's metadata.
+          description: The value's metadata, can hold custom key-value pairs.
           externalDocs:
             url: https://docs.medusajs.com/api/admin#manage-metadata
             description: Learn how to manage metadata
-        inventory_item:
-          type: object
-        available_quantity:
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the value was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the value was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the value was deleted.
+        rank:
           type: number
-          title: available_quantity
-          description: The location level's available quantity.
+          title: rank
+          description: The rank of the value among other option values.
+    StoreProductOptionValue:
+      type: object
+      description: The product option value's details.
+      x-schemaName: StoreProductOptionValue
+      required:
+      - id
+      - value
+      properties:
+        id:
+          type: string
+          title: id
+          description: The value's ID.
+        value:
+          type: string
+          title: value
+          description: The value.
+        option:
+          type: object
+        option_id:
+          type: string
+          title: option_id
+          description: The ID of the option this value belongs to.
+        metadata:
+          type: object
+          description: The value's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the value was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the value was updated.
+        deleted_at:
+          type: string
+          format: date-time
+          title: deleted_at
+          description: The date the value was deleted.
+        rank:
+          type: number
+          title: rank
+          description: The rank of the value among other option values.
     StoreProductVariant:
       type: object
       description: The variant's details.
@@ -2082,62 +2096,17 @@ components:
       - ean
       - upc
       - barcode
-    StoreProductOptionValue:
-      type: object
-      description: The product option value's details.
-      x-schemaName: StoreProductOptionValue
-      required:
-      - id
-      - value
-      properties:
-        id:
-          type: string
-          title: id
-          description: The value's ID.
-        value:
-          type: string
-          title: value
-          description: The value.
-        option:
-          type: object
-        option_id:
-          type: string
-          title: option_id
-          description: The ID of the option this value belongs to.
-        metadata:
-          type: object
-          description: The value's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the value was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the value was updated.
-        deleted_at:
-          type: string
-          format: date-time
-          title: deleted_at
-          description: The date the value was deleted.
-        rank:
-          type: number
-          title: rank
-          description: The rank of the value among other option values.
   responses:
-    unauthorized:
-      description: User is not authorized. Must log in first
+    invalid_state_error:
+      description: Invalid State Error
       content:
-        text/plain:
+        application/json:
           schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
     500_error:
       description: Server Error
       content:
@@ -2153,6 +2122,25 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
     not_found_error:
       description: Not Found Error
       content:
@@ -2172,27 +2160,39 @@ components:
             code: invalid_request_error
             message: Discount with code TEST already exists.
             type: duplicate_error
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
+  examples:
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
   securitySchemes:
     api_token:
       type: http

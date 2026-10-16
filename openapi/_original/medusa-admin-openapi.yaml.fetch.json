@@ -1,0 +1,12 @@
+{
+ "url": "https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml",
+ "requested_url": "https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml",
+ "status": 200,
+ "content_type": "text/plain; charset=utf-8",
+ "bytes": 3852855,
+ "sha256": "c01b1c2c48a4546f8ed0546bfc135b848230955c9d5875f1ee74cc803e0b1e0d",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 0.985), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
