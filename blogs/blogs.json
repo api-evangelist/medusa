@@ -2,21 +2,21 @@
   "repo": "medusa",
   "feeds": [
     {
-      "source": "https://discord.gg/medusajs",
-      "feed_url": "https://discord.gg/medusajs",
-      "title": "",
-      "saved": 0,
-      "method": "none"
-    },
-    {
       "source": "https://medusajs.com/blog/",
       "feed_url": "https://medusajs.com/blog/",
       "title": "",
       "saved": 0,
       "method": "none"
+    },
+    {
+      "source": "https://discord.gg/medusajs",
+      "feed_url": "https://discord.gg/medusajs",
+      "title": "",
+      "saved": 0,
+      "method": "none"
     }
   ],
-  "fetched": "2026-10-03T12:30:02Z",
+  "fetched": "2026-10-10T13:15:00Z",
   "post_count": 1,
   "feed_nature": "vendor-blog",
   "feed_nature_basis": "path_blog",
