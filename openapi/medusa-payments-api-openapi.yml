@@ -911,6 +911,17 @@ paths:
         deprecated: false
 components:
   responses:
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
     invalid_state_error:
       description: Invalid State Error
       content:
@@ -921,6 +932,15 @@ components:
             code: unknown_error
             message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
             type: QueryRunnerAlreadyReleasedError
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
     500_error:
       description: Server Error
       content:
@@ -936,34 +956,6 @@ components:
               $ref: '#/components/examples/invalid_argument_error'
             default_error:
               $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
     invalid_request_error:
       description: Invalid Request Error
       content:
@@ -974,6 +966,47 @@ components:
             code: invalid_request_error
             message: Discount with code TEST already exists.
             type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+  examples:
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
   schemas:
     AdminRefundPayment:
       type: object
@@ -992,6 +1025,81 @@ components:
           title: note
           description: A note to attach to the refund.
       x-schemaName: AdminRefundPayment
+    AdminPaymentProvider:
+      type: object
+      description: The payment provider's details.
+      x-schemaName: AdminPaymentProvider
+      required:
+      - is_enabled
+      - id
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment provider's ID.
+        is_enabled:
+          type: boolean
+          title: is_enabled
+          description: Whether the payment provider is enabled.
+    AdminPaymentSession:
+      type: object
+      description: The payment session's details.
+      x-schemaName: AdminPaymentSession
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment session's ID.
+        amount:
+          type: number
+          title: amount
+          description: The payment session's amount.
+        currency_code:
+          type: string
+          title: currency_code
+          description: The payment session's currency code.
+          example: usd
+        provider_id:
+          type: string
+          title: provider_id
+          description: The ID of the payment provider processing this session.
+        data:
+          type: object
+          description: The payment session's data, useful for the payment provider processing the payment.
+          externalDocs:
+            url: https://docs.medusajs.com/resources/commerce-modules/payment/payment-session#data-property
+        context:
+          type: object
+          description: The context around the payment, such as the customer's details.
+          example:
+            customer:
+              id: cus_123
+        status:
+          type: string
+          description: The payment session's status.
+          enum:
+          - authorized
+          - captured
+          - canceled
+          - pending
+          - requires_more
+          - error
+        authorized_at:
+          type: string
+          title: authorized_at
+          description: The date the payment session was authorized.
+          format: date-time
+        payment_collection:
+          type: object
+        payment:
+          $ref: '#/components/schemas/BasePayment'
+      required:
+      - id
+      - amount
+      - currency_code
+      - provider_id
+      - data
+      - status
     BasePayment:
       type: object
       description: The payment's details.
@@ -1069,283 +1177,6 @@ components:
           type: object
         payment_session:
           type: object
-    BaseRefund:
-      type: object
-      description: The refund's details.
-      x-schemaName: BaseRefund
-      required:
-      - id
-      - amount
-      - created_at
-      - payment
-      properties:
-        id:
-          type: string
-          title: id
-          description: The refund's ID.
-        amount:
-          type: number
-          title: amount
-          description: The refund's amount.
-        refund_reason_id:
-          type: string
-          title: refund_reason_id
-          description: The ID of the refund reason.
-        note:
-          type: string
-          title: note
-          description: More details about the refund.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the refund was created.
-        created_by:
-          type: string
-          title: created_by
-          description: The ID of the user that created the refund.
-        payment:
-          type: object
-        refund_reason:
-          $ref: '#/components/schemas/BaseRefundReason'
-    AdminPaymentProvider:
-      type: object
-      description: The payment provider's details.
-      x-schemaName: AdminPaymentProvider
-      required:
-      - is_enabled
-      - id
-      properties:
-        id:
-          type: string
-          title: id
-          description: The payment provider's ID.
-        is_enabled:
-          type: boolean
-          title: is_enabled
-          description: Whether the payment provider is enabled.
-    AdminPaymentResponse:
-      type: object
-      description: The payment's details.
-      x-schemaName: AdminPaymentResponse
-      required:
-      - payment
-      properties:
-        payment:
-          $ref: '#/components/schemas/AdminPayment'
-    AdminRefund:
-      type: object
-      description: The refund's details.
-      x-schemaName: AdminRefund
-      required:
-      - id
-      - amount
-      - created_at
-      - payment
-      properties:
-        id:
-          type: string
-          title: id
-          description: The refund's ID.
-        amount:
-          type: number
-          title: amount
-          description: The refund's amount.
-        refund_reason_id:
-          type: string
-          title: refund_reason_id
-          description: The ID of the refund reason.
-        note:
-          type: string
-          title: note
-          description: More details about the refund.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the refund was created.
-        created_by:
-          type: string
-          title: created_by
-          description: The ID of the user that created the refund.
-        payment:
-          $ref: '#/components/schemas/BasePayment'
-        refund_reason:
-          $ref: '#/components/schemas/BaseRefundReason'
-    AdminPaymentSession:
-      type: object
-      description: The payment session's details.
-      x-schemaName: AdminPaymentSession
-      properties:
-        id:
-          type: string
-          title: id
-          description: The payment session's ID.
-        amount:
-          type: number
-          title: amount
-          description: The payment session's amount.
-        currency_code:
-          type: string
-          title: currency_code
-          description: The payment session's currency code.
-          example: usd
-        provider_id:
-          type: string
-          title: provider_id
-          description: The ID of the payment provider processing this session.
-        data:
-          type: object
-          description: The payment session's data, useful for the payment provider processing the payment.
-          externalDocs:
-            url: https://docs.medusajs.com/resources/commerce-modules/payment/payment-session#data-property
-        context:
-          type: object
-          description: The context around the payment, such as the customer's details.
-          example:
-            customer:
-              id: cus_123
-        status:
-          type: string
-          description: The payment session's status.
-          enum:
-          - authorized
-          - captured
-          - canceled
-          - pending
-          - requires_more
-          - error
-        authorized_at:
-          type: string
-          title: authorized_at
-          description: The date the payment session was authorized.
-          format: date-time
-        payment_collection:
-          type: object
-        payment:
-          $ref: '#/components/schemas/BasePayment'
-      required:
-      - id
-      - amount
-      - currency_code
-      - provider_id
-      - data
-      - status
-    BaseCapture:
-      type: object
-      description: The details of a captured payment.
-      x-schemaName: BaseCapture
-      required:
-      - id
-      - amount
-      - created_at
-      - payment
-      properties:
-        id:
-          type: string
-          title: id
-          description: The payment capture's ID.
-        amount:
-          type: number
-          title: amount
-          description: The captured amount.
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the capture was created.
-        created_by:
-          type: string
-          title: created_by
-          description: The ID of the user that captured the payment.
-        payment:
-          type: object
-    BaseRefundReason:
-      type: object
-      description: The refund reason's details.
-      x-schemaName: BaseRefundReason
-      required:
-      - id
-      - label
-      - code
-      - created_at
-      - updated_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The refund reason's ID.
-        label:
-          type: string
-          title: label
-          description: The refund reason's label.
-        description:
-          type: string
-          title: description
-          description: The refund reason's description.
-        metadata:
-          type: object
-          description: The refund reason's metadata, can hold custom key-value pairs.
-          externalDocs:
-            url: https://docs.medusajs.com/api/store#manage-metadata
-            description: Learn how to manage metadata
-        created_at:
-          type: string
-          format: date-time
-          title: created_at
-          description: The date the refund reason was created.
-        updated_at:
-          type: string
-          format: date-time
-          title: updated_at
-          description: The date the refund reason was updated.
-        code:
-          type: string
-          title: code
-          description: The refund reason's code.
-    Error:
-      title: Response Error
-      type: object
-      properties:
-        code:
-          type: string
-          description: A slug code to indicate the type of the error.
-          enum:
-          - invalid_state_error
-          - invalid_request_error
-          - api_error
-          - unknown_error
-        message:
-          type: string
-          description: Description of the error that occurred.
-          example: first_name must be a string
-        type:
-          type: string
-          description: A slug indicating the type of the error.
-          enum:
-          - QueryRunnerAlreadyReleasedError
-          - TransactionAlreadyStartedError
-          - TransactionNotStartedError
-          - conflict
-          - unauthorized
-          - payment_authorization_error
-          - duplicate_error
-          - not_allowed
-          - invalid_data
-          - not_found
-          - database_error
-          - unexpected_state
-          - invalid_argument
-          - unknown_error
-    AdminCapturePayment:
-      type: object
-      description: The payment's details.
-      properties:
-        amount:
-          type: number
-          title: amount
-          description: The amount to capture.
-      x-schemaName: AdminCapturePayment
     AdminPayment:
       type: object
       description: The payment's details.
@@ -1423,39 +1254,208 @@ components:
           type: object
         payment_session:
           $ref: '#/components/schemas/AdminPaymentSession'
-  examples:
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+    Error:
+      title: Response Error
+      type: object
+      properties:
+        code:
+          type: string
+          description: A slug code to indicate the type of the error.
+          enum:
+          - invalid_state_error
+          - invalid_request_error
+          - api_error
+          - unknown_error
+        message:
+          type: string
+          description: Description of the error that occurred.
+          example: first_name must be a string
+        type:
+          type: string
+          description: A slug indicating the type of the error.
+          enum:
+          - QueryRunnerAlreadyReleasedError
+          - TransactionAlreadyStartedError
+          - TransactionNotStartedError
+          - conflict
+          - unauthorized
+          - payment_authorization_error
+          - duplicate_error
+          - not_allowed
+          - invalid_data
+          - not_found
+          - database_error
+          - unexpected_state
+          - invalid_argument
+          - unknown_error
+    AdminPaymentResponse:
+      type: object
+      description: The payment's details.
+      x-schemaName: AdminPaymentResponse
+      required:
+      - payment
+      properties:
+        payment:
+          $ref: '#/components/schemas/AdminPayment'
+    BaseRefund:
+      type: object
+      description: The refund's details.
+      x-schemaName: BaseRefund
+      required:
+      - id
+      - amount
+      - created_at
+      - payment
+      properties:
+        id:
+          type: string
+          title: id
+          description: The refund's ID.
+        amount:
+          type: number
+          title: amount
+          description: The refund's amount.
+        refund_reason_id:
+          type: string
+          title: refund_reason_id
+          description: The ID of the refund reason.
+        note:
+          type: string
+          title: note
+          description: More details about the refund.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the refund was created.
+        created_by:
+          type: string
+          title: created_by
+          description: The ID of the user that created the refund.
+        payment:
+          type: object
+        refund_reason:
+          $ref: '#/components/schemas/BaseRefundReason'
+    BaseCapture:
+      type: object
+      description: The details of a captured payment.
+      x-schemaName: BaseCapture
+      required:
+      - id
+      - amount
+      - created_at
+      - payment
+      properties:
+        id:
+          type: string
+          title: id
+          description: The payment capture's ID.
+        amount:
+          type: number
+          title: amount
+          description: The captured amount.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the capture was created.
+        created_by:
+          type: string
+          title: created_by
+          description: The ID of the user that captured the payment.
+        payment:
+          type: object
+    AdminRefund:
+      type: object
+      description: The refund's details.
+      x-schemaName: AdminRefund
+      required:
+      - id
+      - amount
+      - created_at
+      - payment
+      properties:
+        id:
+          type: string
+          title: id
+          description: The refund's ID.
+        amount:
+          type: number
+          title: amount
+          description: The refund's amount.
+        refund_reason_id:
+          type: string
+          title: refund_reason_id
+          description: The ID of the refund reason.
+        note:
+          type: string
+          title: note
+          description: More details about the refund.
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the refund was created.
+        created_by:
+          type: string
+          title: created_by
+          description: The ID of the user that created the refund.
+        payment:
+          $ref: '#/components/schemas/BasePayment'
+        refund_reason:
+          $ref: '#/components/schemas/BaseRefundReason'
+    BaseRefundReason:
+      type: object
+      description: The refund reason's details.
+      x-schemaName: BaseRefundReason
+      required:
+      - id
+      - label
+      - code
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The refund reason's ID.
+        label:
+          type: string
+          title: label
+          description: The refund reason's label.
+        description:
+          type: string
+          title: description
+          description: The refund reason's description.
+        metadata:
+          type: object
+          description: The refund reason's metadata, can hold custom key-value pairs.
+          externalDocs:
+            url: https://docs.medusajs.com/api/store#manage-metadata
+            description: Learn how to manage metadata
+        created_at:
+          type: string
+          format: date-time
+          title: created_at
+          description: The date the refund reason was created.
+        updated_at:
+          type: string
+          format: date-time
+          title: updated_at
+          description: The date the refund reason was updated.
+        code:
+          type: string
+          title: code
+          description: The refund reason's code.
+    AdminCapturePayment:
+      type: object
+      description: The payment's details.
+      properties:
+        amount:
+          type: number
+          title: amount
+          description: The amount to capture.
+      x-schemaName: AdminCapturePayment
   securitySchemes:
     api_token:
       type: http

@@ -1517,115 +1517,104 @@ paths:
       x-workflow: linkSalesChannelsToApiKeyWorkflow
       x-events: []
 components:
+  responses:
+    400_error:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_allowed:
+              $ref: '#/components/examples/not_allowed_error'
+            invalid_data:
+              $ref: '#/components/examples/invalid_data_error'
+    invalid_state_error:
+      description: Invalid State Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: unknown_error
+            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
+            type: QueryRunnerAlreadyReleasedError
+    not_found_error:
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: Entity with id 1 was not found
+            type: not_found
+    500_error:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            database:
+              $ref: '#/components/examples/database_error'
+            unexpected_state:
+              $ref: '#/components/examples/unexpected_state_error'
+            invalid_argument:
+              $ref: '#/components/examples/invalid_argument_error'
+            default_error:
+              $ref: '#/components/examples/default_error'
+    invalid_request_error:
+      description: Invalid Request Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: invalid_request_error
+            message: Discount with code TEST already exists.
+            type: duplicate_error
+    unauthorized:
+      description: User is not authorized. Must log in first
+      content:
+        text/plain:
+          schema:
+            type: string
+            default: Unauthorized
+            example: Unauthorized
+  examples:
+    database_error:
+      summary: Database Error
+      value:
+        code: api_error
+        message: An error occured while hashing password
+        type: database_error
+    default_error:
+      summary: Default Error
+      value:
+        code: unknown_error
+        message: An unknown error occurred.
+        type: unknown_error
+    invalid_data_error:
+      summary: Invalid Data Error
+      value:
+        message: first_name must be a string
+        type: invalid_data
+    not_allowed_error:
+      summary: Not Allowed Error
+      value:
+        message: Discount must be set to dynamic
+        type: not_allowed
+    unexpected_state_error:
+      summary: Unexpected State Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
+    invalid_argument_error:
+      summary: Invalid Argument Error
+      value:
+        message: cart.total must be defined
+        type: unexpected_state
   schemas:
-    ApiKeyResponse:
-      type: object
-      description: The API key's details.
-      x-schemaName: ApiKeyResponse
-      required:
-      - id
-      - token
-      - redacted
-      - title
-      - type
-      - last_used_at
-      - created_by
-      - created_at
-      - revoked_by
-      - revoked_at
-      properties:
-        id:
-          type: string
-          title: id
-          description: The API key's ID.
-        token:
-          type: string
-          title: token
-          description: The API key's token.
-        redacted:
-          type: string
-          title: redacted
-          description: The redacted form of the API key's token. This is useful when showing portion of the token. For example `sk_...123`.
-        title:
-          type: string
-          title: title
-          description: The API key's title.
-        type:
-          type: string
-          description: The API key's type. `secret` API keys are used for authenticating admin users, and `publishable` API key are used for storefronts and similar clients to scope requests to sales channels.
-          enum:
-          - secret
-          - publishable
-        last_used_at:
-          type: string
-          title: last_used_at
-          description: The date the API key was last used.
-          format: date-time
-        created_by:
-          type: string
-          title: created_by
-          description: The ID of the user that created the API key.
-        created_at:
-          type: string
-          title: created_at
-          description: The date the API key was created.
-          format: date-time
-        revoked_by:
-          type: string
-          title: revoked_by
-          description: The ID of the user that revoked the API key.
-        revoked_at:
-          type: string
-          title: revoked_at
-          description: The date the API key was revoked.
-          format: date-time
-    AdminApiKeyResponse:
-      type: object
-      description: The API key's details.
-      x-schemaName: AdminApiKeyResponse
-      required:
-      - api_key
-      properties:
-        api_key:
-          $ref: '#/components/schemas/AdminApiKey'
-    AdminCreateApiKey:
-      type: object
-      description: The API key's details.
-      x-schemaName: AdminCreateApiKey
-      required:
-      - title
-      - type
-      properties:
-        title:
-          type: string
-          title: title
-          description: The API key's title.
-        type:
-          type: string
-          description: The API key's type. Use `secret` for a user's API key; Use `publishable` for Publishable API keys.
-          enum:
-          - publishable
-          - secret
-    AdminUpdateApiKey:
-      type: object
-      description: The details to update in an API key.
-      x-schemaName: AdminUpdateApiKey
-      required:
-      - title
-      properties:
-        title:
-          type: string
-          title: title
-          description: The API key's title.
-    AdminRevokeApiKey:
-      type: object
-      description: The details of revoking the API key.
-      x-schemaName: AdminRevokeApiKey
-      properties:
-        revoke_in:
-          type: number
-          title: revoke_in
-          description: The time in seconds to revoke the API key after. If not set, the API key is revoked immediately.
     AdminBatchLink:
       type: object
       description: A batch operation to manage the associations between two entities.
@@ -1645,6 +1634,24 @@ components:
             title: remove
             description: The entity's ID.
       x-schemaName: AdminBatchLink
+    AdminCreateApiKey:
+      type: object
+      description: The API key's details.
+      x-schemaName: AdminCreateApiKey
+      required:
+      - title
+      - type
+      properties:
+        title:
+          type: string
+          title: title
+          description: The API key's title.
+        type:
+          type: string
+          description: The API key's type. Use `secret` for a user's API key; Use `publishable` for Publishable API keys.
+          enum:
+          - publishable
+          - secret
     AdminApiKey:
       type: object
       description: The API key's details.
@@ -1753,103 +1760,96 @@ components:
           - unexpected_state
           - invalid_argument
           - unknown_error
-  responses:
-    invalid_state_error:
-      description: Invalid State Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: unknown_error
-            message: The request conflicted with another request. You may retry the request with the provided Idempotency-Key.
-            type: QueryRunnerAlreadyReleasedError
-    500_error:
-      description: Server Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            database:
-              $ref: '#/components/examples/database_error'
-            unexpected_state:
-              $ref: '#/components/examples/unexpected_state_error'
-            invalid_argument:
-              $ref: '#/components/examples/invalid_argument_error'
-            default_error:
-              $ref: '#/components/examples/default_error'
-    unauthorized:
-      description: User is not authorized. Must log in first
-      content:
-        text/plain:
-          schema:
-            type: string
-            default: Unauthorized
-            example: Unauthorized
-    400_error:
-      description: Client Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            not_allowed:
-              $ref: '#/components/examples/not_allowed_error'
-            invalid_data:
-              $ref: '#/components/examples/invalid_data_error'
-    not_found_error:
-      description: Not Found Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            message: Entity with id 1 was not found
-            type: not_found
-    invalid_request_error:
-      description: Invalid Request Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: invalid_request_error
-            message: Discount with code TEST already exists.
-            type: duplicate_error
-  examples:
-    invalid_argument_error:
-      summary: Invalid Argument Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    not_allowed_error:
-      summary: Not Allowed Error
-      value:
-        message: Discount must be set to dynamic
-        type: not_allowed
-    database_error:
-      summary: Database Error
-      value:
-        code: api_error
-        message: An error occured while hashing password
-        type: database_error
-    unexpected_state_error:
-      summary: Unexpected State Error
-      value:
-        message: cart.total must be defined
-        type: unexpected_state
-    default_error:
-      summary: Default Error
-      value:
-        code: unknown_error
-        message: An unknown error occurred.
-        type: unknown_error
-    invalid_data_error:
-      summary: Invalid Data Error
-      value:
-        message: first_name must be a string
-        type: invalid_data
+    AdminUpdateApiKey:
+      type: object
+      description: The details to update in an API key.
+      x-schemaName: AdminUpdateApiKey
+      required:
+      - title
+      properties:
+        title:
+          type: string
+          title: title
+          description: The API key's title.
+    AdminRevokeApiKey:
+      type: object
+      description: The details of revoking the API key.
+      x-schemaName: AdminRevokeApiKey
+      properties:
+        revoke_in:
+          type: number
+          title: revoke_in
+          description: The time in seconds to revoke the API key after. If not set, the API key is revoked immediately.
+    ApiKeyResponse:
+      type: object
+      description: The API key's details.
+      x-schemaName: ApiKeyResponse
+      required:
+      - id
+      - token
+      - redacted
+      - title
+      - type
+      - last_used_at
+      - created_by
+      - created_at
+      - revoked_by
+      - revoked_at
+      properties:
+        id:
+          type: string
+          title: id
+          description: The API key's ID.
+        token:
+          type: string
+          title: token
+          description: The API key's token.
+        redacted:
+          type: string
+          title: redacted
+          description: The redacted form of the API key's token. This is useful when showing portion of the token. For example `sk_...123`.
+        title:
+          type: string
+          title: title
+          description: The API key's title.
+        type:
+          type: string
+          description: The API key's type. `secret` API keys are used for authenticating admin users, and `publishable` API key are used for storefronts and similar clients to scope requests to sales channels.
+          enum:
+          - secret
+          - publishable
+        last_used_at:
+          type: string
+          title: last_used_at
+          description: The date the API key was last used.
+          format: date-time
+        created_by:
+          type: string
+          title: created_by
+          description: The ID of the user that created the API key.
+        created_at:
+          type: string
+          title: created_at
+          description: The date the API key was created.
+          format: date-time
+        revoked_by:
+          type: string
+          title: revoked_by
+          description: The ID of the user that revoked the API key.
+        revoked_at:
+          type: string
+          title: revoked_at
+          description: The date the API key was revoked.
+          format: date-time
+    AdminApiKeyResponse:
+      type: object
+      description: The API key's details.
+      x-schemaName: AdminApiKeyResponse
+      required:
+      - api_key
+      properties:
+        api_key:
+          $ref: '#/components/schemas/AdminApiKey'
   securitySchemes:
     api_token:
       type: http
