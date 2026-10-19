@@ -22,3 +22,142 @@
     detected: '2026-10-15'
   status: not-a-workflow
   arazzo: null
+- slug: medusa-npm-registry
+  label: npm registry
+  partner: npm
+  partner_name: npm registry
+  category: official SDK (JavaScript/TypeScript)
+  type: register
+  channel: package-registry
+  evidence: https://www.npmjs.com/package/@medusajs/admin-sdk
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: '@medusajs/admin-sdk'
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/admin-sdk
+      repo_leg: github-org:medusajs
+      publisher_leg: email:medusajs.com
+      matched_by: domain
+    - name: '@medusajs/cache-redis'
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/cache-redis
+      repo_leg: github-org:medusajs
+      publisher_leg: org:medusajs
+      matched_by: github-org
+    - name: '@medusajs/cli'
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/cli
+      repo_leg: github-org:medusajs
+      publisher_leg: org:medusajs
+      matched_by: github-org
+    - name: '@medusajs/event-bus-local'
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/event-bus-local
+      repo_leg: github-org:medusajs
+      publisher_leg: org:medusajs
+      matched_by: github-org
+    - name: '@medusajs/event-bus-redis'
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/event-bus-redis
+      repo_leg: github-org:medusajs
+      publisher_leg: org:medusajs
+      matched_by: github-org
+    - name: '@medusajs/framework'
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/framework
+      repo_leg: github-org:medusajs
+      publisher_leg: org:medusajs
+      matched_by: github-org
+    - name: '@medusajs/js-sdk'
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/js-sdk
+      repo_leg: github-org:medusajs
+      publisher_leg: org:medusajs
+      matched_by: github-org
+    - name: '@medusajs/mcloud'
+      version: 0.1.15
+      released: '2026-09-22'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/mcloud
+      repo_leg: github-org:medusajs
+      publisher_leg: org:medusajs
+      matched_by: github-org
+    - name: '@medusajs/medusa'
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/medusa
+      repo_leg: domain:medusajs.com
+      publisher_leg: org:medusajs
+      matched_by: domain
+    - name: '@medusajs/types'
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/types
+      repo_leg: github-org:medusajs
+      publisher_leg: org:medusajs
+      matched_by: github-org
+    - name: '@medusajs/ui'
+      version: 4.2.6
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/ui
+      repo_leg: github-org:medusajs
+      publisher_leg: email:medusajs.com
+      matched_by: domain
+    - name: '@medusajs/ui-preset'
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@medusajs/ui-preset
+      repo_leg: github-org:medusajs
+      publisher_leg: email:medusajs.com
+      matched_by: domain
+    - name: create-medusa-app
+      version: 2.21.2
+      released: '2026-10-16'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/create-medusa-app
+      repo_leg: github-org:medusajs
+      publisher_leg: email:medusajs.com
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  status: not-a-workflow
+  arazzo: null
