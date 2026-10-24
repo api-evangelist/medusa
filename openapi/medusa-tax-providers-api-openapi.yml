@@ -361,3 +361,9 @@ components:
       x-displayName: Reset Password Token
       scheme: bearer
       x-is-auth: false
+x-provenance:
+  method: harvested
+  publisher: Medusa
+  source: https://raw.githubusercontent.com/medusajs/medusa/develop/www/apps/api-reference/specs/admin/openapi.full.yaml
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
